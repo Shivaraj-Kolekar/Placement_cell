@@ -1,0 +1,25 @@
+<!-- job_details_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Details List</title>
+</head>
+<body>
+    <h1>Job Details List</h1>
+    
+    {% for job_detail in job_details %}
+
+        <div>
+            <h2>{{ job_detail.job_title }}</h2>
+            <p>Company: {{ job_detail.company_name }}</p>
+            <p>Salary: ${{ job_detail.salary }}</p>
+            <p>Required Branch: {{ job_detail.required_branch }}</p>
+            <p>Skills: {{ job_detail.skills }}</p>
+            <!-- You can customize the display as needed -->
+        </div>
+    {% endfor %}
+    
+</body>
+</html>
