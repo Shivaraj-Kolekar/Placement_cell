@@ -1,12 +1,5 @@
-<!-- update_job_details.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- Add your head content here -->
-    <!-- ... -->
-</head>
-<body class="bg-gray-100 font-sans">
 
+    {% block body %}
     <section class="container mx-auto my-8 p-8 bg-blue rounded-lg shadow-md">
         <h2 class="text-3xl font-bold mb-4">Update Job Details</h2>
         <form method="post" action="{% url 'actual_update_job_details'  %}" enctype="multipart/form-data">
@@ -17,6 +10,4 @@
         </form>
         
     </section>
-
-</body>
-</html>
+{%endblock%}

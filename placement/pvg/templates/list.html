@@ -1,11 +1,5 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Event details</title>
-</head>
-<body>
+
+    {% block body %}
         {% for job_detail in job_details %}
 
         <div class= " w-23 bg-slate-400 h-35 mt-3 m-20 rounded-lg ">
@@ -21,6 +15,4 @@
     {% endfor %}
 
        
-
-</body>
-</html>
+{%endblock%}
