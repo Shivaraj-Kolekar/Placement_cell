@@ -66,3 +66,31 @@ def add_job_details(request):
 def job_list(request):
     job_details = JobDetail.objects.all()
     return render(request, 'job_list.html', {'job_details': job_details})
+
+
+def list(request):
+    job_details = JobDetail.objects.all()
+    return render(request, 'list.html', {'job_details': job_details})
+ 
+def admin_home(request):
+    return render(request, 'admin_home.html')
+
+def update_job_details(request):
+    if request.method == 'POST':
+        job_id = request.POST.get('job_id')
+        return redirect('actual_update_job_details', job_id=job_id)
+
+    return render(request, 'update_job_details.html')
+
+def actual_update_job_details(request, job_id):
+    job = get_object_or_404(JobDetail, job_id=job_id)  # Assuming 'job_id' is the primary key field
+
+    if request.method == 'POST':
+        form = JobDetailForm(request.POST, request.FILES, instance=job)
+        if form.is_valid():
+            form.save()
+            return redirect('job_details', job_id=job_id)  # Replace 'job_details' with your actual view name
+    else:
+        form = JobDetailForm(instance=job)
+
+    return render(request, 'actual_update_job_details.html', {'form': form, 'job': job})

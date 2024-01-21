@@ -10,4 +10,4 @@ class StudentForm(forms.ModelForm):
 class JobDetailForm(forms.ModelForm):
     class Meta:
         model = JobDetail
-        fields = ['job_title', 'company_logo', 'company_name', 'salary', 'required_branch', 'skills','location']
+        fields = ['job_id','job_title', 'company_logo', 'company_name', 'salary', 'required_branch', 'skills','location']

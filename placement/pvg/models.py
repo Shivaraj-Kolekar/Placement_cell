@@ -3,10 +3,12 @@ from django.db import models
 class Student(models.Model):
     BRANCH_CHOICES = [
         ('ME', 'Mechanical Engineering'),
-        ('TE', 'Telecommunication Engineering'),
+        ('IT', 'Information Technology'),
         ('CS', 'Computer Science'),
         ('EE', 'Electrical Engineering'),
         ('ENTC', 'Electronics and Telecommunication Engineering'),
+        ('Printing','Printing'),
+        ('AIDS','AIDS')
     ]
 
     name = models.CharField(max_length=100)
@@ -20,6 +22,7 @@ class Student(models.Model):
         return self.name
 
 class JobDetail(models.Model):
+    job_id=models.CharField(max_length=50)
     job_title = models.CharField(max_length=100)
     company_logo = models.ImageField(upload_to='company_logos/')
     company_name = models.CharField(max_length=100)

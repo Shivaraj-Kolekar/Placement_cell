@@ -1,0 +1,64 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <title>Add Job Details | College Campus</title>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <!-- Navigation (if needed) -->
+
+    <!-- Add Job Details Section -->
+    <section class="container mx-auto my-8 p-8 bg-blue rounded-lg shadow-md">
+        <h2 class="text-3xl font-bold mb-4">Add Job Details</h2>
+        <form action="{% url 'add_job_details' %}" method="post" enctype="multipart/form-data" class="">
+            {% csrf_token %}
+          
+                  <!--{{ form.as_p }} -->       
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Student Name -->
+                            <div class="mb-4">
+                                <label for="job_title" class="block text-gray-700 font-bold mb-2">Job Title</label>
+                                <input type="text" id="job_title" name="job_title" class="border-2 border-gray-300 p-2 w-full" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="company_name" class="block text-gray-700 font-bold mb-2">Company Name</label>
+                                <input type="text" id="company_name" name="company_name" class="border-2 border-gray-300 p-2 w-full" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="company_logo" class="block text-gray-700 font-bold mb-2">Company Logo</label>
+                                <input type="file" id="company_logo" name="company_logo" class="border-2 border-gray-300 p-2 w-full" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="location" class="block text-gray-700 font-bold mb-2">Location</label>
+                                <input type="text" id="location" name="location" class="border-2 border-gray-300 p-2 w-full" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="salary" class="block text-gray-700 font-bold mb-2">Salary</label>
+                                <input type="Number" id="salary" name="salary" class="border-2 border-gray-300 p-2 w-full" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="required_branch" class="block text-gray-700 font-bold mb-2">Branch</label>
+                                <input type="text" id="required_branch" name="required_branch" class="border-2 border-gray-300 p-2 w-full" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="skills" class="block text-gray-700 font-bold mb-2">Skills</label>
+                                <input type="text" id="skills" name="skills" class="border-2 border-gray-300 p-2 w-full" required>
+                            </div>
+                        </div>
+            <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-700">Submit</button>
+        </form>
+    </section>
+
+    <!-- Footer (if needed) -->
+
+</body>
+</html>
