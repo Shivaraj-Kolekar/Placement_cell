@@ -3,6 +3,7 @@ from django.contrib import messages
 from .models import Student, JobDetail
 from .forms import StudentForm, JobDetailForm
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
 
 def index(request):
     return render(request, 'index.html')
@@ -63,6 +64,9 @@ def add_job_details(request):
 
     return render(request, 'add_job_details.html', {'form': form})
 
+def login(request):
+    return render(request,'login.html')
+#@login_required
 def job_list(request):
     job_details = JobDetail.objects.all()
     return render(request, 'job_list.html', {'job_details': job_details})
@@ -94,3 +98,6 @@ def actual_update_job_details(request, job_id):
         form = JobDetailForm(instance=job)
 
     return render(request, 'actual_update_job_details.html', {'form': form, 'job': job})
+
+def student_home(request):
+    return render(request,'student_home.html')

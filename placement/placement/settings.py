@@ -57,7 +57,7 @@ ROOT_URLCONF = 'placement.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['placement/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
