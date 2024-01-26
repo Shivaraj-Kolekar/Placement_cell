@@ -1,13 +1,16 @@
-
+{% extends "base.html" %}
     {% block body %}
     <section class="container mx-auto my-8 p-8 bg-blue rounded-lg shadow-md">
         <h2 class="text-3xl font-bold mb-4">Update Job Details</h2>
-        <form method="post" action="{% url 'actual_update_job_details'  %}" enctype="multipart/form-data">
+        <form method="post" action="{% url 'actual_update_job_details' job_id=job_id  %}" enctype="multipart/form-data">
+      
             {% csrf_token %}
             <label for="job_id">Enter Job Id:</label>
-            <input type="text" id="job_id" name="job_id" value="{{ job_id }}" required readonly>
+            <input type="text" id="job_id" name="job_id" value="{{ job_id }}">
             <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-700">Update</button>
         </form>
         
     </section>
+    {%block footer%}
+{%endblock%}
 {%endblock%}

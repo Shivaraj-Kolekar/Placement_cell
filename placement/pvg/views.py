@@ -4,6 +4,8 @@ from .models import Student, JobDetail
 from .forms import StudentForm, JobDetailForm
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
+from .models import Student
+from django.core.paginator import Paginator
 
 def index(request):
     return render(request, 'index.html')
@@ -66,7 +68,7 @@ def add_job_details(request):
 
 def login(request):
     return render(request,'login.html')
-#@login_required
+# @login_required
 def job_list(request):
     job_details = JobDetail.objects.all()
     return render(request, 'job_list.html', {'job_details': job_details})
@@ -101,3 +103,21 @@ def actual_update_job_details(request, job_id):
 
 def student_home(request):
     return render(request,'student_home.html')
+
+def Studentlist(request,page=1):
+    ServiceData = Student.objects.all().order_by('id')
+    paginator = Paginator(ServiceData, 10)
+    page_number = request.GET.get('page')
+    ServiceDataFinal = paginator.get_page(page_number)
+    data = {'ServiceData': ServiceDataFinal }
+    return render(request, 'my_view.html', data)
+
+
+
+def my_view(request, page=1):
+    ServiceData = Student.objects.all().order_by('id')
+    paginator = Paginator(ServiceData, 10)
+    page_number = request.GET.get('page')
+    ServiceDataFinal = paginator.get_page(page_number)
+    data = {'ServiceData': ServiceDataFinal }
+    return render(request, 'my_view.html', data)

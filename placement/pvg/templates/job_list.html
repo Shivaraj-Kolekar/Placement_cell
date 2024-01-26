@@ -1,11 +1,7 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Comany List</title>
-</head>
-<body>
+  {%extends 'base.html'%}
+  
+  {%block title%} Job List{%endblock%}
+  {%block body %}
         {% for job_detail in job_details %}
 
         <div class= " w-23 bg-slate-400 h-35 mt-3 m-20 rounded-lg ">
@@ -18,14 +14,11 @@
            
             <!-- You can customize the display as needed -->
         </div>
-    {% endfor %}
-  {%block footer%}
+        {% endfor %}
+
      <!-- Footer -->
-     <div class="bg-gray-800 text-white py-4">
-        <div class="container mx-auto text-center">
-            <p>&copy; 2024 PVG COET. All rights reserved.</p>
-        </div>
-    </div>
+     {%block footer%}
+   
+         
     {%endblock%}
-</body>
-</html>
+{%endblock%}
