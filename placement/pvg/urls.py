@@ -20,7 +20,10 @@ urlpatterns = [
      path("my_view/<int:page>", views.my_view, name="my_view"),
      path("my_view/", views.my_view, name="my_view_default"),
      
-      path("Studentlist/<int:page>", views.Studentlist, name="Studentlist"),
-     path("Studentlist/", views.Studentlist, name="Studentlist_default"),
+     path("studentlist/<int:page>", views.studentlist, name="studentlist"),
+     path("studentlist/", views.studentlist, name="studentlist_default"),
+
+     path('download_excel/', views.download_excel, name='download_excel'),
+     path('download_pdf/', views.download_pdf, name='download_pdf'),
 
 ]

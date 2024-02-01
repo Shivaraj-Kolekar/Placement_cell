@@ -5,7 +5,7 @@ from .models import Student,JobDetail
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ['name', 'email', 'crn_number', 'branch', 'sem_marks_sheet', 'cv_file']
+        fields = ['name', 'crn_number', 'branch','email',  'student_class','sem_marks_sheet', 'cv_file']
 
 class JobDetailForm(forms.ModelForm):
     class Meta:

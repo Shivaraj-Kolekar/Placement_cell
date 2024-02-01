@@ -6,15 +6,25 @@ class Student(models.Model):
         ('IT', 'Information Technology'),
         ('CS', 'Computer Science'),
         ('EE', 'Electrical Engineering'),
-        ('ENTC', 'Electronics and Telecommunication Engineering'),
+        ('ENTC', 'ENTC'),
         ('Printing','Printing'),
         ('AIDS','AIDS')
     ]
+    
 
     name = models.CharField(max_length=100)
     crn_number = models.CharField(max_length=20)
-    branch = models.CharField(max_length=10, choices=BRANCH_CHOICES)
-    email = models.CharField(max_length=50,default='')  # Adjust the max_length as needed
+    branch = models.CharField(max_length=20, choices=BRANCH_CHOICES,default=''
+    )
+    student_class=[
+         ('FE','First Year'),
+         ('SE','Second Year'),
+         ('TE','Third Year'),
+         ('BE','Final Year')
+         ]
+    student_class=models.CharField(max_length=20,choices=student_class,default='')
+   
+    email = models.CharField(max_length=50,default='') 
     sem_marks_sheet = models.FileField(upload_to='sem_marks_sheets/')
     cv_file = models.FileField(upload_to='cv_files/')
 
