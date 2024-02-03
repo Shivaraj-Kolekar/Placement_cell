@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}Admin Home page{% endblock %}
 {% block body %}
   <header class="header">
     <img src="E:\Placement_cell\placement\pvg\templates\pvg-logo.jpg" alt="PVG logo" class="logo"/>
@@ -10,7 +12,7 @@
         <li><a class="navbar-link" href="{% url 'add_job_details' %}">Add Job</a></li>
         <li><a class="navbar-link" href="{% url 'update_job_details' %}">Update</a></li>
         <li><a class="navbar-link" href="#">Delete</a></li>
-        <li><a class="navbar-link" href="#">Student List</a></li>
+        <li><a class="navbar-link" href="{% url 'studentlist' page=1 %}">Student List</a></li>
         <li><a class="navbar-link" href="#">All List</a></li>
         <li><a class="navbar-link" href="#" target="_blank">Logout</a></li>
       </ul>
@@ -30,7 +32,6 @@
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
   <script src="E:\Placement_cell\placement\pvg\templates\js\admin_home.js"></script>
-{% endblock %}
 
 <style>
   @import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Work+Sans:wght@400;500;600;700&display=swap");
@@ -214,11 +215,5 @@ Responsive Codes
     mobile_nav.addEventListener("click", toggleNavbar);
   };
 </script>
-{% block footer %}
- <!-- Footer -->
- <footer class="bg-gray-800 text-white py-4">
-  <div class="container mx-auto text-center">
-      <p>&copy; 2024 PVG COET. All rights reserved.</p>
-  </div>
-</footer>
-{%endblock%}
+
+{% endblock %}

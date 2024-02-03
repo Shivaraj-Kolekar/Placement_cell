@@ -1,25 +1,47 @@
-  {%extends 'base.html'%}
-  
-  {%block title%} Job List{%endblock%}
-  {%block body %}
-        {% for job_detail in job_details %}
+{% extends 'base.html' %}
 
-        <div class= " w-23 bg-slate-400 h-35 mt-3 m-20 rounded-lg ">
-            <p class="m-3 p-3 font-serif text-3xl "> <b>{{ job_detail.job_title }}</b></p>
+{% block title %}Job List{% endblock %}
+
+{% block body %}
+    {% for job_detail in job_details %}
+        <div class="w-23 bg-slate-400 h-35 mt-3 m-20 rounded-lg">
+            <p class="m-3 p-3 font-serif text-3xl"><b>{{ job_detail.job_title }}</b></p>
             <p class="m-3 p-3 text-lg"><b>Company:</b> {{ job_detail.company_name }}</p>
             <p class="m-3 p-3 text-lg"><b>Salary: RS</b>{{ job_detail.salary }}</p>
             <p class="m-3 p-3 text-lg"><b>Required Branch:</b> {{ job_detail.required_branch }}</p>
             <p class="m-3 p-3 text-lg"><b>Skills:</b> {{ job_detail.skills }}</p>
-            <p class="m-3 p-3 text-lg"><b>Time</b> {{ job_detail.system_time }}</p>
-            <button class="m-3 p-3 rounded-md bg-blue-600 hover:bg-blue-900"> <a url=''>View Details </a></button>
-           
-            <!-- You can customize the display as needed -->
+            <p class="m-3 p-3 text-lg"><b>Time:</b> <span class="timeAgo"></span></p>
+            <button class="m-3 p-3 rounded-md bg-blue-600 hover:bg-blue-900"><a url=''>View Details</a></button>
         </div>
-        {% endfor %}
+    {% endfor %}
 
-     <!-- Footer -->
-     {%block footer%}
-   
-         
-    {%endblock%}
+    <script>
+    {% for job_detail in job_details %}
+        // Get the system time from the server-side and convert it to a JavaScript Date object
+        var systemTime = new Date("{{ job_detail.system_time }}");
+
+        // Get the current time
+        var currentTime = new Date();
+
+        // Calculate the time difference in milliseconds
+        var timeDiff = currentTime - systemTime;
+
+        // Calculate the time ago in minutes
+        var timeAgoMinutes = Math.floor(timeDiff / (1000 * 60));
+
+        // Display the time ago
+        var timeAgoSpan = document.querySelector(".timeAgo");
+        timeAgoSpan.textContent = timeAgoMinutes + " minutes ago"; // You can customize this based on your preference
+    {% endfor %}
+    </script>
+    
+    <!-- Footer -->
+    {% block footer %}
+ <!-- Footer -->
+ <footer class="bg-gray-800 text-white py-4">
+  <div class="container mx-auto text-center">
+      <p>&copy; 2024 PVG COET. All rights reserved.</p>
+  </div>
+</footer>
 {%endblock%}
+{% endblock %}

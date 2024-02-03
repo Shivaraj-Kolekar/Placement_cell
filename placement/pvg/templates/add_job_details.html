@@ -1,5 +1,7 @@
    {% extends "base.html" %}
-      {% block body %}
+   {% block title %}Add job details{% endblock %}   
+   {% block body %}
+      
     <!-- Navigation (if needed) -->
 
     <!-- Add Job Details Section -->
@@ -57,15 +59,16 @@
         </form>
     </section>
     <script>
-        // Get the current system time
-        var currentTime = new Date();
+    // Get the current system time
+    var currentTime = new Date();
 
-        // Format the time as per your requirement
-        var formattedTime = currentTime.toISOString(); // Or any other format you prefer
+    // Format the time as per your requirement
+    var formattedTime = currentTime.toISOString(); // Or any other format you prefer
 
-        // Set the value of the hidden field to the formatted time
-        document.getElementById("systemTime").value = formattedTime;
-    </script>
+    // Set the value of the hidden field to the formatted time
+    document.getElementById("system_time").value = formattedTime; // Corrected ID to "system_time"
+</script>
+
 
     {%block footer%}{%endblock%}
 {%endblock%}

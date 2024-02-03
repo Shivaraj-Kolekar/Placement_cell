@@ -31,7 +31,7 @@ class Student(models.Model):
 
 class JobDetail(models.Model):
     
-    job_id = models.CharField(max_length=50, primary_key=True)
+    job_id =models.IntegerField(primary_key=True)
     job_title = models.CharField(max_length=100)
     company_logo = models.ImageField(upload_to='company_logos/')
     company_name = models.CharField(max_length=100)
@@ -39,6 +39,6 @@ class JobDetail(models.Model):
     required_branch = models.CharField(max_length=50)
     skills = models.TextField()
     location = models.CharField(max_length=50, default='')
-    system_time=models.CharField(max_length=50,default='')
+    system_time=models.DateTimeField()
     def __str__(self):
         return self.job_title
