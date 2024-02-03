@@ -1,15 +1,19 @@
-from django.shortcuts import render, redirect
 from django.http import HttpResponse
-
+from django.template.loader import get_template
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Student, JobDetail
 from .forms import StudentForm, JobDetailForm
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
-from .models import Student
 from django.core.paginator import Paginator
 from django.template.loader import get_template
 import pandas as pd
+import xlsxwriter
+import io
+from .helpers import studentlist_pdf,studentlist_xls
+from xhtml2pdf import pisa  # Import the module for PDF generation
+
 def index(request):
     return render(request, 'index.html')
 
@@ -21,19 +25,24 @@ def signup(request):
             name = form.cleaned_data['name']
             crn_number = form.cleaned_data['crn_number']
             branch = form.cleaned_data['branch']
-            student_class=form.cleaned_data['student_class']
-            sem_marks_sheet = form.cleaned_data['sem_marks_sheet']
-            cv_file = form.cleaned_data['cv_file']
+            year=form.cleaned_data['year']
             email=form.cleaned_data['email']
+            password=form.cleaned_data['password']
+            CGPA=form.cleaned_data['CGPA']
+          #  sem_marks_sheet = form.cleaned_data['sem_marks_sheet']
+          #  cv_file = form.cleaned_data['cv_file']
+           
             # Create a new Student instance
             student = Student(
                 name=name,
                 crn_number=crn_number,
                 branch=branch,
-                student_class=student_class,
-                sem_marks_sheet=sem_marks_sheet,
-                cv_file=cv_file,
-                email=email
+                year=year,
+           #    sem_marks_sheet=sem_marks_sheet,
+           #    cv_file=cv_file,
+                email=email,
+                password=password,
+                CGPA=CGPA
             )
             student.save()
 
@@ -73,6 +82,7 @@ def add_job_details(request):
 def login(request):
     return render(request,'login.html')
 # @login_required
+
 def job_list(request):
     job_details = JobDetail.objects.all()
     return render(request, 'job_list.html', {'job_details': job_details})
@@ -109,7 +119,7 @@ def student_home(request):
     return render(request,'student_home.html')
 
 def studentlist(request,page=1):
-    ServiceData = Student.objects.all().order_by('id')
+    ServiceData = Student.objects.all().order_by('crn_number')
     paginator = Paginator(ServiceData, 10)
     page_number = request.GET.get('page')
     ServiceDataFinal = paginator.get_page(page_number)
@@ -127,30 +137,23 @@ def my_view(request, page=1):
     return render(request, 'my_view.html', data)
 
 def download_excel(request):
-    # Assuming you have a model named Student and you want to export its data
     queryset = Student.objects.all()
-    
-    # Convert queryset to DataFrame
-    df = pd.DataFrame(list(queryset.values()))
-
-    # Convert DataFrame to Excel
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=student_data.xlsx'
-    df.to_excel(response, index=False)
-
-    return response
+    context = {'ServiceData': queryset}  # Pass the queryset to the context
+    xls_content = studentlist_xls(context)  # Call studentlist_xls with the context
+    if xls_content:
+        response = HttpResponse(xls_content, content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=student_data.xls'
+        return response
+    else:
+        return HttpResponse('Error generating Excel file', status=500)
 
 def download_pdf(request):
-    template_path = 'studentlist.html'
-    queryset = ServiceData.objects.all()
-    context = {'Student': queryset}
-    # Render template
-    template = get_template(template_path)
-    html = template.render(context)
-
-    # Create a PDF
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename=student_data.pdf'
-    pisa_status = pisa.CreatePDF(html, dest=response)
-    if pisa_status.err:
-        return HttpResponse('PDF creation error', status=500)
+    queryset = Student.objects.all()
+    context = {'ServiceData': queryset}  # Pass the queryset to the context
+    pdf = studentlist_pdf('studentlist.html', context)  # Call studentlist_pdf with the context
+    if pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename=student_data.pdf'
+        return response
+    else:
+        return HttpResponse('Error generating PDF', status=500)

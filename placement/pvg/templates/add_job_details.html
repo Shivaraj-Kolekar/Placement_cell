@@ -12,6 +12,11 @@
               
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <!-- Student Name -->
+                            
+                            <div class="mb-4">
+                                <label for="job_title" class="block text-gray-700 font-bold mb-2">job_id</label>
+                                <input type="text" id="job_id" name="job_id" class="border-2 border-gray-300 p-2 w-full" required>
+                            </div>
                             <div class="mb-4">
                                 <label for="job_title" class="block text-gray-700 font-bold mb-2">Job Title</label>
                                 <input type="text" id="job_title" name="job_title" class="border-2 border-gray-300 p-2 w-full" required>
@@ -45,10 +50,23 @@
                                 <label for="skills" class="block text-gray-700 font-bold mb-2">Skills</label>
                                 <input type="text" id="skills" name="skills" class="border-2 border-gray-300 p-2 w-full" required>
                             </div>
+                            <input type="hidden" id="system_time" name="system_time">
+
                         </div>
             <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-700">Submit</button>
         </form>
     </section>
+    <script>
+        // Get the current system time
+        var currentTime = new Date();
+
+        // Format the time as per your requirement
+        var formattedTime = currentTime.toISOString(); // Or any other format you prefer
+
+        // Set the value of the hidden field to the formatted time
+        document.getElementById("systemTime").value = formattedTime;
+    </script>
+
     {%block footer%}{%endblock%}
 {%endblock%}
 

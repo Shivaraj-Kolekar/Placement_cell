@@ -7,10 +7,11 @@
         <div class= " w-23 bg-slate-400 h-35 mt-3 m-20 rounded-lg ">
             <p class="m-3 p-3 font-serif text-3xl "> <b>{{ job_detail.job_title }}</b></p>
             <p class="m-3 p-3 text-lg"><b>Company:</b> {{ job_detail.company_name }}</p>
-            <p class="m-3 p-3 text-lg"><b>Salary: $</b>{{ job_detail.salary }}</p>
+            <p class="m-3 p-3 text-lg"><b>Salary: RS</b>{{ job_detail.salary }}</p>
             <p class="m-3 p-3 text-lg"><b>Required Branch:</b> {{ job_detail.required_branch }}</p>
             <p class="m-3 p-3 text-lg"><b>Skills:</b> {{ job_detail.skills }}</p>
-            <button class="m-3 p-3 rounded-md bg-blue-600 hover:bg-blue-950"> <a url=''>Apply</a></button>
+            <p class="m-3 p-3 text-lg"><b>Time</b> {{ job_detail.system_time }}</p>
+            <button class="m-3 p-3 rounded-md bg-blue-600 hover:bg-blue-900"> <a url=''>View Details </a></button>
            
             <!-- You can customize the display as needed -->
         </div>
