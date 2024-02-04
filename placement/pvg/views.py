@@ -1,9 +1,11 @@
 from django.http import HttpResponse
+from django.contrib.auth.models import User 
+from django.contrib.auth import authenticate, login,logout
+from .models import Student, JobDetail
 from django.template.loader import get_template
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Student, JobDetail
-from .forms import StudentForm, JobDetailForm
+from .forms import StudentForm, JobDetailForm,StudentLoginForm
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -21,29 +23,15 @@ def signup(request):
     if request.method == 'POST':
         form = StudentForm(request.POST, request.FILES)
         if form.is_valid():
-            # Process form data and save to the database
-            name = form.cleaned_data['name']
-            crn_number = form.cleaned_data['crn_number']
-            branch = form.cleaned_data['branch']
-            year=form.cleaned_data['year']
-            email=form.cleaned_data['email']
-            password=form.cleaned_data['password']
-            CGPA=form.cleaned_data['CGPA']
-          #  sem_marks_sheet = form.cleaned_data['sem_marks_sheet']
-          #  cv_file = form.cleaned_data['cv_file']
-           
-            # Create a new Student instance
-            student = Student(
-                name=name,
-                crn_number=crn_number,
-                branch=branch,
-                year=year,
-           #    sem_marks_sheet=sem_marks_sheet,
-           #    cv_file=cv_file,
-                email=email,
-                password=password,
-                CGPA=CGPA
+            # Save the form data to create a new user
+            user = User.objects.create_user(
+                username=form.cleaned_data['email'],  # Using email as username
+                email=form.cleaned_data['email'],
+                password=form.cleaned_data['password']
             )
+            # Create a new Student instance
+            student = form.save(commit=False)
+            student.user = user  # Assign the user to the student instance
             student.save()
 
             # Send email to user
@@ -51,18 +39,37 @@ def signup(request):
             message = f"Dear {form.cleaned_data['name']}\n\nYou have successfully registered in PVG Placement cell.\n\nThank you!"
             from_email = 'aniketsonkamble2003@gmail.com'
             recipient_list = [form.cleaned_data['email']]
-
             send_mail(subject, message, from_email, recipient_list, auth_user='aniketsonkamble07@gmail.com', auth_password='ANUSAYA@0941')
 
             messages.success(request, 'Registered successfully!')
             return redirect('user_pprofile')
-        else:
-            # Display form errors in case of validation failure
-            print(form.errors)
     else:
         form = StudentForm()
 
     return render(request, 'signup.html', {'form': form})
+
+def student_login(request):
+    if request.method == 'POST':
+        form = StudentLoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            # Authenticate the user
+            student = authenticate(request, username=email, password=password)
+            if student is not None:
+                # Login the authenticated user
+                login(request, student)
+                return redirect('student_home')  # Redirect to job list page upon successful login
+            else:
+                # Handle invalid credentials
+                form.add_error(None, "Invalid email or password. Please try again.")
+    else:
+        form = StudentLoginForm()
+    return render(request, 'student_login.html', {'form': form})
+
+def my_logout(request):
+    logout(request)
+    return redirect('student_login')
 
 def add_job_details(request):
     if request.method == 'POST':
@@ -79,9 +86,7 @@ def add_job_details(request):
 
     return render(request, 'add_job_details.html', {'form': form})
 
-def login(request):
-    return render(request,'login.html')
-# @login_required
+
 
 def job_list(request):
     job_details = JobDetail.objects.all()
@@ -92,6 +97,15 @@ def list(request):
     job_details = JobDetail.objects.all()
     return render(request, 'list.html', {'job_details': job_details})
  
+@login_required
+def apply_for_job(request, job_id):
+    if request.method == 'POST':
+        job = Job.objects.get(id=job_id)
+        JobApplication.objects.create(student=request.user, job=job)
+        return redirect('job_list')  # Redirect to job list page after applying
+    else:
+        return render(request, 'apply_for_job.html', {'job_id': job_id})
+
 def admin_home(request):
     return render(request, 'admin_home.html')
 

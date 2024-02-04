@@ -29,6 +29,8 @@ class Student(models.Model):
     def __str__(self):
         return self.name
 
+
+
 class JobDetail(models.Model):
     
     job_id =models.IntegerField(primary_key=True)
@@ -42,3 +44,8 @@ class JobDetail(models.Model):
     system_time=models.DateTimeField()
     def __str__(self):
         return self.job_title
+
+class JobApplication(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    job = models.ForeignKey(JobDetail, on_delete=models.CASCADE)
+    applied_time = models.DateTimeField(auto_now_add=True)

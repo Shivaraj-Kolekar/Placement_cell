@@ -7,6 +7,12 @@ class StudentForm(forms.ModelForm):
         model = Student
         fields = [ 'crn_number', 'name',  'branch','email',  'year','password','CGPA']
 
+
+
+class StudentLoginForm(forms.Form):
+    email = forms.EmailField()
+    password = forms.CharField(widget=forms.PasswordInput)
+
 class JobDetailForm(forms.ModelForm):
     class Meta:
         model = JobDetail
