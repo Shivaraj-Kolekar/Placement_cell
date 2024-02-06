@@ -1,0 +1,77 @@
+{%extends 'base.html'%}
+  
+  {%block title%} Student Data Modify  Page{%endblock%}
+  {%block body %}
+    <div class="bg-gray-100 font-sans">
+    
+    <section class="container mx-auto my-8 p-8 bg-white rounded-lg shadow-md" >
+        <h2 class="text-3xl font-bold mb-4">Modify Student Data</h2>
+        <form action="{% url 'do_update_std' data.crn_number %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          
+                <div class="mb-4">
+                    <label for="crn_number" class="block text-gray-700 font-bold mb-2">CRN Number</label>
+                    <input type="text" id="crn_number" name="crn_number" class="border-2 border-gray-300 p-2 w-full" value="{{data.crn_number}}" readonly>
+                </div>
+                <div class="mb-4">
+                    <label for="name" class="block text-gray-700 font-bold mb-2">Name</label>
+                    <input type="text" id="name" name="name" class="border-2 border-gray-300 p-2 w-full" value="{{data.name}}" required>
+                </div>
+            
+                
+                <div class="mb-4">
+                    <label for="email" class="block text-gray-700 font-bold mb-2">Email</label>
+                    <input type="email" id="email" name="email" class="border-2 border-gray-300 p-2 w-full" value="{{data.email}}" required>
+                </div>
+                <div class="mb-4">
+                    <label for="branch" class="block text-gray-700 font-bold mb-2">Branch</label>
+                    <select id='branch' name='branch',class="border-2 border-gray-300 p-2 w-full", value="{{data.branch}}" required>
+                        <option value='IT'>Information Technology</option>
+                        <option value='CS'>Computer Science</option>
+                        <option value='EE'>Electrical Engineering</option>
+                        <option value='ENTC'>ENTC</option>
+                        <option value='ME'>Mechnical Engineering</option>
+                        <option value='Printing'>Printing</option>
+                        <option value='AIDS'>AIDS</option>
+
+                    </select>
+                </div>
+               
+                  <!-- Class  -->
+                  <div class="mb-4">
+                    <label for="year" class="block text-gray-700 font-bold mb-2">Class</label>
+                    <select id='year' name='year',class="border-2 border-gray-300 p-2 w-full", value="{{data.year}}" required>
+                        <option value='FE'>First Year</option>
+                        <option value='SE'>Second Year</option>
+                        <option value='TE'>Third Year</option>
+                        <option value='BE'>Final Year</option>
+                    </select>
+                </div>
+           
+                <div class="mb-4 col-span-2">
+                    <label for="CGPA" class="block text-gray-700 font-bold mb-2">CGPA</label>
+                    <input type="CGPA" id="CGPA" name="CGPA" class="border-2 border-gray-300 p-2 ", value="{{data.CGPA}}" required>
+                </div>
+                <!--   
+                
+                <div class="mb-4 col-span-2">
+                    <label for="semester_marksheets" class="block text-gray-700 font-bold mb-2">Semester Marksheets</label>
+                    <input type="file" id="sem_marks_sheet" name="sem_marks_sheet" class="border-2 border-gray-300 p-2 w-full" required>
+                </div>
+               
+                <div class="mb-4 col-span-2">
+                    <label for="cv_file" class="block text-gray-700 font-bold mb-2">CV File</label>
+                    <input type="file" id="cv_file" name="cv_file" class="border-2 border-gray-300 p-2 w-full" required>
+                </div>
+            --> 
+              
+
+            </div>
+            
+            <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-700">Modify Details</button>
+        </form>
+    </section>
+  {% block footer%}
+  {%endblock%}
+{%endblock%}

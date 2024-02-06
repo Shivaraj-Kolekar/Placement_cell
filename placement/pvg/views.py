@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.contrib.auth.models import User 
 from django.contrib.auth import authenticate, login,logout
-from .models import Student, JobDetail
+from .models import Student, JobDetail,JobApplication
 from django.template.loader import get_template
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -13,6 +13,7 @@ from django.template.loader import get_template
 import pandas as pd
 import xlsxwriter
 import io
+from io import BytesIO 
 from .helpers import studentlist_pdf,studentlist_xls
 from xhtml2pdf import pisa  # Import the module for PDF generation
 
@@ -25,7 +26,7 @@ def signup(request):
         if form.is_valid():
             # Save the form data to create a new user
             user = User.objects.create_user(
-                username=form.cleaned_data['email'],  # Using email as username
+                username=form.cleaned_data['crn_number'],  # Using email as username
                 email=form.cleaned_data['email'],
                 password=form.cleaned_data['password']
             )
@@ -100,11 +101,17 @@ def list(request):
 @login_required
 def apply_for_job(request, job_id):
     if request.method == 'POST':
-        job = Job.objects.get(id=job_id)
-        JobApplication.objects.create(student=request.user, job=job)
+        job = JobDetail.objects.get(job_id=job_id)
+        # Retrieve the Student instance associated with the current user
+        student = Student.objects.get(user=request.crn_number
+        )
+        # Create a job application for the current student and job
+        JobApplication.objects.create(student=student, job=job)
         return redirect('job_list')  # Redirect to job list page after applying
     else:
-        return render(request, 'apply_for_job.html', {'job_id': job_id})
+        # Fetch the job details based on the job_id and pass it to the template
+        job = JobDetail.objects.get(job_id=job_id)
+        return render(request, 'apply_for_job.html', {'job_detail': job})
 
 def admin_home(request):
     return render(request, 'admin_home.html')
@@ -132,14 +139,49 @@ def actual_update_job_details(request, job_id):
 def student_home(request):
     return render(request,'student_home.html')
 
-def studentlist(request,page=1):
-    ServiceData = Student.objects.all().order_by('crn_number')
+def studentlist(request, page=1):
+    search_query = request.GET.get('q')  # Get the search query parameter
+    if search_query:  # If there is a search query
+        ServiceData = Student.objects.filter(crn_number__icontains=search_query).order_by('crn_number')
+    else:
+        ServiceData = Student.objects.all().order_by('crn_number')
+
     paginator = Paginator(ServiceData, 10)
     page_number = request.GET.get('page')
     ServiceDataFinal = paginator.get_page(page_number)
-    data = {'ServiceData': ServiceDataFinal }
+    data = {'ServiceData': ServiceDataFinal, 'search_query': search_query}
     return render(request, 'studentlist.html', data)
 
+
+def delete_std(request, crn_number,page=1):
+    s = Student.objects.get(pk=crn_number)
+    s.delete()
+
+    return redirect("studentlist",page=page)
+
+def update_std(request, crn_number):
+    data = Student.objects.get(pk=crn_number)
+    return render(request, "update_std.html", {'data': data})
+
+def do_update_std(request, crn_number, page=1):
+    crn_number=request.POST.get("crn_number")
+    name=request.POST.get("name")
+    email=request.POST.get("email")
+    branch=request.POST.get("branch")
+    year=request.POST.get("year")
+    CGPA=request.POST.get("CGPA")
+
+    data=Student.objects.get(pk=crn_number)
+
+    data.crn_number=crn_number
+    data.name=name
+    data.email=email
+    data.branch=branch
+    data.year=year
+    data.CGPA=CGPA
+    data.save()
+    return redirect("studentlist", page=page)
+   
 
 
 def my_view(request, page=1):
@@ -163,11 +205,20 @@ def download_excel(request):
 
 def download_pdf(request):
     queryset = Student.objects.all()
-    context = {'ServiceData': queryset}  # Pass the queryset to the context
-    pdf = studentlist_pdf('studentlist.html', context)  # Call studentlist_pdf with the context
+    context = {'ServiceData': queryset}
+    pdf = render_to_pdf('studentlist_pdf.html', context)
     if pdf:
         response = HttpResponse(pdf, content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename=student_data.pdf'
         return response
     else:
         return HttpResponse('Error generating PDF', status=500)
+
+def render_to_pdf(template_src, context_dict):
+    template = get_template(template_src)
+    html  = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
