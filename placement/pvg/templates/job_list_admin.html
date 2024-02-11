@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% block title %}Job List{% endblock %}  
 {% block head %}
     {% block link %}
        <!-- Bootstrap CSS -->
@@ -10,27 +10,50 @@
 {% endblock %}
 
 {% block body %}
+<style>
+    .logo-cell img {
+        max-width: 100px; /* Adjust this value as needed */
+        max-height: 50px; /* Adjust this value as needed */
+        width: auto;
+        height: auto;
+    }
+</style>
     <div class="container mt-5">
-        <h1>Student List</h1>
+        <h1>Job List</h1>
 
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>CRN Number</th>
-                    <th>Name</th>
-                    <th>Branch</th>
-                    <th>Email</th>
+                    <th>Job Id</th>
+                    <th>Job Role</th>
+                    <th>Comapny Name</th>
+                    <th>Comapny Logo</th>
+                    <th>Location</th>
+                    <th>Salary</th>
+                    <th>Branches </th>
+                    <th>CGPA</th>
+                    <th>Delete</th>
+                    <th>Modify</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in ServiceData %}
                     <tr>
-                        <td>{{ item.id }}</td>
-                        <td>{{ item.crn_number }}</td>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.branch }}</td>
-                        <td>{{ item.email }}</td>
+                        <td>{{ item.job_id }}</td>
+                        <td>{{ item.job_title }}</td>
+                        <td>{{ item.company_name }}</td>
+                        <td class="logo-cell">
+                             <img src="{{ item.company_logo }}" alt="Company Logo">
+                        </td>
+                        <td>{{ item.location }}</td>
+                        <td>{{ item.salary }}</td>
+                        <td>{{itemrequired_branch}}</td>
+                        <td>
+                            <a href="{% url 'delete_job' item.job_id %}" class="btn btn-danger md-sm">Delete</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'update_job' item.job_id %}" class="btn btn-success md-sm">Modify</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

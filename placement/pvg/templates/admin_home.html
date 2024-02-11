@@ -6,15 +6,14 @@
 
     <nav class="navbar">
       <ul class="navbar-list">
-        <li><a class="navbar-link" href="#">Home</a></li>
+        <li><a class="navbar-link" href="{%url 'admin_home'%}">Home</a></li>
         <li><a class="navbar-link" href="#">Profile</a></li>
-        <li><a class="navbar-link" href="{% url 'job_list' %}">Job List</a></li>
+        <li><a class="navbar-link" href="{% url 'job_list_admin' page=1 %}">Job List</a></li>
         <li><a class="navbar-link" href="{% url 'add_job_details' %}">Add Job</a></li>
-        <li><a class="navbar-link" href="{% url 'update_job_details' %}">Update</a></li>
-        <li><a class="navbar-link" href="#">Delete</a></li>
+       
         <li><a class="navbar-link" href="{% url 'studentlist' page=1 %}">Student List</a></li>
-        <li><a class="navbar-link" href="#">All List</a></li>
-        <li><a class="navbar-link" href="#" target="_blank">Logout</a></li>
+       
+        <li><a class="navbar-link" href="{%url 'my_logout'%}" target="_blank">Logout</a></li>
       </ul>
     </nav>
 

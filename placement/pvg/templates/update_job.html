@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Update job details{% endblock %}   
+{% block body %}
+   
+ <!-- Navigation (if needed) -->
+
+ <!-- Add Job Details Section -->
+ <section class="container mx-auto my-8 p-8 bg-blue rounded-lg shadow-md">
+     <h2 class="text-3xl font-bold mb-4">Add Job Details</h2>
+     <form action="{% url 'do_update_job' data.job_id %}" method="post" enctype="multipart/form-data">
+         {% csrf_token %}
+       
+               <!--{{ form.as_p }} -->       
+           
+           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                         <!-- Student Name -->
+                         
+                         <div class="mb-4">
+                             <label for="job_title" class="block text-gray-700 font-bold mb-2">job_id</label>
+                             <input type="text" id="job_id" name="job_id" class="border-2 border-gray-300 p-2 w-full" value={{data.job_id}} required>
+                         </div>
+                         <div class="mb-4">
+                             <label for="job_title" class="block text-gray-700 font-bold mb-2">Job Title</label>
+                             <input type="text" id="job_title" name="job_title" class="border-2 border-gray-300 p-2 w-full" value={{data.job_title}} required>
+                         </div>
+
+                         <div class="mb-4">
+                             <label for="company_name" class="block text-gray-700 font-bold mb-2">Company Name</label>
+                             <input type="text" id="company_name" name="company_name" class="border-2 border-gray-300 p-2 w-full" value={{data.company_name}} required>
+                         </div>
+
+                         <div class="mb-4">
+                             <label for="company_logo" class="block text-gray-700 font-bold mb-2">Company Logo</label>
+                             <input type="file" id="company_logo" name="company_logo" class="border-2 border-gray-300 p-2 w-full" value={{data.company_logo}} >
+                         </div>
+
+                         <div class="mb-4">
+                             <label for="location" class="block text-gray-700 font-bold mb-2">Location</label>
+                             <input type="text" id="location" name="location" class="border-2 border-gray-300 p-2 w-full"  value={{data.location}} required>
+                         </div>
+
+                         <div class="mb-4">
+                             <label for="salary" class="block text-gray-700 font-bold mb-2">Salary</label>
+                             <input type="Number" id="salary" name="salary" class="border-2 border-gray-300 p-2 w-full"  value={{data.salary}} required>
+                         </div>
+
+                         <div class="mb-4">
+                             <label for="required_branch" class="block text-gray-700 font-bold mb-2">Branch</label>
+                             <input type="text" id="required_branch" name="required_branch" class="border-2 border-gray-300 p-2 w-full" value={{data.required_branch}} required>
+                         </div>
+                         <div class="mb-4">
+                             <label for="skills" class="block text-gray-700 font-bold mb-2">Skills</label>
+                             <input type="text" id="skills" name="skills" class="border-2 border-gray-300 p-2 w-full"  value={{data.skills}} required>
+                         </div>
+                         <input type="hidden" id="system_time" name="system_time">
+
+                     </div>
+         <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-700">Modify </button>
+     </form>
+ </section>
+
+ {%block footer%}{%endblock%}
+{%endblock%}
+

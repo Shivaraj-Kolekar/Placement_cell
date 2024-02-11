@@ -16,7 +16,7 @@ import io
 from io import BytesIO 
 from .helpers import studentlist_pdf,studentlist_xls
 from xhtml2pdf import pisa  # Import the module for PDF generation
-
+from django.db.models import Q
 def index(request):
     return render(request, 'index.html')
 
@@ -72,69 +72,9 @@ def my_logout(request):
     logout(request)
     return redirect('student_login')
 
-def add_job_details(request):
-    if request.method == 'POST':
-        form = JobDetailForm(request.POST, request.FILES)
-        if form.is_valid():
-            # Process form data and save to the database
-            form.save()
-            return redirect('job_list')  # Redirect to the home page or any other desired page
-        else:
-            # Display form errors in case of validation failure
-            print(form.errors)
-    else:
-        form = JobDetailForm()
-
-    return render(request, 'add_job_details.html', {'form': form})
-
-
-
-def job_list(request):
-    job_details = JobDetail.objects.all()
-    return render(request, 'job_list.html', {'job_details': job_details})
-
-
-def list(request):
-    job_details = JobDetail.objects.all()
-    return render(request, 'list.html', {'job_details': job_details})
- 
-@login_required
-def apply_for_job(request, job_id):
-    if request.method == 'POST':
-        job = JobDetail.objects.get(job_id=job_id)
-        # Retrieve the Student instance associated with the current user
-        student = Student.objects.get(user=request.crn_number
-        )
-        # Create a job application for the current student and job
-        JobApplication.objects.create(student=student, job=job)
-        return redirect('job_list')  # Redirect to job list page after applying
-    else:
-        # Fetch the job details based on the job_id and pass it to the template
-        job = JobDetail.objects.get(job_id=job_id)
-        return render(request, 'apply_for_job.html', {'job_detail': job})
 
 def admin_home(request):
     return render(request, 'admin_home.html')
-
-def update_job_details(request):
-    if request.method == 'POST':
-        job_id = request.POST.get('job_id')
-        return redirect('actual_update_job_details', job_id=job_id)
-
-    return render(request, 'update_job_details.html')
-
-def actual_update_job_details(request, job_id):
-    job = get_object_or_404(JobDetail, job_id=job_id)  # Assuming 'job_id' is the primary key field
-
-    if request.method == 'POST':
-        form = JobDetailForm(request.POST, request.FILES, instance=job)
-        if form.is_valid():
-            form.save()
-            return redirect('job_details', job_id=job_id)  # Replace 'job_details' with your actual view name
-    else:
-        form = JobDetailForm(instance=job)
-
-    return render(request, 'actual_update_job_details.html', {'form': form, 'job': job})
 
 def student_home(request):
     return render(request,'student_home.html')
@@ -142,9 +82,12 @@ def student_home(request):
 def studentlist(request, page=1):
     search_query = request.GET.get('q')  # Get the search query parameter
     if search_query:  # If there is a search query
-        ServiceData = Student.objects.filter(crn_number__icontains=search_query).order_by('crn_number')
+        ServiceData = Student.objects.filter(
+            Q(crn_number__icontains=search_query) | Q(name__icontains=search_query)
+        ).order_by('crn_number')
     else:
         ServiceData = Student.objects.all().order_by('crn_number')
+
 
     paginator = Paginator(ServiceData, 10)
     page_number = request.GET.get('page')
@@ -182,16 +125,92 @@ def do_update_std(request, crn_number, page=1):
     data.save()
     return redirect("studentlist", page=page)
    
+# job section
+def add_job_details(request):
+    if request.method == 'POST':
+        form = JobDetailForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Process form data and save to the database
+            form.save()
+            return redirect('job_list_admin',page=1)  # Redirect to the home page or any other desired page
+        else:
+            # Display form errors in case of validation failure
+            print(form.errors)
+    else:
+        form = JobDetailForm()
+
+    return render(request, 'add_job_details.html', {'form': form})
 
 
-def my_view(request, page=1):
-    ServiceData = Student.objects.all().order_by('id')
+
+def job_list(request):
+    job_details = JobDetail.objects.all()
+    return render(request, 'job_list.html', {'job_details': job_details})
+
+
+def list(request):
+    job_details = JobDetail.objects.all()
+    return render(request, 'list.html', {'job_details': job_details})
+ 
+@login_required
+def apply_for_job(request, job_id):
+    if request.method == 'POST':
+        job = JobDetail.objects.get(job_id=job_id)
+        # Retrieve the Student instance associated with the current user
+        student = Student.objects.get(user=request.crn_number
+        )
+        # Create a job application for the current student and job
+        JobApplication.objects.create(student=student, job=job)
+        return redirect('job_list')  # Redirect to job list page after applying
+    else:
+        # Fetch the job details based on the job_id and pass it to the template
+        job = JobDetail.objects.get(job_id=job_id)
+        return render(request, 'apply_for_job.html', {'job_detail': job})
+
+
+#Job update and delete section 
+
+
+def delete_job(request, job_id,page=1):
+    s = JobDetail.objects.get(pk=job_id)
+    s.delete()
+
+    return redirect("job_list_admin",page=page)
+
+def update_job(request, job_id):
+    data = JobDetail.objects.get(pk=job_id)
+    return render(request, "update_job.html", {'data': data})
+
+def do_update_job(request, job_id, page=1):
+    job_id=request.POST.get("job_id")
+    job_title=request.POST.get("job_title")
+    company_name=request.POST.get("company_name")
+    comany_logo=request.POST.get("company_logo")
+    required_branch=request.POST.get("required_branch")
+    salary=request.POST.get("salary")
+    location=request.POST.get("location")
+   # CGPA=request.POST.get("CGPA")
+
+    data=JobDetail.objects.get(pk=job_id)
+
+    data.job_id=job_id
+    data.job_title=job_title
+    data.company_name=company_name
+    data.required_branch=required_branch
+    data.location=location
+   # data.CGPA=CGPA
+    data.save()
+    return redirect("job_list_admin", page=page)
+   
+
+def job_list_admin(request, page=1):
+    ServiceData = JobDetail.objects.all().order_by('job_id')
     paginator = Paginator(ServiceData, 10)
     page_number = request.GET.get('page')
     ServiceDataFinal = paginator.get_page(page_number)
     data = {'ServiceData': ServiceDataFinal }
-    return render(request, 'my_view.html', data)
-
+    return render(request, 'job_list_admin.html', data)
+#  Excel sheet Download
 def download_excel(request):
     queryset = Student.objects.all()
     context = {'ServiceData': queryset}  # Pass the queryset to the context
@@ -202,14 +221,14 @@ def download_excel(request):
         return response
     else:
         return HttpResponse('Error generating Excel file', status=500)
-
+# PDF Download
 def download_pdf(request):
     queryset = Student.objects.all()
     context = {'ServiceData': queryset}
     pdf = render_to_pdf('studentlist_pdf.html', context)
     if pdf:
         response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename=student_data.pdf'
+        response['Content-Disposition'] = 'inline; filename=student_data.pdf'
         return response
     else:
         return HttpResponse('Error generating PDF', status=500)

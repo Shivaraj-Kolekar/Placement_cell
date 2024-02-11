@@ -16,12 +16,16 @@ urlpatterns = [
      path('add_job_details/', views.add_job_details, name='add_job_details'),
      path('list/',views.list,name='list'),
      path('admin_home/',views.admin_home,name='admin_home'),
-     path('update_job_details/', views.update_job_details, name='update_job_details'),
-     path("actual_update_job_details/<int:job_id>",views.actual_update_job_details, name="actual_update_job_details"),
      
-     path("my_view/<int:page>", views.my_view, name="my_view"),
-     path("my_view/", views.my_view, name="my_view_default"),
+     path('job_list_admin/<int:page>/', views.job_list_admin, name='job_list_admin'),
+
+     path("job_list_admin/", views.job_list_admin, name="job_list_admin_default"),
      
+     path("delete_job/<int:job_id>",views.delete_job,name="delete_job"),
+     path("update_job/<int:job_id>",views.update_job,name="update_job"),
+     path("do_update_job/<int:job_id>",views.do_update_job,name="do_update_job"),
+
+
      path("studentlist/<int:page>", views.studentlist, name="studentlist"),
      path("studentlist/", views.studentlist, name="studentlist_default"),
 
