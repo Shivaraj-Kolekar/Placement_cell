@@ -83,7 +83,7 @@ def studentlist(request, page=1):
     search_query = request.GET.get('q')  # Get the search query parameter
     if search_query:  # If there is a search query
         ServiceData = Student.objects.filter(
-            Q(crn_number__icontains=search_query) | Q(name__icontains=search_query)
+            Q(crn_number__icontains=search_query) | Q(name__icontains=search_query) | Q(branch__icontains=search_query)
         ).order_by('crn_number')
     else:
         ServiceData = Student.objects.all().order_by('crn_number')
@@ -189,7 +189,7 @@ def do_update_job(request, job_id, page=1):
     required_branch=request.POST.get("required_branch")
     salary=request.POST.get("salary")
     location=request.POST.get("location")
-   # CGPA=request.POST.get("CGPA")
+    CGPA=request.POST.get("CGPA")
 
     data=JobDetail.objects.get(pk=job_id)
 
@@ -198,7 +198,7 @@ def do_update_job(request, job_id, page=1):
     data.company_name=company_name
     data.required_branch=required_branch
     data.location=location
-   # data.CGPA=CGPA
+    data.CGPA=CGPA
     data.save()
     return redirect("job_list_admin", page=page)
    
@@ -241,3 +241,4 @@ def render_to_pdf(template_src, context_dict):
     if not pdf.err:
         return HttpResponse(result.getvalue(), content_type='application/pdf')
     return None
+

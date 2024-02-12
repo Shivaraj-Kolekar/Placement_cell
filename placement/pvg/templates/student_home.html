@@ -1,6 +1,7 @@
 {% block body %}
   <header class="header">
-    <img src="E:\Placement_cell\placement\pvg\templates\pvg-logo.jpg" alt="PVG logo" class="logo"/>
+    {%load static %}
+    <img src="{% static "img/logo.jfif" %}" alt="PVG logo" class="logo"/>
 
     <nav class="navbar">
       <ul class="navbar-list">

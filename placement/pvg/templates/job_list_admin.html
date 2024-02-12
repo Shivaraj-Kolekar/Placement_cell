@@ -47,7 +47,8 @@
                         </td>
                         <td>{{ item.location }}</td>
                         <td>{{ item.salary }}</td>
-                        <td>{{itemrequired_branch}}</td>
+                        <td>{{ item.required_branch }}</td>
+                        <td>{{ item.CGPA }}</td>
                         <td>
                             <a href="{% url 'delete_job' item.job_id %}" class="btn btn-danger md-sm">Delete</a>
                         </td>
