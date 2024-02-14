@@ -49,3 +49,5 @@ class JobApplication(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     job = models.ForeignKey(JobDetail, on_delete=models.CASCADE)
     applied_time = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"{self.student.name} - {self.job.job_title}"

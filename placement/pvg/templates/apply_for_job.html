@@ -4,7 +4,7 @@
 
 {% block body %}
     <div class="w-23 bg-slate-400 h-35 mt-3 m-20 rounded-lg">
-        <form method="post">
+        <form method="post" action="{% url 'apply_for_job2' job_id=job_id %}">
             {% csrf_token %}
             <!-- Add any form fields you need here -->
             <p class="m-3 p-3 font-serif text-3xl"><b>{{ job_detail.job_title }}</b></p>
@@ -17,5 +17,4 @@
             <button type="submit" class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">Apply</button>
         </form>
     </div>
-
 {% endblock %}

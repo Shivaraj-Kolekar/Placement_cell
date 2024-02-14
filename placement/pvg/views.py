@@ -26,7 +26,7 @@ def signup(request):
         if form.is_valid():
             # Save the form data to create a new user
             user = User.objects.create_user(
-                username=form.cleaned_data['crn_number'],  # Using email as username
+                username=form.cleaned_data['email'],  # Using email as username
                 email=form.cleaned_data['email'],
                 password=form.cleaned_data['password']
             )
@@ -43,7 +43,7 @@ def signup(request):
             send_mail(subject, message, from_email, recipient_list, auth_user='aniketsonkamble07@gmail.com', auth_password='ANUSAYA@0941')
 
             messages.success(request, 'Registered successfully!')
-            return redirect('user_pprofile')
+            return redirect('student_home')
     else:
         form = StudentForm()
 
@@ -51,27 +51,29 @@ def signup(request):
 
 def student_login(request):
     if request.method == 'POST':
-        form = StudentLoginForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            # Authenticate the user
-            student = authenticate(request, username=email, password=password)
-            if student is not None:
-                # Login the authenticated user
-                login(request, student)
-                return redirect('student_home')  # Redirect to job list page upon successful login
-            else:
-                # Handle invalid credentials
-                form.add_error(None, "Invalid email or password. Please try again.")
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        # Authenticate the user
+        user = authenticate(request, username=email, password=password)
+        if user is not None:
+            # Login the authenticated user
+            login(request, user)
+            # Retrieve the crn_number associated with the user's email
+            student = Student.objects.get(email=email)
+            crn_number = student.crn_number
+            # Store crn_number in the session
+            request.session['crn_number'] = crn_number
+            return redirect('student_home')  # Redirect to student home page upon successful login
+        else:
+            # Handle invalid credentials
+            error_message = "Invalid email or password. Please try again."
+            return render(request, 'student_login.html', {'error_message': error_message})
     else:
-        form = StudentLoginForm()
-    return render(request, 'student_login.html', {'form': form})
+        return render(request, 'student_login.html')
 
 def my_logout(request):
     logout(request)
-    return redirect('student_login')
-
+    return redirect('student_login') 
 
 def admin_home(request):
     return render(request, 'admin_home.html')
@@ -151,23 +153,51 @@ def job_list(request):
 def list(request):
     job_details = JobDetail.objects.all()
     return render(request, 'list.html', {'job_details': job_details})
- 
-@login_required
+
 def apply_for_job(request, job_id):
-    if request.method == 'POST':
-        job = JobDetail.objects.get(job_id=job_id)
-        # Retrieve the Student instance associated with the current user
-        student = Student.objects.get(user=request.crn_number
-        )
-        # Create a job application for the current student and job
-        JobApplication.objects.create(student=student, job=job)
-        return redirect('job_list')  # Redirect to job list page after applying
-    else:
-        # Fetch the job details based on the job_id and pass it to the template
-        job = JobDetail.objects.get(job_id=job_id)
-        return render(request, 'apply_for_job.html', {'job_detail': job})
+    job_detail = JobDetail.objects.get(pk=job_id)
+    context = {'job_detail': job_detail, 'job_id': job_id}  # Pass job_id to the context
+    return render(request, 'apply_for_job.html', context)
 
 
+def apply_for_job2(request, job_id):
+    # Retrieve crn_number from the session
+    crn_number = request.session.get('crn_number')
+
+    if crn_number is None:
+        # If crn_number is not in session, handle the error (redirect to job_list with an error message)
+        messages.error(request, 'CRN number is missing from the session.')
+        return redirect('job_list')
+
+    try:
+        # Retrieve the job and student objects
+        job = JobDetail.objects.get(pk=job_id)
+        student = Student.objects.get(crn_number=crn_number)
+        
+        # Create a new JobApplication object
+        job_application = JobApplication(student=student, job=job)
+        
+        # Save the JobApplication object
+        job_application.save()
+
+        # If saving is successful, redirect to job_list with a success message
+        messages.success(request, 'Successfully applied for the job.')
+        return redirect('student_home')
+
+    except JobDetail.DoesNotExist:
+        # Handle the case where the job does not exist
+        messages.error(request, 'Job does not exist.')
+        return redirect('job_list')
+
+    except Student.DoesNotExist:
+        # Handle the case where the student does not exist
+        messages.error(request, 'Student does not exist.')
+        return redirect('job_list')
+
+    except Exception as e:
+        # Handle any other exceptions
+        messages.error(request, f'An error occurred: {str(e)}')
+        return redirect('job_list')
 #Job update and delete section 
 
 

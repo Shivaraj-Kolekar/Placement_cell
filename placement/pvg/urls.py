@@ -35,9 +35,9 @@ urlpatterns = [
      path("update_std/<int:crn_number>",views.update_std,name="update_std"),
      path("do_update_std/<int:crn_number>",views.do_update_std,name="do_update_std"),
 
-      path('apply_for_job/<int:job_id>/', views.apply_for_job, name='apply_for_job'),
+     path('apply_for_job/<int:job_id>/', views.apply_for_job, name='apply_for_job'),
      path('download_excel/', views.download_excel, name='download_excel'),
      path('download_pdf/', views.download_pdf, name='download_pdf'),
 
-
+ path('apply_for_job2/<int:job_id>/', views.apply_for_job2, name='apply_for_job2'),
 ]

@@ -12,7 +12,7 @@
             <p class="m-3 p-3 text-lg"><b>Salary: RS</b>{{ job_detail.salary }}</p>
             <p class="m-3 p-3 text-lg"><b>Time:</b> <span class="timeAgo"></span></p>
             {% if job_detail.job_id %}
-                <button class="m-3 p-3 rounded-md bg-blue-600 hover:bg-blue-900"><a href="{% url 'apply_for_job' job_detail.job_id %}">View Details</a></button>
+                <button class="m-3 p-3 rounded-md bg-blue-600 hover:bg-blue-900"><a href="{% url 'apply_for_job' job_id=job_detail.job_id %}">View Details</a></button>
             {% else %}
                 <p class="m-3 p-3 text-red-500">Job ID not available</p>
             {% endif %}
@@ -20,9 +20,8 @@
     {% endfor %}
 
     <script>
-    {% for job_detail in job_details %}
         // Get the system time from the server-side and convert it to a JavaScript Date object
-        var systemTime = new Date("{{ job_detail.system_time }}");
+        var systemTime = new Date("{{ job_details.0.system_time }}");
 
         // Get the current time
         var currentTime = new Date();
@@ -36,16 +35,14 @@
         // Display the time ago
         var timeAgoSpan = document.querySelector(".timeAgo");
         timeAgoSpan.textContent = timeAgoMinutes + " minutes ago"; // You can customize this based on your preference
-    {% endfor %}
     </script>
     
     <!-- Footer -->
     {% block footer %}
- <!-- Footer -->
- <footer class="bg-gray-800 text-white py-4">
-  <div class="container mx-auto text-center">
-      <p>&copy; 2024 PVG COET. All rights reserved.</p>
-  </div>
-</footer>
-{%endblock%}
+        <footer class="bg-gray-800 text-white py-4">
+            <div class="container mx-auto text-center">
+                <p>&copy; 2024 PVG COET. All rights reserved.</p>
+            </div>
+        </footer>
+    {% endblock %}
 {% endblock %}
