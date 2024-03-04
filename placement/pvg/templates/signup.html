@@ -1,36 +1,52 @@
 {%extends 'base.html'%}
-  
-  {%block title%} Signup Page{%endblock%}
+  {% block head %}
+  {%load static %}
+  <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+  {%endblock%}
   {%block body %}
-    <div class="bg-gray-100 font-sans">
+  <div class="container">
     
-    <section class="container mx-auto my-8 p-8 bg-white rounded-lg shadow-md" >
-        <h2 class="text-3xl font-bold mb-4">Student Signup</h2>
-        <form action="{% url 'signup' %}" method="post" enctype="multipart/form-data">
+    <h1 class="form-title">Registration</h1>
+     <!-- Display error messages -->
+     {% if messages %}
+     <ul>
+         {% for message in messages %}
+             <li>{{ message }}</li>
+         {% endfor %}
+     </ul>
+ {% endif %}
+        <form action="{% url 'signup' %}" method="post" enctype="multipart/form-data " class="form1">
             {% csrf_token %}
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          
-                <div class="mb-4">
-                    <label for="crn_number" class="block text-gray-700 font-bold mb-2">CRN Number</label>
-                    <input type="text" id="crn_number" name="crn_number" class="border-2 border-gray-300 p-2 w-full" required>
-                </div>
-                <div class="mb-4">
-                    <label for="name" class="block text-gray-700 font-bold mb-2">Name</label>
-                    <input type="text" id="name" name="name" class="border-2 border-gray-300 p-2 w-full" required>
-                </div>
             
+            <div class="main-user-info">
+                <div class="user-input-box">
+                   
+                    <label for="crn_number" >CRN Number</label>
+                    <input type="text" id="crn_number" name="crn_number" placeholder="Enter CRN Number" required>
+                </div>
+                <div class="user-input-box">
+                    <label for="name" class="">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter Your  Name" required>
+                </div>
+                <div class="user-input-box">
+                    <label for="email" class="">Username</label>
+                    <input type="email" id="email" name="email" placeholder="Enter College Email Id" required>
+                </div>
+                <div class="user-input-box">
+                    <label for="text" class="">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Create Password" required>
+                </div>
                 
-                <div class="mb-4">
-                    <label for="email" class="block text-gray-700 font-bold mb-2">Email</label>
-                    <input type="email" id="email" name="email" class="border-2 border-gray-300 p-2 w-full" required>
+                <div class="user-input-box">
+                    <label for="gender" class="">Gender</label>
+                    <select id='gender' name='gender' required>
+                        <option value='Male'>Male</option>
+                        <option value='Female'>Female</option>
+                    </select>
                 </div>
-                <div class="mb-4">
-                    <label for="text" class="block text-gray-700 font-bold mb-2">Password</label>
-                    <input type="password" id="password" name="password" class="border-2 border-gray-300 p-2 w-full" required>
-                </div>
-                <div class="mb-4">
-                    <label for="branch" class="block text-gray-700 font-bold mb-2">Branch</label>
-                    <select id='branch' name='branch',class="border-2 border-gray-300 p-2 w-full",required>
+                <div class="user-input-box">
+                    <label for="branch" class="">Branch</label>
+                    <select id='branch' name='branch' class="" required>
                         <option value='IT'>Information Technology</option>
                         <option value='CS'>Computer Science</option>
                         <option value='EE'>Electrical Engineering</option>
@@ -41,41 +57,68 @@
 
                     </select>
                 </div>
-               
-                  <!-- Class  -->
-                  <div class="mb-4">
-                    <label for="year" class="block text-gray-700 font-bold mb-2">Class</label>
-                    <select id='year' name='year',class="border-2 border-gray-300 p-2 w-full",required>
+
+                <div class="user-input-box">
+                    <label for="year" class="">Class</label>
+                    <select id='year' name='year' class="" required>
                         <option value='FE'>First Year</option>
                         <option value='SE'>Second Year</option>
                         <option value='TE'>Third Year</option>
                         <option value='BE'>Final Year</option>
                     </select>
                 </div>
-           
-                <div class="mb-4 col-span-2">
-                    <label for="CGPA" class="block text-gray-700 font-bold mb-2">CGPA</label>
-                    <input type="CGPA" id="CGPA" name="CGPA" class="border-2 border-gray-300 p-2 " required>
+                 
+                <div class="user-input-box">
+                    <label for="mobile_number" class="">Mobile Number</label>
+                    <input type="text" id="mobile_number" name="mobile_number"placeholder="Enter Mobile Number" required>
                 </div>
-                <!--   
-                
-                <div class="mb-4 col-span-2">
-                    <label for="semester_marksheets" class="block text-gray-700 font-bold mb-2">Semester Marksheets</label>
-                    <input type="file" id="sem_marks_sheet" name="sem_marks_sheet" class="border-2 border-gray-300 p-2 w-full" required>
+                <div class="user-input-box">
+                    <label for="CGPA" class="">CGPA</label>
+                    <input type="CGPA" id="CGPA" name="CGPA" placeholder="Enter Your CGPA" required>
                 </div>
                
-                <div class="mb-4 col-span-2">
-                    <label for="cv_file" class="block text-gray-700 font-bold mb-2">CV File</label>
-                    <input type="file" id="cv_file" name="cv_file" class="border-2 border-gray-300 p-2 w-full" required>
-                </div>
-            --> 
-              
-
-            </div>
+                <div class="user-input-box">
+                  <label for="mark_10th" class="">10th Marks</label>
+                  <input type="text" id="mark_10th" name="mark_10th" placeholder="Enter 10th Marks" required>
+              </div>
             
-            <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-700">Submit</button>
+              <div class="user-input-box">
+                  <label for="mark_12th" class="">12th Marks</label>
+                  <input type="text" id="mark_12th" name="mark_12th" placeholder="Enter 12th Marks">
+              </div>
+              <div class="user-input-box">
+                  <label for="mobile_number" class="">Diploma Marks</label>
+                  <input type="text" id="diploma_marks" name="diploma_marks" placeholder="Enter Diploma Marks">
+              </div>
+                
+              <div class="user-input-box">
+                  <label for="aggregate_marks" class="">Aggregate Marks</label>
+                  <input type="text" id="aggregate_marks" name="aggregate_marks" placeholder="Enter Aggregate Marks" required>
+              </div>
+              <div class="user-input-box">
+                <label for="year_down" class="">Year Down</label>
+                <select id='year_down' name='year_down' required>
+                    <option value='YES'>Yes</option>
+                    <option value='NO'>No</option>
+                </select>
+            </div>
+            <div class="user-input-box">
+                <label for="active_backlog" class="">Active Backlog</label>
+                <select id='active_backlog' name='active_backlog' required>
+                    <option value='YES'>Yes</option>
+                    <option value='NO'>No</option>
+                </select>
+            </div>
+            <input type="hidden" id="remarks" value="No" name="remarks">    
+        
+            
+            </div>
+            <div class="form-submit-btn">
+                <input type="submit" value="Register">
+              </div>
+           
         </form>
-    </section>
+    </div>
   {% block footer%}
   {%endblock%}
 {%endblock%}

@@ -1,161 +1,95 @@
-{% extends "base.html" %}
-{%block title%}Student List{%endblock%}
-{% block head %}
-    <style>
-        /* Define your custom CSS styles here */
-        .container {
-            margin-top: 50px;
-        }
+<html>
+    <head>
+        {%load static %}
+        <link rel="stylesheet" href="{% static 'css/studentlist.css' %}">
+    </head>
+    <body>
 
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #dee2e6; /* Bootstrap's table border color */
-        }
-
-        th {
-            font-weight: bold;
-        }
-
-        .pagination {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            list-style: none;
-            padding: 0;
-        }
-
-        .page-item {
-            margin: 0 5px;
-        }
-
-        .page-link {
-            display: block;
-            padding: 5px 10px;
-            background-color: #007bff; /* Bootstrap's primary color */
-            color: #fff; /* Bootstrap's text color for primary buttons */
-            text-decoration: none;
-            border: 1px solid #007bff; /* Bootstrap's border color for primary buttons */
-            border-radius: 3px;
-        }
-
-        .page-link:hover {
-            background-color: #0056b3; /* Bootstrap's hover color for primary buttons */
-        }
-
-        .page-link:focus {
-            outline: none; /* Remove Bootstrap's default focus style */
-        }
-
-        .active .page-link {
-            background-color: #0056b3; /* Bootstrap's active background color */
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 6px 12px;
-            margin-bottom: 0;
-            font-size: 14px;
-            font-weight: 400;
-            line-height: 1.42857143;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: middle;
-            cursor: pointer;
-            user-select: none;
-            background-image: none;
-            border: 1px solid transparent;
-            border-radius: 4px;
-        }
-
-        .btn-primary {
-            color: #fff;
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
-        }
-
-        .btn-primary:focus {
-            outline: none; /* Remove Bootstrap's default focus style */
-        }
-
-        .btn-primary:active {
-            background-color: #0056b3;
-            border-color: #0056b3;
-        }
-    </style>
-{% endblock %}
-
-{% block body %}
 <div class="container">
     <h1>Student List</h1>
 
     <form method="GET" action="{% url 'studentlist' page=1 %}">
-        <input type="text" name="q" placeholder="Search" >
+        <input type="text" name="q" placeholder="Search">
         <button type="submit">Search</button>
     </form>
 
-    <!-- Table to display student list -->
     <table>
-        <!-- Table headers -->
         <thead>
             <tr>
                 <th>CRN Number</th>
-                <th>Name</th>
-                <th>Branch</th>
-                <th>Year</th>
-                <th>CGPA</th>
+                <th>Name</th> 
+                <th>Branch</th> 
+                <th>Year</th> 
+                <th>Gender</th> 
                 <th>Email</th>
+                <th>Mobile Number</th>             
+                <th>CGPA</th>
+                <th>Aggregate Marks </th>                
+                <th>10th Marks</th>
+                <th>12th Marks</th>                
+                <th>Diploma Marks</th>
+                <th>Active Backlog</th>               
+                <th>Year Down</th>
+                <th>Remark</th>
                 <th>Delete</th>
                 <th>Update</th>
             </tr>
         </thead>
         <tbody>
-            <!-- Loop through the filtered queryset -->
             {% for item in ServiceData %}
             <tr>
-                <!-- Display student details -->
                 <td>{{ item.crn_number }}</td>
                 <td>{{ item.name }}</td>
                 <td>{{ item.branch }}</td>
                 <td>{{ item.year }}</td>
-                <td>{{ item.CGPA }}</td>
+                <td>{{ item.gender }}</td>
                 <td>{{ item.email }}</td>
+                <td>{{ item.mobile_number }}</td>
+                <td>{{ item.CGPA }}</td>
+                <td>{{ item.aggregate_marks }}</td>
+                <td>{{ item.mark_10th }}</td>
+                <td>{{ item.mark_12th }}</td>
+                <td>{{ item.diploma_marks }}</td>
+                <td>{{ item.active_backlog }}</td>
+                <td>{{ item.year_down }}</td>
+                <td>{{ item.remarks }}</td>
+
                 <td>
-                    <a href="{% url 'delete_std' item.crn_number %}" class="btn btn-danger md-sm">Delete</a>
+                    <a href="{% url 'delete_std' item.crn_number %}" class="error">Delete</a>
                 </td>
                 <td>
-                    <a href="{% url 'update_std' item.crn_number %}" class="btn btn-danger md-sm">Modify</a>
+                    <a href="{% url 'update_std' item.crn_number %}" class="success ">Modify</a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <!-- Pagination links -->
     <nav>
         <ul class="pagination">
-            <!-- Pagination links here -->
+            {% if ServiceData.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1" tabindex="-1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ ServiceData.previous_page_number }}" tabindex="-1">Previous</a>
+                </li>
+            {% endif %}
+            {% for i in ServiceData.paginator.page_range %}
+                <li class="page-item {% if i == ServiceData.number %}active{% endif %}">
+                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+            {% if ServiceData.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ ServiceData.next_page_number }}">Next</a>
+                </li>
+            {% endif %}
         </ul>
     </nav>
 
-    <!-- Download links -->
     <a href="{% url 'download_excel' %}" class="btn btn-primary">Download Excel</a>
     <a href="{% url 'download_pdf' %}" class="btn btn-primary">Download PDF</a>
 </div>
-
-{% endblock %}
+</body>
+</html>

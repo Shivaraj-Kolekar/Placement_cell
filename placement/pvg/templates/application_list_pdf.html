@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Applied Student List{% endblock %}
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/studentlist.css' %}">
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Applied Student List</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>CRN Number</th>
+                     <th>Name</th> 
+                     <th>Branch</th> 
+                     <th>Year</th> 
+                     <th>Gender</th> 
+                     <th>Email</th>
+                    <th>Mobile Number</th>             
+                    <th>CGPA</th>
+                    <th>Aggregate Marks </th>                
+                    <th>10th Marks</th>
+                    <th>12th Marks</th>                
+                    <th>Diploma Marks</th>
+                    <th>Active Backlog</th>               
+                     <th>Year Down</th>
+                    <th>Remark</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in students %}
+                <tr>
+                    <td>{{ item.crn_number }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.branch }}</td>
+                    <td>{{ item.year }}</td>
+                    <td>{{ item.gender }}</td>
+                    <td>{{ item.email }}</td>
+                    <td>{{ item.mobile_number }}</td>
+                    <td>{{ item.CGPA }}</td>
+                    <td>{{ item.aggregate_marks }}</td>
+                    <td>{{ item.mark_10th }}</td>
+                    <td>{{ item.mark_12th }}</td>
+                    <td>{{ item.diploma_marks }}</td>
+                    <td>{{ item.active_backlog }}</td>
+                    <td>{{ item.year_down }}</td>
+                    <td>{{ item.remarks }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

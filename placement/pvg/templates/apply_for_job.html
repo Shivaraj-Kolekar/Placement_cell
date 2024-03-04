@@ -1,20 +1,67 @@
-{% extends 'base.html' %}
-
-{% block title %}Apply for Job{% endblock %}
-
+{%extends 'base.html'%}
+{% block head %}
+  {%load static%}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
 {% block body %}
-    <div class="w-23 bg-slate-400 h-35 mt-3 m-20 rounded-lg">
+<style>
+    /* Centering the form container */
+    .apply_for_container {
+        width: 50%;
+        height: auto;
+        margin: 70px auto; /* Centering horizontally and adding top margin */
+        background: #f9f9f9; /* Light background color */
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px 3px lightgray;
+        padding: 30px; /* Padding for space inside the container */
+    }
+    
+    /* Styling for the card content */
+    .card {
+        font-size: 18px;
+        line-height: 40px;
+        text-align: left;
+    }
+    
+    /* Styling for the submit button */
+    button {
+        background-color: #007bff; /* Blue background color */
+        color: #fff; /* White text color */
+        padding: 12px 24px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-size: 16px;
+    }
+    
+    button:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+    }
+    
+    /* Styling for the form labels */
+    .form-label {
+        font-weight: bold;
+    }
+</style>
+<div class="apply_for_container">
+    <div class="card">
         <form method="post" action="{% url 'apply_for_job2' job_id=job_id %}">
             {% csrf_token %}
-            <!-- Add any form fields you need here -->
-            <p class="m-3 p-3 font-serif text-3xl"><b>{{ job_detail.job_title }}</b></p>
-            <p class="m-3 p-3 text-lg"><b>Company:</b> {{ job_detail.company_name }}</p>
-            <p class="m-3 p-3 text-lg"><b>Salary: RS</b>{{ job_detail.salary }}</p>
-            <p class="m-3 p-3 text-lg"><b>Required Branch:</b> {{ job_detail.required_branch }}</p>
-            <p class="m-3 p-3 text-lg"><b>Skills:</b> {{ job_detail.skills }}</p>
-            <p class="m-3 p-3 text-lg"><b>Time:</b> <span class="timeAgo"></span></p>
-    
-            <button type="submit" class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">Apply</button>
+            <p class="form-label"><b>{{ job_detail.job_title }}</b></p>
+            <p><b>Company:</b> {{ job_detail.company_name }}</p>
+            <p><b>Salary: RS</b>{{ job_detail.salary }}</p>
+            <p><b>Location: </b>{{ job_detail.location }}</p>
+            <p><b>Required Branch:</b> {{ job_detail.required_branchs }}</p>
+            <p><b>Required CGPA: </b>{{ job_detail.required_CGPA }}</p>
+            <p><b>Required Marks: </b>{{ job_detail.required_marks }}</p>
+            <p><b>Last Date: </b>{{ job_detail.last_date }}</p>
+            <p><b>Exam Date: </b>{{ job_detail.date_exam }}</p>
+            <p><b>Venue: </b>{{ job_detail.venue }}</p>
+            <button type="submit">Apply</button>
         </form>
     </div>
+</div>
 {% endblock %}
+{%block footer%}
+{%endblock%}

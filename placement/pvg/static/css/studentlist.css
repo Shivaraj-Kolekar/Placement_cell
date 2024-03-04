@@ -1,0 +1,44 @@
+/* Define your custom CSS styles here */
+.container {
+    margin-top: 50px;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ccc; /* Add border to the table */
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6; /* Bootstrap's table border color */
+    border-right: 1px solid #dee2e6; /* Add right border to cells */
+}
+
+th {
+    font-weight: bold;
+    border-top: 1px solid #dee2e6; /* Add top border to table header */
+}
+
+tr {
+    border-bottom: 1px solid #dee2e6; /* Add bottom border to table rows */
+}
+
+.error{
+    text-decoration: none;
+    background-color: red;
+    color: white;
+}
+.success{
+    text-decoration: none;
+    background-color: green;
+    color: white;
+    border-color: green;
+    
+}

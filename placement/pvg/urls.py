@@ -28,8 +28,7 @@ urlpatterns = [
 
      path("studentlist/<int:page>", views.studentlist, name="studentlist"),
      path("studentlist/", views.studentlist, name="studentlist_default"),
-
-   
+     path('applied_jobs/', views.applied_jobs, name='applied_jobs'),
 
      path("delete_std/<int:crn_number>",views.delete_std,name="delete_std"),
      path("update_std/<int:crn_number>",views.update_std,name="update_std"),
@@ -39,5 +38,10 @@ urlpatterns = [
      path('download_excel/', views.download_excel, name='download_excel'),
      path('download_pdf/', views.download_pdf, name='download_pdf'),
 
- path('apply_for_job2/<int:job_id>/', views.apply_for_job2, name='apply_for_job2'),
+     path('apply_for_job2/<int:job_id>/', views.apply_for_job2, name='apply_for_job2'),
+
+     path('application_list_search/',views.application_list_search,name="application_list_search"),
+     path('application_list_search_result/', views.application_list_search_result ,name="application_list_search_result"),
+     path('download_application_pdf/<int:job_id>/',views.download_application_pdf, name='download_application_pdf'),
+    path('download_application_excel/<int:job_id>/',views.download_application_excel, name='download_application_excel') 
 ]

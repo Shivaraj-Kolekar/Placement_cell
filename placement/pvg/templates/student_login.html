@@ -1,22 +1,118 @@
 {% extends 'base.html' %}
-{%block title%} Login Page{%endblock%}
+{%load static%}
+{% block title %} Login Page{% endblock %}
 {% block body %}
-<div class="flex flex-col items-center justify-center h-screen relative">
-  <div class="w-72 bg-white p-6 rounded-lg shadow-lg bg-opacity-50">
+<style>
+  /* CSS Styles */
+
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url('{% static "images/bg.jpg" %}');
+    background-size: cover;
+    background-position: center;
+  }
+
+  .form-container {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: #ffffff;
+  }
+
+  .form-container h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+
+  .form-container form input,
+  .form-container form select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+
+  .form-container form button {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    font-weight: bold;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .form-container form button:hover {
+   
+    background-color: #3490dc;
+  }
+
+  .form-container p {
+    margin-top: 16px;
+    text-align: center;
+  }
+
+  .form-container p a {
+    color: #3490dc;
+    text-decoration: none;
+  }
+
+  .form-container p a:hover {
+    text-decoration: underline;
+  }
+
+  /* Additional styles for select dropdown */
+  .form-container form select {
+    appearance: none; /* Remove default arrow */
+    -webkit-appearance: none; /* Safari and Chrome */
+    -moz-appearance: none; /* Firefox */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 14l-7-7h14l-7 7z" fill="%23ffffff"/></svg>'); /* Add custom arrow */
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: 12px;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Adjust select dropdown options style */
+  .form-container form select option {
+    background-color: rgba(0, 0, 0, 0.5); /* Background color for options */
+  }
+</style>
+
+
+<div class="container">
+  <div class="form-container">
     <!-- Login form content goes here -->
-    <h2 class="text-xl font-bold mb-4">Login</h2>
-    <form method="post"   action="{% url 'student_login' %}" enctype="multipart/form-data">
+    <h2>Login</h2>
+    <form method="post" action="{% url 'student_login' %}" enctype="multipart/form-data">
       {% csrf_token %}
       <!-- Login form fields -->
       <div class="mb-4">
-        <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email" class="w-full px-3 py-2 border rounded-lg">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email">
       </div>
       <div class="mb-6">
-        <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
-        <input type="password" id="password" name="password" placeholder="Enter your password" class="w-full px-3 py-2 border rounded-lg">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password">
       </div>
-      <button type="submit" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">Login</button>
+      <!-- Add role selection dropdown -->
+      <div class="mb-6">
+        <label for="role">Role</label>
+        <select id="role" name="role" required>
+          <option value="Admin">Admin</option>
+          <option value="Student">Student</option>
+        </select>
+      </div>
+      <button type="submit">Login</button>
     </form>
     <p><a href="#">Forgot password?</a></p>
   </div>

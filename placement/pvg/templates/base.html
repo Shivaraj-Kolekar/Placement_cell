@@ -2,26 +2,27 @@
 <html lang="en">
 <head>
     {% block head %}
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     {%load static %}
-
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    {% endblock %}
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <title>{% block title %}Base Page{% endblock %}</title>
     <style>{% block css %}{% endblock %}</style>
+    {%endblock%}
 </head>
 
-<body>
-    {% block body %}
+<body>{% block body%}
+    <nav>
+        {% block nav_student %}
+            
+        {% endblock %}
+    </nav>
     <footer>
         {% block footer %}
-        <div class="bg-gray-800 text-white py-4">
-            <div class="container mx-auto text-center">
+        <div class="">
+            <div class="">
                 <p>&copy; 2024 PVG COET. All rights reserved.</p>
             </div>
         </div>

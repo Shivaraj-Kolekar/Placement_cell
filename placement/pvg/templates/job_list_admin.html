@@ -1,23 +1,26 @@
 {% extends "base.html" %}
 {% block title %}Job List{% endblock %}  
-{% block head %}
-    {% block link %}
-       <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    {% endblock %}
-  
-    {# You can include additional head content specific to this template if needed #}
-{% endblock %}
+{%load static%}
 
 {% block body %}
-<style>
-    .logo-cell img {
-        max-width: 100px; /* Adjust this value as needed */
-        max-height: 50px; /* Adjust this value as needed */
-        width: auto;
-        height: auto;
-    }
-</style>
+{% block nav_student %}
+<nav>
+    <input type="checkbox" id="check" name="" value="">
+    <label for="check" id="checkbtn"><i class="fa fa-bars"></i></label>
+    <label class="logo">PVG</label>
+    <ul>
+        <li><a class="navbar-link" href="{%url 'admin_home'%}">Home</a></li>
+    <li><a class="navbar-link" href="#">Profile</a></li>
+    <li><a class="navbar-link" href="{% url 'job_list_admin' page=1 %}">Job List</a></li>
+    <li><a class="navbar-link" href="{% url 'add_job_details' %}">Add Job</a></li>
+   
+    <li><a class="navbar-link" href="{% url 'studentlist' page=1 %}">Student List</a></li>
+    <li><a class="navbar-link" href="{% url 'application_list_search' %}">Application List</a></li>
+   
+    <li><a class="navbar-link" href="{%url 'my_logout'%}" >Logout</a></li>
+    </ul>
+</nav>
+{% endblock %}
     <div class="container mt-5">
         <h1>Job List</h1>
 
@@ -43,7 +46,7 @@
                         <td>{{ item.job_title }}</td>
                         <td>{{ item.company_name }}</td>
                         <td class="logo-cell">
-                             <img src="{{ item.company_logo }}" alt="Company Logo">
+                            <img src="{% static 'images/company_logo.jpg' %}" alt="Company Logo">
                         </td>
                         <td>{{ item.location }}</td>
                         <td>{{ item.salary }}</td>

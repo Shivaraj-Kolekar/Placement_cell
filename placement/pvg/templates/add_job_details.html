@@ -1,60 +1,93 @@
-   {% extends "base.html" %}
-   {% block title %}Add job details{% endblock %}   
-   {% block body %}
-      
-    <!-- Navigation (if needed) -->
+{%extends 'base.html'%}
+  {% block head %}
+  
+  {% block css %}
+  {%load static %}
+  <link rel="stylesheet" href="{% static 'css/signup.css' %}">
 
-    <!-- Add Job Details Section -->
-    <section class="container mx-auto my-8 p-8 bg-blue rounded-lg shadow-md">
-        <h2 class="text-3xl font-bold mb-4">Add Job Details</h2>
-        <form action="{% url 'add_job_details' %}" method="post" enctype="multipart/form-data" class="">
-            {% csrf_token %}
-          
-                  <!--{{ form.as_p }} -->       
-              
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <!-- Student Name -->
-                            
-                            <div class="mb-4">
-                                <label for="job_title" class="block text-gray-700 font-bold mb-2">Job Id</label>
-                                <input type="text" id="job_id" name="job_id" class="border-2 border-gray-300 p-2 w-full" required>
-                            </div>
-                            <div class="mb-4">
-                                <label for="job_title" class="block text-gray-700 font-bold mb-2">Job Title</label>
-                                <input type="text" id="job_title" name="job_title" class="border-2 border-gray-300 p-2 w-full" required>
-                            </div>
+{% endblock %}
 
-                            <div class="mb-4">
-                                <label for="company_name" class="block text-gray-700 font-bold mb-2">Company Name</label>
-                                <input type="text" id="company_name" name="company_name" class="border-2 border-gray-300 p-2 w-full" required>
-                            </div>
+{%endblock%}
+{% block body %}
 
-                            <div class="mb-4">
-                                <label for="company_logo" class="block text-gray-700 font-bold mb-2">Company Logo</label>
-                                <input type="file" id="company_logo" name="company_logo" class="border-2 border-gray-300 p-2 w-full" required >
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="location" class="block text-gray-700 font-bold mb-2">Location</label>
-                                <input type="text" id="location" name="location" class="border-2 border-gray-300 p-2 w-full" required>
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="salary" class="block text-gray-700 font-bold mb-2">Salary</label>
-                                <input type="Number" id="salary" name="salary" class="border-2 border-gray-300 p-2 w-full" required>
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="required_branch" class="block text-gray-700 font-bold mb-2">Branch</label>
-                                <input type="text" id="required_branch" name="required_branch" class="border-2 border-gray-300 p-2 w-full" required>
-                            </div>
-                
-                            <input type="hidden" id="system_time" name="system_time">
-
-                        </div>
-            <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-700">Submit</button>
+    <div class="container">
+       
+        <h1 class="form-title" >Add Job Details</h1>
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+                <form action="{% url 'add_job_details' %}" method="post" enctype="multipart/form-data" class="">
+                       {% csrf_token %}
+                     <div class="main-user-info">
+                    <div class="user-input-box">
+                    <label for="job_id" class="">Job Id</label>
+                    <input type="text" id="job_id" name="job_id" placeholder="Enter Job id" required>
+                </div>
+                <div class="user-input-box">
+                    <label for="job_title" class="">Job Title</label>
+                    <input type="text" id="job_title" name="job_title" placeholder="Enter Job Title" required>
+                </div>
+                <div class="user-input-box">
+                    <label for="company_name" class="">Company Name</label>
+                    <input type="text" id="company_name" name="company_name" placeholder="Enter Company Name" required>
+                </div>
+                <div class="user-input-box">
+                    <label for="company_logo" class="">Company Logo</label>
+                    <input type="file" id="company_logo" name="company_logo"  required>
+                </div>
+                <div class="user-input-box">
+                    <label for="location" class="block text-gray-700 font-bold mb-2">Location</label>
+                    <input type="text" id="location" name="location" placeholder="Enter Job Location" required>
+                </div>
+                <div class="user-input-box">
+                    <label for="salary" class="">Salary</label>
+                    <input type="number" id="salary" name="salary" placeholder="Enter Salary" required>
+                </div>
+               
+                <div class="user-input-box">
+                    <label for="required_CGPA" class="">Required CGPA</label>
+                    <input type="text" id="required_CGPA" name="required_CGPA" placeholder="Enter Required CGPA" required>
+                </div>
+                <div class="user-input-box">
+                    <label for="required_marks" class="">Required Marks</label>
+                    <input type="text" id="required_marks" name="required_marks" placeholder="Enter Required Marks" required>
+                </div>
+                <div class="user-input-box">
+                    <label for="date_exam" class="">Last Date </label>
+                    <input type="date" id="date_last" name="date_last" placeholder="Enter Exam Date" required>
+                </div>
+                <div class="user-input-box">
+                    <label for="date_exam" class="">Date of Exam</label>
+                    <input type="date" id="date_exam" name="date_exam" placeholder="Enter Exam Date" required>
+                </div>
+                <div class="user-input-box">
+                    <label for="venue" class="">Venue</label>
+                    <input type="text" id="venue" name="venue" placeholder="Enter Venue" required>
+                </div>
+                <div class="user-input-box-1">
+                    <label class="">Select Branches</label>
+                    <div class="checkbox-options">
+                        <label><input type="checkbox" name="required_branchs" value="IT"> Information Technology</label>
+                        <label><input type="checkbox" name="required_branchs" value="ME"> Mechanical Engineering</label>
+                        <label><input type="checkbox" name="required_branchs" value="CS"> Computer Science</label>
+                        <label><input type="checkbox" name="required_branchs" value="EE"> Electrical Engineering</label>
+                        <label><input type="checkbox" name="required_branchs" value="ENTC"> ENTC</label>
+                        <label><input type="checkbox" name="required_branchs" value="Printing"> Printing</label>
+                        <label><input type="checkbox" name="required_branchs" value="AIDS"> AIDS</label>
+                    </div>
+                </div>
+                <input type="hidden" id="system_time" name="system_time">
+            </div>
+            <div class="form-submit-btn">
+                <input type="submit" value="Submit">
+              </div>
         </form>
-    </section>
+    </div>
+    
     <script>
     // Get the current system time
     var currentTime = new Date();
