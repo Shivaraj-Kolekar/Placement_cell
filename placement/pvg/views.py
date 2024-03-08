@@ -1,11 +1,11 @@
 from django.http import HttpResponse
 from django.contrib.auth.models import User 
 from django.contrib.auth import authenticate, login,logout
-from .models import Student, JobDetail,JobApplication
+from .models import Student, JobDetail,JobApplication,Admin
 from django.template.loader import get_template
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import StudentForm, JobDetailForm,StudentLoginForm
+from .forms import StudentForm, JobDetailForm,StudentLoginForm,AdminDetailForm
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -19,7 +19,6 @@ from xhtml2pdf import pisa  # Import the module for PDF generation
 from django.db.models import Q
 def index(request):
     return render(request, 'index.html')
-
 def signup(request):
     if request.method == 'POST':
         form = StudentForm(request.POST)
@@ -27,46 +26,37 @@ def signup(request):
             # Create a new user account
             if User.objects.filter(email=form.cleaned_data['email']).exists() or Student.objects.filter(crn_number=form.cleaned_data['crn_number']).exists():
                 messages.error(request, 'Email or CRN number already exists.')
-                
                 return render(request, 'signup.html', {'form': form})
-            else : 
+            else:
                 user = User.objects.create_user(
-                username=form.cleaned_data['email'],
-                email=form.cleaned_data['email'],
-                password=form.cleaned_data['password'],
-            
-               
-            )
+                    username=form.cleaned_data['email'],
+                    email=form.cleaned_data['email'],
+                    password=form.cleaned_data['password']    
+                )
 
-            # Additional user profile data can be saved here
-            user_profile = form.save(commit=False)
-            user_profile.user = user
-            user_profile.save()
+                # Additional user profile data can be saved here
+                user_profile = form.save(commit=False)
+                user_profile.user = user
+                user_profile.save()
 
-            user = authenticate(username=user.username, password=form.cleaned_data['password'])
-            login(request, user)
-            request.session['crn_number'] = form.cleaned_data['crn_number']
+                # Send email to user
+                subject = "PVG Placement cell registration"
+                message = f"Dear {form.cleaned_data['name']},\n\nYou have successfully registered in PVG Placement cell.\n\nThank you!"
+                from_email = 'aniketsonkamble07@gmail.com'
+                recipient_list = [form.cleaned_data['email']]
+                try:
+                    send_mail(subject, message, from_email, recipient_list, auth_user='aniketsonkamble07@gmail.com', auth_password='pkjllfvwnstdfked')
+                except Exception as e:
+                    print("An error occurred while sending the email:", e)
 
-            messages.success(request, 'You have successfully signed up!')
-        
-            return redirect('student_home')  # Redirect to the home page or any other desired page
-
-            # Send email to user
-            subject = "PVG Placement cell registration"
-            message = f"Dear {form.cleaned_data['name']}\n\nYou have successfully registered in PVG Placement cell.\n\nThank you!"
-            from_email = '22113071@pvgcoet.ac.in'
-            recipient_list = [form.cleaned_data['email']]
-            send_mail(subject, message, from_email, recipient_list, auth_user='aniketsonkamble07@gmail.com', auth_password='ANUSAYA@0941')
-            # Log the user in after signing up
-            user = authenticate(username=user.username, password=form.cleaned_data['password'])
-            login(request, user)
-
-            messages.success(request, 'You have successfully signed up!')
-            return redirect('student_home')  # Redirect to the home page or any other desired page
-
+                # Log the user in after signing up
+                user = authenticate(username=user.username, password=form.cleaned_data['password'])
+                login(request, user)
+                request.session['crn_number'] = form.cleaned_data['crn_number']
+                messages.success(request, 'You have successfully signed up!')
+                return redirect('student_home')  # Redirect to the home page or any other desired page
     else:
-        form =StudentForm()
-
+        form = StudentForm()
     return render(request, 'signup.html', {'form': form})
 
 def student_login(request):
@@ -77,7 +67,7 @@ def student_login(request):
 
         # Check if the role is Student
         if role == 'Student':
-            # Authenticate the user
+            # Authenticate the student user
             user = authenticate(request, username=email, password=password)
             if user is not None:
                 # If authenticated, login and redirect to student home page
@@ -91,12 +81,16 @@ def student_login(request):
                 error_message = "Invalid email or password. Please try again."
                 return render(request, 'student_login.html', {'error_message': error_message})
         elif role == 'Admin':
-             login(request, user)
-             return redirect('admin_home')
-              #  admin = Admin.objects.get(email=email)
-               # admin_id = admin.admin_id
-               # request.session['admin_id'] = admin_id
-               
+            # Authenticate the admin user
+            user = authenticate(request, username=email, password=password)
+            if user is not None:
+                # If authenticated, login and redirect to admin home page
+                login(request, user)
+                return redirect('admin_home')
+            else:
+                # Handle invalid credentials
+                error_message = "Invalid email or password for admin. Please try again."
+                return render(request, 'student_login.html', {'error_message': error_message})
         else:
             # Handle invalid role
             error_message = "Invalid role. Please select a valid role."
@@ -110,6 +104,31 @@ def my_logout(request):
 
 def admin_home(request):
     return render(request, 'admin_home.html')
+
+
+
+def add_admin(request):
+    form = AdminDetailForm()  # Instantiate the form outside of the conditional block
+
+    if request.method == 'POST':
+        form = AdminDetailForm(request.POST, request.FILES)
+        if form.is_valid():
+            if User.objects.filter(email=form.cleaned_data['admin_email']).exists() or Admin.objects.filter(admin_id=form.cleaned_data['admin_id']).exists():
+
+                messages.error(request, 'Email already exists.')
+                return render(request, 'add_admin.html', {'form': form})
+            else: 
+                user = User.objects.create_user(
+                    username=form.cleaned_data['admin_email'],
+                    email=form.cleaned_data['admin_email'],
+                    password=form.cleaned_data['admin_password']    
+                )
+                # Save the admin instance
+                admin_instance = form.save(commit=False)
+                admin_instance.save()
+                return redirect('admin_home')  
+
+    return render(request, 'add_admin.html', {'form': form})
 
 def student_home(request):
     return render(request,'student_home.html')
@@ -166,8 +185,24 @@ def add_job_details(request):
         form = JobDetailForm(request.POST, request.FILES)
         if form.is_valid():
             # Process form data and save to the database
-            form.save()
-            return redirect('job_list_admin',page=1)  # Redirect to the home page or any other desired page
+            job = form.save()
+
+            # Send email to all students
+            subject = f"New Job Opportunity: {job.job_title}"
+            message = f"Dear student,\n\nA new job opportunity is available:\n\n"
+            message += f"Job ID: {job.job_id}\n"
+            message += f"Job Title: {job.job_title}\n"
+            # Include other job details as needed
+
+            from_email = "aniketsonkamble07@gmail.com"
+            student_emails = Student.objects.values_list('email', flat=True)  # Get all student emails
+            recipient_list = list(student_emails)
+            try:
+                send_mail(subject, message, from_email, recipient_list)
+            except Exception as e:
+                print("An error occurred while sending the email:", e)
+
+            return redirect('job_list_admin', page=1)  # Redirect to the home page or any other desired page
         else:
             # Display form errors in case of validation failure
             print(form.errors)
@@ -175,7 +210,6 @@ def add_job_details(request):
         form = JobDetailForm()
 
     return render(request, 'add_job_details.html', {'form': form})
-
 
 
 def job_list(request):

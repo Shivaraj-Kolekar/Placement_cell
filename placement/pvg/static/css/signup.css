@@ -25,7 +25,10 @@ body {
     border-radius: 10px;
     box-shadow: inset -2px 2px 2px white;
 }
-
+.container .error_msg ul li{
+    color: white;
+    
+}
 .container .form-title {
     font-size: 26px;
     font-weight: 600;

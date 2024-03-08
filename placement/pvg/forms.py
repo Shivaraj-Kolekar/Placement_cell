@@ -1,6 +1,6 @@
 # forms.py
 from django import forms
-from .models import Student,JobDetail
+from .models import Student,JobDetail,Admin
 
 class StudentForm(forms.ModelForm):
     class Meta:
@@ -20,5 +20,8 @@ class JobDetailForm(forms.ModelForm):
         fields = ['job_id','job_title', 'company_logo', 'company_name', 'salary', 'required_branchs','location','system_time','required_CGPA','required_marks','date_exam','date_last','venue']
 
 
-    
-   
+
+class AdminDetailForm(forms.ModelForm):
+    class Meta:
+        model = Admin
+        fields = ['admin_id', 'admin_name', 'admin_email', 'admin_password', 'admin_branch']

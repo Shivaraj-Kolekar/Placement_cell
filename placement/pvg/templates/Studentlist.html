@@ -1,10 +1,28 @@
-<html>
-    <head>
+{% extends "base.html" %}
+    {%block head %}
         {%load static %}
         <link rel="stylesheet" href="{% static 'css/studentlist.css' %}">
-    </head>
-    <body>
-
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {%endblock%}
+   {%block body%}
+{%block nav_student %}
+<nav>
+    <input type="checkbox" id="check" name="" value="">
+    <label for="check" id="checkbtn"><i class="fa fa-bars"></i></label>
+    <label class="logo">PVG</label>
+    <ul>
+        <li><a class="navbar-link" href="{%url 'admin_home'%}">Home</a></li>
+    <li><a class="navbar-link" href="#">Profile</a></li>
+    <li><a class="navbar-link" href="{% url 'job_list_admin' page=1 %}">Job List</a></li>
+    <li><a class="navbar-link" href="{% url 'add_job_details' %}">Add Job</a></li>
+   
+    <li><a class="navbar-link" href="{% url 'studentlist' page=1 %}">Student List</a></li>
+    <li><a class="navbar-link" href="{% url 'application_list_search' %}">Application List</a></li>
+   
+    <li><a class="navbar-link" href="{%url 'my_logout'%}" >Logout</a></li>
+    </ul>
+</nav>
+{%endblock%}
 <div class="container">
     <h1>Student List</h1>
 
@@ -88,8 +106,7 @@
         </ul>
     </nav>
 
-    <a href="{% url 'download_excel' %}" class="btn btn-primary">Download Excel</a>
-    <a href="{% url 'download_pdf' %}" class="btn btn-primary">Download PDF</a>
+    <a href="{% url 'download_excel' %}" class="btn-primary">Download Excel</a>
+    <a href="{% url 'download_pdf' %}" class="btn-primary">Download PDF</a>
 </div>
-</body>
-</html>
+{%endblock%}

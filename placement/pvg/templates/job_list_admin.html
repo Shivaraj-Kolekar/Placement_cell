@@ -1,26 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Job List{% endblock %}  
+{%block head %}
+
 {%load static%}
+<link rel="stylesheet" href="{% static 'css/studentlist.css' %}">
+{%endblock%}
 
 {% block body %}
-{% block nav_student %}
-<nav>
-    <input type="checkbox" id="check" name="" value="">
-    <label for="check" id="checkbtn"><i class="fa fa-bars"></i></label>
-    <label class="logo">PVG</label>
-    <ul>
-        <li><a class="navbar-link" href="{%url 'admin_home'%}">Home</a></li>
-    <li><a class="navbar-link" href="#">Profile</a></li>
-    <li><a class="navbar-link" href="{% url 'job_list_admin' page=1 %}">Job List</a></li>
-    <li><a class="navbar-link" href="{% url 'add_job_details' %}">Add Job</a></li>
-   
-    <li><a class="navbar-link" href="{% url 'studentlist' page=1 %}">Student List</a></li>
-    <li><a class="navbar-link" href="{% url 'application_list_search' %}">Application List</a></li>
-   
-    <li><a class="navbar-link" href="{%url 'my_logout'%}" >Logout</a></li>
-    </ul>
-</nav>
-{% endblock %}
     <div class="container mt-5">
         <h1>Job List</h1>
 
@@ -50,13 +35,13 @@
                         </td>
                         <td>{{ item.location }}</td>
                         <td>{{ item.salary }}</td>
-                        <td>{{ item.required_branch }}</td>
-                        <td>{{ item.CGPA }}</td>
+                        <td>{{ item.required_branchs }}</td>
+                        <td>{{ item.required_CGPA }}</td>
                         <td>
-                            <a href="{% url 'delete_job' item.job_id %}" class="btn btn-danger md-sm">Delete</a>
+                            <a href="{% url 'delete_job' item.job_id %}" class="error">Delete</a>
                         </td>
                         <td>
-                            <a href="{% url 'update_job' item.job_id %}" class="btn btn-success md-sm">Modify</a>
+                            <a href="{% url 'update_job' item.job_id %}" class="success">Modify</a>
                         </td>
                     </tr>
                 {% endfor %}

@@ -34,11 +34,32 @@ tr {
     text-decoration: none;
     background-color: red;
     color: white;
+    width: 10px;
+    height: 10px;
+    padding: 5px;
+    border-radius: 5px;
 }
 .success{
     text-decoration: none;
     background-color: green;
     color: white;
     border-color: green;
-    
+    width: 10px;
+    height: 10px;
+    padding: 5px;
+    border-radius: 5px;
 }
+.btn-primary{
+    background-color: #2d3dcc;
+    color:white;
+    width: 10px;
+    height: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+
+}
+.btn-primary:hover{
+    background-color: #0a1157;
+}
+
