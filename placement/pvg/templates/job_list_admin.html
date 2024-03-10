@@ -3,10 +3,18 @@
 
 {%load static%}
 <link rel="stylesheet" href="{% static 'css/studentlist.css' %}">
+<style>
+    .thumbnail-img {
+        max-width: 50px; 
+        height: auto; 
+        display: block; 
+        margin: 0 auto;
+    }
+</style>
 {%endblock%}
 
 {% block body %}
-    <div class="container mt-5">
+    <div class="container ">
         <h1>Job List</h1>
 
         <table class="table">
@@ -20,6 +28,9 @@
                     <th>Salary</th>
                     <th>Branches </th>
                     <th>CGPA</th>
+                    <th>Percentages</th>
+                    <th>Last date</th>
+                    <th>Exam date</th>
                     <th>Delete</th>
                     <th>Modify</th>
                 </tr>
@@ -31,12 +42,21 @@
                         <td>{{ item.job_title }}</td>
                         <td>{{ item.company_name }}</td>
                         <td class="logo-cell">
-                            <img src="{% static 'images/company_logo.jpg' %}" alt="Company Logo">
+                            <img src="{{ item.company_logo.url }}" alt="Company Logo" class="thumbnail-img">
                         </td>
                         <td>{{ item.location }}</td>
                         <td>{{ item.salary }}</td>
-                        <td>{{ item.required_branchs }}</td>
+                        <td>
+                            {% for branch in item.required_branchs %}
+                                {{ branch }}
+                                {% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                        
                         <td>{{ item.required_CGPA }}</td>
+                        <td>{{ item.required_marks }}</td>
+                        <td>{{ item.date_last }}</td>
+                        <td>{{ item.date_exam }}</td>
                         <td>
                             <a href="{% url 'delete_job' item.job_id %}" class="error">Delete</a>
                         </td>

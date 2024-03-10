@@ -1,32 +1,30 @@
-*{
-
-    margin:0px;
+* {
+    margin: 0px;
     padding: 0px;
     font-family: sans-serif;
-
 }
-.training-section{
 
+.training-section {
     width: 100%;
-    background: url();
     background-size: cover;
-
 }
-.training-section h1{
+
+.training-section h1 {
     text-align: center;
     padding: 25px 0px;
 }
-.container{
+
+.container {
     width: 90%;
-    margin:auto;
+    margin: auto;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-    
-
 }
-.training-items{
-    height: 400px;
+
+.training-items {
+    height: auto;
+    min-height: 400px; /* Set minimum height to prevent content from overflowing */
     flex-basis: 23%;
     text-align: center;
     margin: 10px 0px;
@@ -34,31 +32,30 @@
     background: white;
     box-shadow: 0px 0px 10px 3px lightgray;
 }
-.training-items h3{
-    padding: 10px 0px;
 
+.training-items h3 {
+    padding: 10px 0px;
 }
-.training-items p{
+
+.training-items p {
     font-size: 15px;
     padding: 10px;
 }
 
-.training-items button{
+.training-items button {
     background: blue;
     padding: 10px 25px;
     color: white;
     border-radius: 10px;
-
 }
 
-
-@media only screen and (min-width:200px) and (max-width:767px)
-{
-    .container{
-        width:100%;
+@media only screen and (min-width: 200px) and (max-width: 767px) {
+    .container {
+        width: 100%;
         flex-direction: column;
     }
-    .training-items{
+
+    .training-items {
         margin: 10px;
     }
 }

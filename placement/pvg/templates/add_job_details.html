@@ -13,63 +13,57 @@
     <div class="container">
        
         <h1 class="form-title" >Add Job Details</h1>
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+       
                 <form action="{% url 'add_job_details' %}" method="post" enctype="multipart/form-data" class="">
                        {% csrf_token %}
                      <div class="main-user-info">
                     <div class="user-input-box">
-                    <label for="job_id" class="">Job Id</label>
+                    <label for="job_id" >Job Id</label>
                     <input type="text" id="job_id" name="job_id" placeholder="Enter Job id" required>
                 </div>
                 <div class="user-input-box">
-                    <label for="job_title" class="">Job Title</label>
+                    <label for="job_title" >Job Title</label>
                     <input type="text" id="job_title" name="job_title" placeholder="Enter Job Title" required>
                 </div>
                 <div class="user-input-box">
-                    <label for="company_name" class="">Company Name</label>
+                    <label for="company_name">Company Name</label>
                     <input type="text" id="company_name" name="company_name" placeholder="Enter Company Name" required>
                 </div>
                 <div class="user-input-box">
-                    <label for="company_logo" class="">Company Logo</label>
+                    <label for="company_logo">Company Logo</label>
                     <input type="file" id="company_logo" name="company_logo"  required>
                 </div>
                 <div class="user-input-box">
-                    <label for="location" class="block text-gray-700 font-bold mb-2">Location</label>
+                    <label for="location">Location</label>
                     <input type="text" id="location" name="location" placeholder="Enter Job Location" required>
                 </div>
                 <div class="user-input-box">
-                    <label for="salary" class="">Salary</label>
+                    <label for="salary" >Salary</label>
                     <input type="number" id="salary" name="salary" placeholder="Enter Salary" required>
                 </div>
                
                 <div class="user-input-box">
-                    <label for="required_CGPA" class="">Required CGPA</label>
+                    <label for="required_CGPA">Required CGPA</label>
                     <input type="text" id="required_CGPA" name="required_CGPA" placeholder="Enter Required CGPA" required>
                 </div>
                 <div class="user-input-box">
-                    <label for="required_marks" class="">Required Marks</label>
+                    <label for="required_marks">Required Percentages</label>
                     <input type="text" id="required_marks" name="required_marks" placeholder="Enter Required Marks" required>
                 </div>
                 <div class="user-input-box">
-                    <label for="date_exam" class="">Last Date </label>
-                    <input type="date" id="date_last" name="date_last" placeholder="Enter Exam Date" required>
+                    <label for="date_exam" >Last Date </label>
+                    <input type="datetime-local" id="date_last" name="date_last" placeholder="Enter Exam Date" required>
                 </div>
                 <div class="user-input-box">
-                    <label for="date_exam" class="">Date of Exam</label>
-                    <input type="date" id="date_exam" name="date_exam" placeholder="Enter Exam Date" required>
+                    <label for="date_exam">Date of Exam</label>
+                    <input type="datetime-local" id="date_exam" name="date_exam" placeholder="Enter Exam Date" required>
                 </div>
                 <div class="user-input-box">
-                    <label for="venue" class="">Venue</label>
+                    <label for="venue" >Venue</label>
                     <input type="text" id="venue" name="venue" placeholder="Enter Venue" required>
                 </div>
                 <div class="user-input-box-1">
-                    <label class="">Select Branches</label>
+                    <label >Select Branches</label>
                     <div class="checkbox-options">
                         <label><input type="checkbox" name="required_branchs" value="IT"> Information Technology</label>
                         <label><input type="checkbox" name="required_branchs" value="ME"> Mechanical Engineering</label>

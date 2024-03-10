@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placements</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Placements</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Placement Type</th>
+                <th>Company Name</th>
+                <th>Salary</th>
+                <th>Placement Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for placement in placements %}
+            <tr>
+                <td>{{ placement.student.name }}</td>
+                <td>{{ placement.placement_type }}</td>
+                <td>{{ placement.job.company_name }}</td>
+                <td>{{ placement.salary }}</td>
+                <td>{{ placement.placement_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

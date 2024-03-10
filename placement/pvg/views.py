@@ -5,7 +5,7 @@ from .models import Student, JobDetail,JobApplication,Admin
 from django.template.loader import get_template
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import StudentForm, JobDetailForm,StudentLoginForm,AdminDetailForm
+from .forms import StudentForm, JobDetailForm,StudentLoginForm,AdminDetailForm,PlacementForm
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -98,9 +98,20 @@ def student_login(request):
     else:
         return render(request, 'student_login.html')
 
+
 def my_logout(request):
-    logout(request)
-    return redirect('student_login') 
+    if request.user.is_authenticated:
+        # Redirect to the login page
+        next_url = '/student_login'  # Or whatever your login page URL is
+        response = redirect(next_url)
+
+        # Clear any sensitive session data
+        request.session.flush()
+
+        return response
+
+    # If the user is not authenticated, redirect to login page
+    return redirect('student_login')
 
 def admin_home(request):
     return render(request, 'admin_home.html')
@@ -150,11 +161,17 @@ def studentlist(request, page=1):
     return render(request, 'studentlist.html', data)
 
 
-def delete_std(request, crn_number,page=1):
-    s = Student.objects.get(pk=crn_number)
-    s.delete()
 
-    return redirect("studentlist",page=page)
+def delete_std(request, crn_number, page=1):
+    student = Student.objects.get(pk=crn_number)
+    user = student.user  
+
+    student.delete()
+
+    if user:
+        user.delete()
+
+    return redirect("studentlist", page=page)
 
 def update_std(request, crn_number):
     data = Student.objects.get(pk=crn_number)
@@ -179,28 +196,31 @@ def do_update_std(request, crn_number, page=1):
     data.save()
     return redirect("studentlist", page=page)
    
-# job section
+
 def add_job_details(request):
     if request.method == 'POST':
         form = JobDetailForm(request.POST, request.FILES)
         if form.is_valid():
             # Process form data and save to the database
-            job = form.save()
+            job = form.save(commit=False)
+
+            # Get the list of selected branches from the form
+            selected_branches = request.POST.getlist('required_branchs')
+            # Convert the list to a comma-separated string before saving to the database
+            job.required_branchs = ', '.join(selected_branches)
+
+            job.save()
+
+            # Retrieve all students
+            students = Student.objects.all()
 
             # Send email to all students
-            subject = f"New Job Opportunity: {job.job_title}"
-            message = f"Dear student,\n\nA new job opportunity is available:\n\n"
-            message += f"Job ID: {job.job_id}\n"
-            message += f"Job Title: {job.job_title}\n"
-            # Include other job details as needed
-
-            from_email = "aniketsonkamble07@gmail.com"
-            student_emails = Student.objects.values_list('email', flat=True)  # Get all student emails
-            recipient_list = list(student_emails)
-            try:
-                send_mail(subject, message, from_email, recipient_list)
-            except Exception as e:
-                print("An error occurred while sending the email:", e)
+            subject = 'New Job Opening Alert'
+            for student in students:
+                message = f'Dear {student.name},\n\nA new job opening has been posted: "{job.job_title}". Here are the job details:\n\nJob ID: {job.job_id}\nTitle: {job.job_title}\nCompany Name: {job.company_name}\nSalary: {job.salary}\nLocation: {job.location}\nDate of Exam: {job.date_exam}\nVenue: {job.venue}\n\nThank you for your interest.\n\nFor more details, visit our website:  \n\nBest regards,\nThe PVG Placement Cell'
+                from_email = "aniketsonkamble07@gmail.com"
+                to_email = student.email
+                send_mail(subject, message, from_email, [to_email], fail_silently=False)
 
             return redirect('job_list_admin', page=1)  # Redirect to the home page or any other desired page
         else:
@@ -228,6 +248,7 @@ def apply_for_job(request, job_id):
 
 
 import logging
+
 def apply_for_job2(request, job_id):
     logger = logging.getLogger(__name__)  # Creating a logger instance
 
@@ -251,10 +272,19 @@ def apply_for_job2(request, job_id):
             messages.warning(request, 'You have already applied for this job.')
             return redirect('job_list')
         else:
-           job_application = JobApplication(student=student, job=job)
-           job_application.save()
-           messages.success(request, 'Successfully applied for the job.')
-           return redirect('student_home')
+            job_application = JobApplication(student=student, job=job)
+            job_application.save()
+           
+            messages.success(request, 'Successfully applied for the job.')
+
+            # Send notification email
+            subject = 'Job Application Confirmation'
+            message = f'Dear {student.name},\n\nYou have successfully applied for the job "{job.job_title}". Here are the job details:\n\nJob ID: {job.job_id}\nTitle: {job.job_title}\nCompany Name: {job.company_name}\nSalary: {job.salary}\nLocation: {job.location}\nDate of Exam: {job.date_exam}\nVenue: {job.venue}\n\nThank you for your interest.\n\nBest regards,\nThe PVG Placement Cell'
+            from_email = "aniketsonkamble07@gmail.com"
+            to_email = [student.email]
+            send_mail(subject, message, from_email, to_email, fail_silently=False)
+
+            return redirect('student_home')
 
     except JobDetail.DoesNotExist:
         messages.error(request, 'Job does not exist.')
@@ -281,6 +311,8 @@ def applied_jobs(request):
             applied_time=F('jobapplication__applied_time')
         )
         print(job_applications)
+
+
         return render(request, 'applied_jobs.html', {'job_applications': job_applications})
     else:
         # Redirect or handle case where CRN number is not in session
@@ -300,24 +332,35 @@ def update_job(request, job_id):
     return render(request, "update_job.html", {'data': data})
 
 def do_update_job(request, job_id, page=1):
-    job_id=request.POST.get("job_id")
-    job_title=request.POST.get("job_title")
-    company_name=request.POST.get("company_name")
-    comany_logo=request.POST.get("company_logo")
-    required_branch=request.POST.get("required_branch")
-    salary=request.POST.get("salary")
-    location=request.POST.get("location")
-    CGPA=request.POST.get("CGPA")
+    job_title = request.POST.get("job_title")
+    company_name = request.POST.get("company_name")
+    company_logo = request.FILES.get("company_logo")
+    required_branch = request.POST.getlist("required_branch")
+    salary = request.POST.get("salary")
+    location = request.POST.get("location")
+    CGPA = request.POST.get("CGPA")
+    required_marks = request.POST.get("required_marks")
+    date_exam = request.POST.get("date_exam")
+    date_last = request.POST.get("date_last")
+    venue = request.POST.get("venue")
 
-    data=JobDetail.objects.get(pk=job_id)
-
-    data.job_id=job_id
-    data.job_title=job_title
-    data.company_name=company_name
-    data.required_branch=required_branch
-    data.location=location
-    data.CGPA=CGPA
+    data = JobDetail.objects.get(pk=job_id)
+    
+    if company_logo:
+        data.company_logo = company_logo
+    
+    data.job_title = job_title
+    data.company_name = company_name
+    data.required_branch = required_branch
+    data.salary = salary
+    data.location = location
+    data.CGPA = CGPA
+    data.required_marks = required_marks
+    data.date_exam = date_exam
+    data.date_last = date_last
+    data.venue = venue
     data.save()
+
     return redirect("job_list_admin", page=page)
    
 
@@ -418,3 +461,29 @@ def download_application_excel(request, job_id):
         return response
     else:
         return HttpResponse('Error generating Excel file', status=500)
+def placement_list(request):
+    placements = Placement.objects.all()
+    return render(request, 'placement_list.html', {'placements': placements})
+
+def add_placement(request):
+    if request.method == 'POST':
+        # Create a form instance and populate it with data from the request:
+        form = PlacementForm(request.POST)
+        # Check if the form is valid:
+        if form.is_valid():
+            # Save the form data to the database:
+            form.save()
+            # Redirect to a success page:
+            print("Form saved successfully")  # Debug statement
+            return redirect('student_home')  # Replace 'student_home' with the name of your success page URL
+        else:
+            print("Form is not valid")  # Debug statement
+    else:
+        # If a GET (or any other method) request, create a blank form:
+        crn_number = request.session.get('crn_number')
+        form = PlacementForm(initial={'student': crn_number})
+    
+    # Render the HTML template with the form data:
+    print("Rendering the template")  # Debug statement
+    return render(request, 'add_placement.html', {'form': form})
+

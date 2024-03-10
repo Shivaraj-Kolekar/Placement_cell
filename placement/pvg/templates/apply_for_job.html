@@ -43,11 +43,19 @@
     .form-label {
         font-weight: bold;
     }
+
+    .company-logo {
+        width: 300px; 
+        height: 300px; 
+    }
 </style>
 <div class="apply_for_container">
     <div class="card">
         <form method="post" action="{% url 'apply_for_job2' job_id=job_id %}">
             {% csrf_token %}
+            <div class="media-image">
+                <img src="{{ job_detail.company_logo.url}}" alt="Job Image" class="company-logo">
+            </div>
             <p class="form-label"><b>{{ job_detail.job_title }}</b></p>
             <p><b>Company:</b> {{ job_detail.company_name }}</p>
             <p><b>Salary: RS</b>{{ job_detail.salary }}</p>
@@ -55,7 +63,7 @@
             <p><b>Required Branch:</b> {{ job_detail.required_branchs }}</p>
             <p><b>Required CGPA: </b>{{ job_detail.required_CGPA }}</p>
             <p><b>Required Marks: </b>{{ job_detail.required_marks }}</p>
-            <p><b>Last Date: </b>{{ job_detail.last_date }}</p>
+            <p><b>Last Date: </b>{{ job_detail.date_last }}</p>
             <p><b>Exam Date: </b>{{ job_detail.date_exam }}</p>
             <p><b>Venue: </b>{{ job_detail.venue }}</p>
             <button type="submit">Apply</button>

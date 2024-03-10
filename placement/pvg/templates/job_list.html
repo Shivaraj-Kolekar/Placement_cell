@@ -1,21 +1,17 @@
-{%extends 'base.html'%}
-  {% block head %}
-
-  {%load static%}
+{% extends 'base.html' %}
+{% block head %}
+    {% load static %}
     <link rel="stylesheet" href="{% static 'css/job_list.css' %}">
-
+   
 {% endblock %}
-
 {% block body %}
     {% for job_detail in job_details %}
-    {%endfor%}
-
-    <div class="training-section">
+    {% endfor %}
+   
         <h1>Our Placement Cell</h1>
         <div class="container">
             {% for job_detail in job_details %}
             <div class="training-items">
-                
                 <p><b>{{ job_detail.job_title }}</b></p>
                 <p><b>Job:</b> {{ job_detail.job_id }}</p>
                 <p><b>Company:</b> {{ job_detail.company_name }}</p>
@@ -27,11 +23,7 @@
                     <p class="text-red-500">Job ID not available</p>
                 {% endif %}
             </div>
-            {%endfor%}
+            {% endfor %}
         </div>
-
-       
     </div>
-        
-
-    {%endblock%}
+{% endblock %}

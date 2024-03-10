@@ -44,5 +44,9 @@ urlpatterns = [
      path('application_list_search/',views.application_list_search,name="application_list_search"),
      path('application_list_search_result/', views.application_list_search_result ,name="application_list_search_result"),
      path('download_application_pdf/<int:job_id>/',views.download_application_pdf, name='download_application_pdf'),
-    path('download_application_excel/<int:job_id>/',views.download_application_excel, name='download_application_excel') 
+    path('download_application_excel/<int:job_id>/',views.download_application_excel, name='download_application_excel') ,
+
+
+     path('placements/', views.placement_list, name='placement_list'),
+    path('add_placement/', views.add_placement, name='add_placement'),
 ]
