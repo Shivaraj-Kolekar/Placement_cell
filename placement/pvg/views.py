@@ -1,24 +1,25 @@
 from django.http import HttpResponse
-from django.contrib.auth.models import User 
-from django.contrib.auth import authenticate, login,logout
-from .models import Student, JobDetail,JobApplication,Admin
-from django.template.loader import get_template
-from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.contrib import messages
-from .forms import StudentForm, JobDetailForm,StudentLoginForm,AdminDetailForm,PlacementForm
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.mail import send_mail
-from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.db.models import Q, F
+from django.core.exceptions import ObjectDoesNotExist
 from django.template.loader import get_template
-import pandas as pd
-import xlsxwriter
-import io
-from io import BytesIO 
-from .helpers import studentlist_pdf,studentlist_xls
-from xhtml2pdf import pisa  # Import the module for PDF generation
-from django.db.models import Q
+from .models import Student, JobDetail, JobApplication, Admin
+from .forms import StudentForm, JobDetailForm, StudentLoginForm, AdminDetailForm, PlacementForm
+from .helpers import studentlist_pdf, studentlist_xls
+from xhtml2pdf import pisa
+import logging
+from io import BytesIO
+
+
+
 def index(request):
     return render(request, 'index.html')
+    
 def signup(request):
     if request.method == 'POST':
         form = StudentForm(request.POST)
@@ -31,7 +32,8 @@ def signup(request):
                 user = User.objects.create_user(
                     username=form.cleaned_data['email'],
                     email=form.cleaned_data['email'],
-                    password=form.cleaned_data['password']    
+                    password=form.cleaned_data['password'],
+                    is_staff=False  # Assuming non-admin users are students
                 )
 
                 # Additional user profile data can be saved here
@@ -61,48 +63,36 @@ def signup(request):
 
 def student_login(request):
     if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        role = request.POST.get('role')
+        form = StudentLoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            role = form.cleaned_data['role']
 
-        # Check if the role is Student
-        if role == 'Student':
-            # Authenticate the student user
+            # Authenticate the user
             user = authenticate(request, username=email, password=password)
             if user is not None:
-                # If authenticated, login and redirect to student home page
-                login(request, user)
-                student = Student.objects.get(email=email)
-                crn_number = student.crn_number
-                request.session['crn_number'] = crn_number
-                return redirect('student_home')
+                # Check user role
+                if role == 'Student' and not user.is_staff:
+                    login(request, user)
+                    return redirect('student_home')
+                elif role == 'Admin' and user.is_staff:
+                    login(request, user)
+                    return redirect('admin_home')
+                else:
+                    error_message = "Invalid role for the provided credentials."
             else:
-                # Handle invalid credentials
                 error_message = "Invalid email or password. Please try again."
-                return render(request, 'student_login.html', {'error_message': error_message})
-        elif role == 'Admin':
-            # Authenticate the admin user
-            user = authenticate(request, username=email, password=password)
-            if user is not None:
-                # If authenticated, login and redirect to admin home page
-                login(request, user)
-                return redirect('admin_home')
-            else:
-                # Handle invalid credentials
-                error_message = "Invalid email or password for admin. Please try again."
-                return render(request, 'student_login.html', {'error_message': error_message})
-        else:
-            # Handle invalid role
-            error_message = "Invalid role. Please select a valid role."
-            return render(request, 'student_login.html', {'error_message': error_message})
     else:
-        return render(request, 'student_login.html')
+        form = StudentLoginForm()
+        error_message = None
 
+    return render(request, 'student_login.html', {'form': form, 'error_message': error_message})
 
 def my_logout(request):
     if request.user.is_authenticated:
         # Redirect to the login page
-        next_url = '/student_login'  # Or whatever your login page URL is
+        next_url = '/login'  # Or whatever your login page URL is
         response = redirect(next_url)
 
         # Clear any sensitive session data
@@ -114,12 +104,33 @@ def my_logout(request):
     return redirect('student_login')
 
 def admin_home(request):
-    return render(request, 'admin_home.html')
+    total_registrations = Student.objects.count()
+    placed_students = Student.objects.filter(placement_status='Placed').count()
+    unplaced_students = Student.objects.filter(placement_status='Not Placed').count()
+
+    department_wise_students = []
+    branches = ['IT', 'CS', 'ME', 'EE', 'ENTC', 'Printing', 'AIDS']  # Add all your department choices here
+    for branch in branches:
+        placed_count = Student.objects.filter(branch=branch, placement_status='Placed').count()
+        unplaced_count = Student.objects.filter(branch=branch, placement_status='Not Placed').count()
+        department_wise_students.append({
+            'branch': branch,
+            'placed_students': placed_count,
+            'unplaced_students': unplaced_count
+        })
+
+    context = {
+        'total_registrations': total_registrations,
+        'placed_students': placed_students,
+        'unplaced_students': unplaced_students,
+        'department_wise_students': department_wise_students
+    }
+    return render(request, 'admin_home.html', context)
 
 
 
 def add_admin(request):
-    form = AdminDetailForm()  # Instantiate the form outside of the conditional block
+    form = AdminDetailForm() 
 
     if request.method == 'POST':
         form = AdminDetailForm(request.POST, request.FILES)
@@ -142,60 +153,78 @@ def add_admin(request):
     return render(request, 'add_admin.html', {'form': form})
 
 def student_home(request):
-    return render(request,'student_home.html')
+    job_details = JobDetail.objects.all()
+    return render(request, 'student_home.html', {'job_details': job_details})
+
+
+
 
 def studentlist(request, page=1):
-    search_query = request.GET.get('q')  # Get the search query parameter
-    if search_query:  # If there is a search query
-        ServiceData = Student.objects.filter(
-            Q(crn_number__icontains=search_query) | Q(name__icontains=search_query) | Q(branch__icontains=search_query)
-        ).order_by('crn_number')
-    else:
-        ServiceData = Student.objects.all().order_by('crn_number')
+    # Fetch all Student objects from the database
+    students = Student.objects.all()
 
-
-    paginator = Paginator(ServiceData, 10)
+    # Paginate the queryset
+    paginator = Paginator(students, 10)
     page_number = request.GET.get('page')
-    ServiceDataFinal = paginator.get_page(page_number)
-    data = {'ServiceData': ServiceDataFinal, 'search_query': search_query}
-    return render(request, 'studentlist.html', data)
+    ServiceData = paginator.get_page(page_number)
 
+    # Pass the paginated queryset to the template context
+    context = {'ServiceData': ServiceData}
+    return render(request, 'studentlist.html', context)
 
 
 def delete_std(request, crn_number, page=1):
-    student = Student.objects.get(pk=crn_number)
-    user = student.user  
+    try:
+        student = Student.objects.get(pk=crn_number)
+    except Student.DoesNotExist:
+        return HttpResponse("Student not found", status=404)
 
+    # Check if the student has an associated user before trying to delete it
+    if hasattr(student, 'user') and student.user is not None:
+        student.user.delete()
+
+    # Delete the Student object
     student.delete()
 
-    if user:
-        user.delete()
-
     return redirect("studentlist", page=page)
+    
 
 def update_std(request, crn_number):
     data = Student.objects.get(pk=crn_number)
     return render(request, "update_std.html", {'data': data})
 
 def do_update_std(request, crn_number, page=1):
-    crn_number=request.POST.get("crn_number")
-    name=request.POST.get("name")
-    email=request.POST.get("email")
-    branch=request.POST.get("branch")
-    year=request.POST.get("year")
-    CGPA=request.POST.get("CGPA")
-
-    data=Student.objects.get(pk=crn_number)
-
-    data.crn_number=crn_number
-    data.name=name
-    data.email=email
-    data.branch=branch
-    data.year=year
-    data.CGPA=CGPA
-    data.save()
+    # Get the student instance
+    student_instance = get_object_or_404(Student, pk=crn_number)
+    
+    # Update the instance with data from the POST request
+    student_instance.name = request.POST.get("name")
+    student_instance.email = request.POST.get("email")
+    student_instance.branch = request.POST.get("branch")
+    student_instance.year = request.POST.get("year")
+    student_instance.CGPA = request.POST.get("CGPA")
+    student_instance.gender = request.POST.get("gender")
+    student_instance.mobile_number = request.POST.get("mobile_number")
+    student_instance.aggregate_marks = request.POST.get("aggregate_marks")
+    student_instance.mark_10th = request.POST.get("mark_10th")
+    student_instance.mark_12th = request.POST.get("mark_12th")
+    student_instance.diploma_marks = request.POST.get("diploma_marks")
+    student_instance.year_down = request.POST.get("year_down")
+    student_instance.active_backlog = request.POST.get("active_backlog")
+    student_instance.placement_status = request.POST.get("placement_status")
+    student_instance.placement_type = request.POST.get("placement_type")
+    student_instance.company_name = request.POST.get("company_name")
+    
+    # Check if salary is empty, then assign default value '00'
+    salary = request.POST.get("salary")
+    
+    # Check if salary is None or empty string, then assign default value '00'
+    if salary is None or salary == 'None':
+        salary = '00'
+    student_instance.salary = salary
+    student_instance.save()
+ 
     return redirect("studentlist", page=page)
-   
 
 def add_job_details(request):
     if request.method == 'POST':
@@ -206,15 +235,9 @@ def add_job_details(request):
 
             # Get the list of selected branches from the form
             selected_branches = request.POST.getlist('required_branchs')
-            # Convert the list to a comma-separated string before saving to the database
-            job.required_branchs = ', '.join(selected_branches)
-
+            job.required_branchs = ''.join(selected_branches)
             job.save()
-
-            # Retrieve all students
             students = Student.objects.all()
-
-            # Send email to all students
             subject = 'New Job Opening Alert'
             for student in students:
                 message = f'Dear {student.name},\n\nA new job opening has been posted: "{job.job_title}". Here are the job details:\n\nJob ID: {job.job_id}\nTitle: {job.job_title}\nCompany Name: {job.company_name}\nSalary: {job.salary}\nLocation: {job.location}\nDate of Exam: {job.date_exam}\nVenue: {job.venue}\n\nThank you for your interest.\n\nFor more details, visit our website:  \n\nBest regards,\nThe PVG Placement Cell'
@@ -222,10 +245,7 @@ def add_job_details(request):
                 to_email = student.email
                 send_mail(subject, message, from_email, [to_email], fail_silently=False)
 
-            return redirect('job_list_admin', page=1)  # Redirect to the home page or any other desired page
-        else:
-            # Display form errors in case of validation failure
-            print(form.errors)
+            return redirect('job_list_admin', page=1)  
     else:
         form = JobDetailForm()
 
@@ -246,85 +266,82 @@ def apply_for_job(request, job_id):
     context = {'job_detail': job_detail, 'job_id': job_id}  # Pass job_id to the context
     return render(request, 'apply_for_job.html', context)
 
-
-import logging
-
 def apply_for_job2(request, job_id):
-    logger = logging.getLogger(__name__)  # Creating a logger instance
+    logger = logging.getLogger(__name__)
 
-    # Retrieve crn_number from the session
     crn_number = request.session.get('crn_number')
-    print(crn_number)
-
     if crn_number is None:
         messages.error(request, 'CRN number is missing from the session.')
-        return redirect('job_list')
+        return redirect('student_home')
 
     try:
         job = JobDetail.objects.get(pk=job_id)
         student = Student.objects.get(crn_number=crn_number)
         
-        logger.debug(f"Job: {job}, Student: {student}")  # Add this line for debugging
-
         existing_application = JobApplication.objects.filter(student=student, job=job).exists()
         
         if existing_application:
-            messages.warning(request, 'You have already applied for this job.')
-            return redirect('job_list')
-        else:
-            job_application = JobApplication(student=student, job=job)
-            job_application.save()
-           
-            messages.success(request, 'Successfully applied for the job.')
-
-            # Send notification email
-            subject = 'Job Application Confirmation'
-            message = f'Dear {student.name},\n\nYou have successfully applied for the job "{job.job_title}". Here are the job details:\n\nJob ID: {job.job_id}\nTitle: {job.job_title}\nCompany Name: {job.company_name}\nSalary: {job.salary}\nLocation: {job.location}\nDate of Exam: {job.date_exam}\nVenue: {job.venue}\n\nThank you for your interest.\n\nBest regards,\nThe PVG Placement Cell'
-            from_email = "aniketsonkamble07@gmail.com"
-            to_email = [student.email]
-            send_mail(subject, message, from_email, to_email, fail_silently=False)
-
+            messages.error(request, 'You have already applied for this job.')
             return redirect('student_home')
 
+        if student.placement_status == "Placed":
+            if student.salary + 2.5 >= job.salary:
+                messages.error(request, 'Your salary is not sufficient to apply for this job.')
+                return redirect('student_home')
+        else:
+            if job.required_branchs and student.branch not in job.required_branchs:
+                messages.error(request, 'Your branch does not match the required branch for this job.')
+                return redirect('student_home')
+
+            if job.required_CGPA and student.CGPA < job.required_CGPA:
+                messages.error(request, 'Your CGPA is below the required CGPA for this job.')
+                return redirect('student_home')
+
+            if job.required_marks and student.aggregate_marks < job.required_marks:
+               messages.error(request, 'Your aggregate marks are below the required aggregate marks for this job.')
+               return redirect('student_home')
+
+        job_application = JobApplication(student=student, job=job)
+        job_application.save()
+        messages.success(request, 'Successfully applied for the job.')
+
+        # Sending email confirmation
+        subject = 'Job Application Confirmation'
+        message = f'Dear {student.name},\n\nYou have successfully applied for the job "{job.job_title}". Here are the job details:\n\nJob ID: {job.job_id}\nTitle: {job.job_title}\nCompany Name: {job.company_name}\nSalary: {job.salary}\nLocation: {job.location}\nDate of Exam: {job.date_exam}\nVenue: {job.venue}\n\nThank you for your interest.\n\nBest regards,\nThe PVG Placement Cell'
+        from_email = "aniketsonkamble07@gmail.com"
+        to_email = [student.email]
+        send_mail(subject, message, from_email, to_email, fail_silently=False)
+
+        return redirect('student_home')
+    
     except JobDetail.DoesNotExist:
         messages.error(request, 'Job does not exist.')
-        return redirect('job_list')
-
     except Student.DoesNotExist:
         messages.error(request, 'Student does not exist.')
-        return redirect('job_list')
-
     except Exception as e:
         messages.error(request, f'An error occurred: {str(e)}')
-        logger.error(f'An error occurred: {str(e)}')  # Log the error
-        return redirect('job_list')
+        logger.error(f'An error occurred: {str(e)}')
+    return redirect('student_home')
 
-from django.db.models import F  
+
 def applied_jobs(request):
     crn_number = request.session.get('crn_number')  
-    print(crn_number)
     if crn_number:
         student = JobApplication.objects.filter(student__crn_number=crn_number)
-        job_ids = student.values_list('job_id', flat=True)  # Extract job IDs from student queryset
+        job_ids = student.values_list('job_id', flat=True)  
         job_applications = JobDetail.objects.filter(job_id__in=job_ids)
         job_applications = job_applications.annotate(
             applied_time=F('jobapplication__applied_time')
         )
-        print(job_applications)
-
 
         return render(request, 'applied_jobs.html', {'job_applications': job_applications})
     else:
-        # Redirect or handle case where CRN number is not in session
         return HttpResponse("CRN number not found in session.")
-
-#Job update and delete section 
 
 
 def delete_job(request, job_id,page=1):
     s = JobDetail.objects.get(pk=job_id)
     s.delete()
-
     return redirect("job_list_admin",page=page)
 
 def update_job(request, job_id):
@@ -335,10 +352,10 @@ def do_update_job(request, job_id, page=1):
     job_title = request.POST.get("job_title")
     company_name = request.POST.get("company_name")
     company_logo = request.FILES.get("company_logo")
-    required_branch = request.POST.getlist("required_branch")
+    required_branchs = request.POST.getlist("required_branchs")
     salary = request.POST.get("salary")
     location = request.POST.get("location")
-    CGPA = request.POST.get("CGPA")
+    required_CGPA= request.POST.get("required_CGPA")
     required_marks = request.POST.get("required_marks")
     date_exam = request.POST.get("date_exam")
     date_last = request.POST.get("date_last")
@@ -351,10 +368,10 @@ def do_update_job(request, job_id, page=1):
     
     data.job_title = job_title
     data.company_name = company_name
-    data.required_branch = required_branch
+    data.required_branchs = required_branchs
     data.salary = salary
     data.location = location
-    data.CGPA = CGPA
+    data.required_CGPA = required_CGPA
     data.required_marks = required_marks
     data.date_exam = date_exam
     data.date_last = date_last
@@ -371,6 +388,7 @@ def job_list_admin(request, page=1):
     ServiceDataFinal = paginator.get_page(page_number)
     data = {'ServiceData': ServiceDataFinal }
     return render(request, 'job_list_admin.html', data)
+
 #  Excel sheet Download
 def download_excel(request):
     queryset = Student.objects.all()
@@ -382,6 +400,7 @@ def download_excel(request):
         return response
     else:
         return HttpResponse('Error generating Excel file', status=500)
+
 # PDF Download
 def download_pdf(request):
     queryset = Student.objects.all()
@@ -410,20 +429,18 @@ def application_list_search(request):
 
 def application_list_search_result(request):
     search_applications = request.GET.get('search_applications')
-   
+    students = []
+    job_id = ''
+
     if search_applications:
-        # Assuming job_id is an integer field
         try:
-            job_id = search_applications
-            job_applications = JobApplication.objects.filter(Q(job__job_id=job_id) | Q(job__company_name=search_applications))
+            job_id = int(search_applications)
+            job_applications = JobApplication.objects.filter(Q(job__job_id=job_id) | Q(job__job_title__icontains=search_applications))
             students = [job_app.student for job_app in job_applications]
         except ValueError:
             # Handle cases where the search term is not a valid integer
-            students = []
-            job_id = ''  # Set job_id to empty string if search term is not valid
-    else:
-        students = []
-        job_id = ''  # Set job_id to empty string if search term is not provided
+            job_applications = JobApplication.objects.filter(job__job_title__icontains=search_applications)
+            students = [job_app.student for job_app in job_applications]
 
     context = {
         'students': students,
@@ -432,7 +449,6 @@ def application_list_search_result(request):
     return render(request, 'application_list_search_result.html', context)
 
 
-from django.shortcuts import get_object_or_404
 def download_application_pdf(request,job_id):
     job_application = get_object_or_404(JobApplication, job__job_id=job_id)
     
@@ -465,25 +481,19 @@ def placement_list(request):
     placements = Placement.objects.all()
     return render(request, 'placement_list.html', {'placements': placements})
 
-def add_placement(request):
-    if request.method == 'POST':
-        # Create a form instance and populate it with data from the request:
-        form = PlacementForm(request.POST)
-        # Check if the form is valid:
-        if form.is_valid():
-            # Save the form data to the database:
-            form.save()
-            # Redirect to a success page:
-            print("Form saved successfully")  # Debug statement
-            return redirect('student_home')  # Replace 'student_home' with the name of your success page URL
-        else:
-            print("Form is not valid")  # Debug statement
-    else:
-        # If a GET (or any other method) request, create a blank form:
-        crn_number = request.session.get('crn_number')
-        form = PlacementForm(initial={'student': crn_number})
-    
-    # Render the HTML template with the form data:
-    print("Rendering the template")  # Debug statement
-    return render(request, 'add_placement.html', {'form': form})
 
+
+def add_placement(request):
+    crn_number = request.session.get('crn_number')
+    student = Student.objects.get(pk=crn_number)
+    
+    if request.method == 'POST':
+        form = PlacementForm(request.POST, instance=student)
+        if form.is_valid():
+            form.save()
+            return redirect('student_home')
+
+    else:
+        form = PlacementForm(instance=student)
+    
+    return render(request, 'add_placement.html', {'form': form})

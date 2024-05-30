@@ -1,125 +1,106 @@
-{%extends 'base.html'%}
-  {% block head %}
-  {%load static %}
-  <link rel="stylesheet" href="{% static 'css/signup.css' %}">
-  {%endblock%}
-  {%block body %}
-  <div class="container">
-    
-    <h1 class="form-title">Student Details</h1>
-     <!-- Display error messages -->
-     {% if messages %}
-     <ul>
-         {% for message in messages %}
-             <li>{{ message }}</li>
-         {% endfor %}
-     </ul>
- {% endif %}
- <form action="{% url 'do_update_std' data.crn_number %}" method="post" enctype="multipart/form-data">
+{% extends "base_admin.html" %}
+{%block head %}
+
+{%load static%}
+<link rel="stylesheet" href="{% static 'css/signup.css' %}">
+{%endblock%}
+
+{% block body %}
+<form id="signup-form" action="{% url 'do_update_std' data.crn_number %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
-            
-            <div class="main-user-info">
-                <div class="user-input-box">
-                   
-                    <label for="crn_number" >CRN Number</label>
-                    <input type="text" id="crn_number" name="crn_number" value='{{data.crn_number}}' readonly>
-                </div>
-                <div class="user-input-box">
-                    <label for="name" class="">Name</label>
-                    <input type="text" id="name" name="name" placeholder="EnterName"  value='{{data.name}}' required>
-                </div>
-                <div class="user-input-box">
-                    <label for="email" class="">Username</label>
-                    <input type="email" id="email" name="email"  value='{{data.email}}' readonly>
-                </div>
-                
-                <div class="user-input-box">
-                    <label for="gender" class="">Gender</label>
-                    <select id='gender' name='gender'  value='{{data.gender}}' required>
-                        <option value='Male'>Male</option>
-                        <option value='Female'>Female</option>
-                    </select>
-                </div>
-                <div class="user-input-box">
-                    <label for="branch" class="">Branch</label>
-                    <select id='branch' name='branch'  value='{{data.branch}}' required>
-                        <option value='IT'>Information Technology</option>
-                        <option value='CS'>Computer Science</option>
-                        <option value='EE'>Electrical Engineering</option>
-                        <option value='ENTC'>ENTC</option>
-                        <option value='ME'>Mechnical Engineering</option>
-                        <option value='Printing'>Printing</option>
-                        <option value='AIDS'>AIDS</option>
+  <!-- Step 1: Personal Information -->
+  <div class="step" id="step1">
+    <h2>Step 1: Personal Information</h2>
+    <label for="crn_number">CRN Number:</label>
+    <input type="text" id="crn_number" name="crn_number" value='{{data.crn_number}}' readonly><br>
+    <label for="email">Email</label>
+	<input type="email" id="email" name="email" placeholder="Enter College Email Id"value='{{data.email}}' required><br>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" placeholder="Enter Your Name"value='{{data.name}}' required><br>
+    <label for="gender">Gender:</label>
+    <select id="gender" name="gender" value='{{data.gender}}' required>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select><br>
+    <label for="branch">Branch:</label>
+    <select id="branch" name="branch"  value='{{data.branch}}' required>
+      <option value="IT">Information Technology</option>
+      <option value="CS">Computer Science</option>
+      <option value="EE">Electrical Engineering</option>
+      <option value="ENTC">ENTC</option>
+      <option value="ME">Mechanical Engineering</option>
+      <option value="Printing">Printing</option>
+      <option value="AIDS">AIDS</option>
+    </select><br>
+    <label for="year">Class:</label>
+    <select id="year" name="year" value='{{data.year}}' required>
+      <option value="FE">First Year</option>
+      <option value="SE">Second Year</option>
+      <option value="TE">Third Year</option>
+      <option value="BE">Final Year</option>
+    </select><br>
+    <label for="mobile_number">Mobile Number:</label>
+    <input type="text" id="mobile_number" name="mobile_number" placeholder="Enter Mobile Number" value='{{data.mobile_number}}' pattern="[0-9]{10}" required>
 
-                    </select>
-                </div>
+    <button type="button" onclick="nextStep(1)">Next</button>
+  </div>
 
-                <div class="user-input-box">
-                    <label for="year" class="">Class</label>
-                    <select id='year' name='year'  value='{{data.year}}' required>
-                        <option value='FE'>First Year</option>
-                        <option value='SE'>Second Year</option>
-                        <option value='TE'>Third Year</option>
-                        <option value='BE'>Final Year</option>
-                    </select>
-                </div>
-                 
-                <div class="user-input-box">
-                    <label for="mobile_number" class="">Mobile Number</label>
-                    <input type="text" id="mobile_number" name="mobile_number"placeholder="Enter Mobile Number"  value='{{data.mobile_number}}' required>
-                </div>
-                <div class="user-input-box">
-                    <label for="CGPA" class="">CGPA</label>
-                    <input type="CGPA" id="CGPA" name="CGPA" placeholder="Enter Your CGPA"  value='{{data.CGPA}}' required>
-                </div>
-                <div class="user-input-box">
-                    <label for="aggregate_marks" class="">Aggregate Marks</label>
-                    <input type="text" id="aggregate_marks" name="aggregate_marks" placeholder="Enter Aggregate Marks" value='{{data.aggregate_marks}}'  required>
-                </div>
-                <div class="user-input-box">
-                  <label for="mark_10th" >10th Marks</label>
-                  <input type="text" id="mark_10th" name="mark_10th" placeholder="Enter 10th Marks" value='{{data.mark_10th}}' required>
-              </div>
-            
-              <div class="user-input-box">
-                  <label for="mark_12th">12th Marks</label>
-                  <input type="text" id="mark_12th" name="mark_12th" placeholder="Enter 12th Marks"  value='{{data.mark_12th}}'>
-              </div>
-              <div class="user-input-box">
-                  <label for="diploma_marks" >Diploma Marks</label>
-                  <input type="text" id="diploma_marks" name="diploma_marks" placeholder="Enter Diploma Marks" value='{{data.diploma_marks}}'>
-              </div>
-                
-             
-              <div class="user-input-box">
-                <label for="year_down" >Year Down</label>
-                <select id='year_down' name='year_down'  value='{{data.year_down}}' required>
-                    <option value='YES'>Yes</option>
-                    <option value='NO'>No</option>
-                </select>
-            </div>
-            <div class="user-input-box">
-                <label for="active_backlog" >Active Backlog</label>
-                <select id='active_backlog' name='active_backlog'  value='{{data.active_backlog}}' required>
-                    <option value='YES'>Yes</option>
-                    <option value='NO'>No</option>
-                </select>
-            </div>
+  <!-- Step 2: Academic Details -->
+  <div class="step" id="step2">
+    <h2>Step 2: Academic Details</h2>
+    <label for="CGPA">CGPA:</label>
+    <input type="text" id="CGPA" name="CGPA" placeholder="Enter Your CGPA" value='{{data.CGPA}}' required><br>
+    <label for="aggregate_marks">Aggregate Marks:</label>
+    <input type="text" id="aggregate_marks" name="aggregate_marks" placeholder="Enter Aggregate Marks" value='{{data.aggregate_marks}}' required><br>
+    <label for="mark_10th">10th Marks:</label>
+    <input type="text" id="mark_10th" name="mark_10th" placeholder="Enter 10th Marks" value='{{data.mark_10th}}' required><br>
+    <label for="mark_12th">12th Marks:</label>
+    <input type="text" id="mark_12th" name="mark_12th" placeholder="Enter 12th Marks" value='{{data.mark_12th}}'><br>
+    <label for="diploma_marks">Diploma Marks:</label>
+    <input type="text" id="diploma_marks" name="diploma_marks" placeholder="Enter Diploma Marks" value='{{data.diploma_marks}}'><br>
+    <label for="year_down">Year Down:</label>
+    <select id="year_down" name="year_down"  value='{{data.year_down}}' required>
+      <option value="YES">Yes</option>
+      <option value="NO">No</option>
+    </select><br>
+    <label for="active_backlog">Active Backlog:</label>
+    <select id="active_backlog" name="active_backlog" value='{{data.active_backlog}}' required>
+      <option value="YES">Yes</option>
+      <option value="NO">No</option>
+    </select>
+    <input type="hidden" id="remarks" name="remarks"  value='{{data.remarks}}'>
+    <button type="button" onclick="prevStep(2)">Previous</button>
+    <button type="button" onclick="nextStep(2)">Next</button>
+  </div>
 
-            <div class="user-input-box">
-                <label for="Remark">Remark</label>
-                <input type="text" id="remarks" name="remarks" value='{{data.remarks}}'>
-            </div>
-            <input type="hidden" id="remarks" value="No" name="remarks">    
-        
-            
-            </div>
-            <div class="form-submit-btn">
-                <input type="submit" value="Register">
-              </div>
-           
-        </form>
+  <!-- Step 3: Placement Status -->
+<div class="step" id="step3">
+    <h2>Step 3: Placement Status</h2>
+    <label for="placement_status">Placement Status:</label>
+    <select id="placement_status" name="placement_status" value='{{data.placement_status}}' required onchange="toggleFields()">
+      <option value="Not Placed">Not Placed</option>
+      <option value="Placed">Placed</option>
+    </select><br>
+    <div class="user-input-box hidden" id="additionalFields">
+      <label for="placement_type">Placement Type:</label>
+      <select id="placement_type" name="placement_type" value='{{data.placement_type}}'>
+        <option value="On Campus">On Campus</option>
+        <option value="Off Campus">Off Campus</option>
+      </select><br>
+      <label for="company_name">Company Name:</label>
+      <input type="text" id="company_name" name="company_name" value='{{data.company_name}}'><br>
+      <label for="salary">Salary:</label>
+      <input type="text" id="salary" name="salary" value='{{data.salary}}'><br>
     </div>
-  {% block footer%}
-  {%endblock%}
+  
+    <button type="button" onclick="prevStep(3)">Previous</button>
+    <button type="submit">Submit</button>
+  </div>
+  
+  <a href="{% url 'student_login' %}">Sign In</a>
+</form>
+
+
+<script src="{% static 'js/signup.js' %}"></script>
+
 {%endblock%}

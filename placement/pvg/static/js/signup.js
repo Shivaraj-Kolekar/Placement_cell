@@ -1,93 +1,48 @@
-const form = document.getElementById('signupForm');
-const sections = form.querySelectorAll('.form-section');
-const prevButtons = form.querySelectorAll('.prevBtn');
-const nextButtons = form.querySelectorAll('.nextBtn');
-const submitBtn = document.querySelector('.submitBtn');
-let currentStep = 0;
+let currentStep = 1;
+const form = document.getElementById('signup-form');
+const steps = form.getElementsByClassName('step');
 
-function showStep(stepIndex) {
-    sections.forEach((section, index) => {
-        if (index === stepIndex) {
-            section.style.display = 'block';
-        } else {
-            section.style.display = 'none';
-        }
-    });
-
-    // Show/hide buttons based on current step
-    if (currentStep === 0) {
-        prevButtons.forEach(button => {
-            button.style.display = 'none';
-        });
-        nextButtons.forEach(button => {
-            button.style.display = 'inline-block';
-        });
-        submitBtn.style.display = 'none';
-    } else if (currentStep === sections.length - 1) {
-        prevButtons.forEach(button => {
-            button.style.display = 'inline-block';
-        });
-        nextButtons.forEach(button => {
-            button.style.display = 'none';
-        });
-        submitBtn.style.display = 'inline-block';
+function showStep(stepNumber) {
+  for (let i = 0; i < steps.length; i++) {
+    if (i + 1 === stepNumber) {
+      steps[i].style.display = 'block';
     } else {
-        prevButtons.forEach(button => {
-            button.style.display = 'inline-block';
-        });
-        nextButtons.forEach(button => {
-            button.style.display = 'inline-block';
-        });
-        submitBtn.style.display = 'none';
+      steps[i].style.display = 'none';
     }
+  }
 }
 
-function goToNextStep() {
+function nextStep(stepNumber) {
+  if (stepNumber === currentStep && currentStep < steps.length) {
     currentStep++;
     showStep(currentStep);
+  }
 }
 
-function goToPrevStep() {
+function prevStep(stepNumber) {
+  if (stepNumber === currentStep && currentStep > 1) {
     currentStep--;
     showStep(currentStep);
+  }
 }
 
-function handleSubmit(event) {
-    event.preventDefault(); // Prevent default form submission
-
-    // Collect form data
-    const formData = new FormData(form);
-
-    // Send form data to the server using fetch or XMLHttpRequest
-    fetch(form.action, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (response.ok) {
-            // Redirect or handle successful form submission
-            window.location.href = '';
-        } else {
-            // Handle error response from the server
-            console.error('Form submission failed:', response.statusText);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
-
-// Add event listener for form submission
-form.addEventListener('submit', handleSubmit);
-
-// Add event listeners for previous and next buttons
-prevButtons.forEach(button => {
-    button.addEventListener('click', goToPrevStep);
-});
-
-nextButtons.forEach(button => {
-    button.addEventListener('click', goToNextStep);
-});
-
-// Show initial step
 showStep(currentStep);
+
+function toggleFields() {
+  var placementStatus = document.getElementById("placement_status").value;
+  var additionalFields = document.getElementById("additionalFields");
+  if (placementStatus === "Placed") {
+    additionalFields.classList.remove("hidden");
+  } else {
+    additionalFields.classList.add("hidden");
+  }
+}
+var currentTime = new Date();
+
+// Format the time as per your requirement
+var formattedTime = currentTime.toISOString(); // Or any other format you prefer
+
+// Set the value of the hidden field to the formatted time
+document.getElementById("system_time").value = formattedTime; // Corrected ID to "system_time"
+
+

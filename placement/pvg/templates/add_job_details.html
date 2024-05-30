@@ -1,99 +1,90 @@
-{%extends 'base.html'%}
+{%extends 'base_admin.html'%}
   {% block head %}
   
-  {% block css %}
   {%load static %}
   <link rel="stylesheet" href="{% static 'css/signup.css' %}">
 
 {% endblock %}
 
-{%endblock%}
+
 {% block body %}
+  {% if messages %}
+  <ul>
+      {% for message in messages %}
+          <li>{{ message }}</li>
+      {% endfor %}
+  </ul>
+{% endif %}
 
-    <div class="container">
-       
-        <h1 class="form-title" >Add Job Details</h1>
-       
-                <form action="{% url 'add_job_details' %}" method="post" enctype="multipart/form-data" class="">
-                       {% csrf_token %}
-                     <div class="main-user-info">
-                    <div class="user-input-box">
-                    <label for="job_id" >Job Id</label>
-                    <input type="text" id="job_id" name="job_id" placeholder="Enter Job id" required>
-                </div>
-                <div class="user-input-box">
-                    <label for="job_title" >Job Title</label>
-                    <input type="text" id="job_title" name="job_title" placeholder="Enter Job Title" required>
-                </div>
-                <div class="user-input-box">
-                    <label for="company_name">Company Name</label>
-                    <input type="text" id="company_name" name="company_name" placeholder="Enter Company Name" required>
-                </div>
-                <div class="user-input-box">
-                    <label for="company_logo">Company Logo</label>
-                    <input type="file" id="company_logo" name="company_logo"  required>
-                </div>
-                <div class="user-input-box">
-                    <label for="location">Location</label>
-                    <input type="text" id="location" name="location" placeholder="Enter Job Location" required>
-                </div>
-                <div class="user-input-box">
-                    <label for="salary" >Salary</label>
-                    <input type="number" id="salary" name="salary" placeholder="Enter Salary" required>
-                </div>
-               
-                <div class="user-input-box">
-                    <label for="required_CGPA">Required CGPA</label>
-                    <input type="text" id="required_CGPA" name="required_CGPA" placeholder="Enter Required CGPA" required>
-                </div>
-                <div class="user-input-box">
-                    <label for="required_marks">Required Percentages</label>
-                    <input type="text" id="required_marks" name="required_marks" placeholder="Enter Required Marks" required>
-                </div>
-                <div class="user-input-box">
-                    <label for="date_exam" >Last Date </label>
-                    <input type="datetime-local" id="date_last" name="date_last" placeholder="Enter Exam Date" required>
-                </div>
-                <div class="user-input-box">
-                    <label for="date_exam">Date of Exam</label>
-                    <input type="datetime-local" id="date_exam" name="date_exam" placeholder="Enter Exam Date" required>
-                </div>
-                <div class="user-input-box">
-                    <label for="venue" >Venue</label>
-                    <input type="text" id="venue" name="venue" placeholder="Enter Venue" required>
-                </div>
-                <div class="user-input-box-1">
-                    <label >Select Branches</label>
-                    <div class="checkbox-options">
-                        <label><input type="checkbox" name="required_branchs" value="IT"> Information Technology</label>
-                        <label><input type="checkbox" name="required_branchs" value="ME"> Mechanical Engineering</label>
-                        <label><input type="checkbox" name="required_branchs" value="CS"> Computer Science</label>
-                        <label><input type="checkbox" name="required_branchs" value="EE"> Electrical Engineering</label>
-                        <label><input type="checkbox" name="required_branchs" value="ENTC"> ENTC</label>
-                        <label><input type="checkbox" name="required_branchs" value="Printing"> Printing</label>
-                        <label><input type="checkbox" name="required_branchs" value="AIDS"> AIDS</label>
-                    </div>
-                </div>
-                <input type="hidden" id="system_time" name="system_time">
-            </div>
-            <div class="form-submit-btn">
-                <input type="submit" value="Submit">
-              </div>
-        </form>
-    </div>
+<form id="signup-form" action="{% url 'add_job_details' %}" method="post" enctype="multipart/form-data">
+
+	{% csrf_token %}
+  <!-- Step 1: Personal Information -->
+  <div class="step" id="step1">
     
-    <script>
-    // Get the current system time
-    var currentTime = new Date();
+    <h2>Step 1: job Role Information</h2>
 
-    // Format the time as per your requirement
-    var formattedTime = currentTime.toISOString(); // Or any other format you prefer
+    <label for="job_id" >Job Id</label>
+    <input type="text" id="job_id" name="job_id" placeholder="Enter Job id" required><br>
+   
+    <label for="job_title" >Job Title</label>
+    <input type="text" id="job_title" name="job_title" placeholder="Enter Job Title" required><br>
 
-    // Set the value of the hidden field to the formatted time
-    document.getElementById("system_time").value = formattedTime; // Corrected ID to "system_time"
-</script>
+    <label for="company_name">Company Name</label>
+    <input type="text" id="company_name" name="company_name" placeholder="Enter Company Name" required><br>
+    <label for="company_logo">Company Logo</label>
+    <input type="file" id="company_logo" name="company_logo"  required><br>
 
+    <label for="location">Location</label>
+    <input type="text" id="location" name="location" placeholder="Enter Job Location" required><br>
 
-    {%block footer%}{%endblock%}
+    <label for="salary" >Salary</label>
+    <input type="number" id="salary" name="salary" placeholder="Enter Salary" required><br>
+
+    <button type="button" onclick="nextStep(1)">Next</button>
+  </div>
+
+  <!-- Step 2: Academic Details -->
+  <div class="step" id="step2">
+    <h2>Step 2: Academic Details</h2>
+    <label for="required_CGPA">Required CGPA</label>
+    <input type="text" id="required_CGPA" name="required_CGPA" placeholder="Enter Required CGPA" required><br>
+    
+    <label for="required_marks">Required Percentages</label>
+    <input type="text" id="required_marks" name="required_marks" placeholder="Enter Required Marks" required><br>
+
+    <label >Select Branches</label><br>
+    
+        <label><input type="checkbox" name="required_branchs" value="IT"> Information Technology</label><br>
+        <label><input type="checkbox" name="required_branchs" value="ME"> Mechanical Engineering</label><br>
+        <label><input type="checkbox" name="required_branchs" value="CS"> Computer Science</label><br>
+        <label><input type="checkbox" name="required_branchs" value="EE"> Electrical Engineering</label><br>
+        <label><input type="checkbox" name="required_branchs" value="ENTC"> ENTC</label><br>
+        <label><input type="checkbox" name="required_branchs" value="Printing"> Printing</label><br>
+        <label><input type="checkbox" name="required_branchs" value="AIDS"> AIDS</label><br><br>
+    <button type="button" onclick="prevStep(2)">Previous</button>
+    <button type="button" onclick="nextStep(2)">Next</button>
+  </div>
+
+  <!-- Step 3: Placement Status -->
+  <div class="step" id="step3">
+    <h2>Step 3: Exam Details </h2>
+
+    <label for="date_exam" >Last Date </label><br>
+    <input type="datetime-local" id="date_last" name="date_last" placeholder="Enter Exam Date" required><br>
+
+      <label for="date_exam">Date of Exam</label><br>
+      <input type="datetime-local" id="date_exam" name="date_exam" placeholder="Enter Exam Date" required><br>
+     <label for="venue" >Venue</label>
+    <input type="text" id="venue" name="venue" placeholder="Enter Venue" required><br>
+    <input type="hidden" id="system_time" name="system_time">
+
+    <button type="button" onclick="prevStep(3)">Previous</button>
+    <button type="submit">Submit</button>
+  </div>
+
+  
+</form>
+<script src="{% static 'js/signup.js' %}"></script>
+
 {%endblock%}
-

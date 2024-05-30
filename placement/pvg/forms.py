@@ -1,11 +1,11 @@
 # forms.py
 from django import forms
-from .models import Student,JobDetail,Admin,Placement
+from .models import Student,JobDetail,Admin
 
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = [ 'crn_number','email','password','name','branch','year','mobile_number','CGPA','mark_10th','mark_12th','diploma_marks','aggregate_marks','year_down','active_backlog','remarks','gender','placement_status']
+        fields = [ 'crn_number','email','password','name','branch','year','mobile_number','CGPA','mark_10th','mark_12th','diploma_marks','aggregate_marks','year_down','active_backlog','remarks','gender','placement_status','company_name', 'salary',  'placement_type']
 
 
 class StudentLoginForm(forms.Form):
@@ -21,10 +21,22 @@ class JobDetailForm(forms.ModelForm):
 
 
 class PlacementForm(forms.ModelForm):
-    class Meta:
-        model = Placement
-        fields = ['student', 'company_name', 'salary',  'placement_type']
 
+    ON_CAMPUS = 'On Campus'
+    OFF_CAMPUS = 'Off Campus'
+    PLACEMENT_CHOICES = [
+        (ON_CAMPUS, 'On Campus'),
+        (OFF_CAMPUS, 'Off Campus')
+    ]
+    placement_status = forms.CharField(max_length=100, required=False)
+    company_name = forms.CharField(max_length=100, required=False)
+    salary = forms.FloatField(required=False)
+    placement_type = forms.ChoiceField(choices=PLACEMENT_CHOICES, required=False)
+    placement_status=forms.CharField(max_length=100, required=False)
+    class Meta:
+        model = Student
+        fields = ['placement_status', 'company_name', 'salary', 'placement_type']
+        
 class AdminDetailForm(forms.ModelForm):
     class Meta:
         model = Admin

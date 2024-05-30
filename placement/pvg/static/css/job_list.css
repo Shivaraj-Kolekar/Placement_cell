@@ -4,6 +4,14 @@
     font-family: sans-serif;
 }
 
+h1 {
+    text-align: center;
+   
+}
+a{
+    text-decoration: none;
+    color: white;
+}
 .training-section {
     width: 100%;
     background-size: cover;
@@ -12,6 +20,49 @@
 .training-section h1 {
     text-align: center;
     padding: 25px 0px;
+}
+/* CSS for alert messages */
+.alert {
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+}
+
+.alert-success {
+    color: white;
+    background-color: #4caf50; /* Green background for success messages */
+    border-color: #4caf50;
+}
+
+.alert-danger {
+    color: white;
+    background-color: #ff3333; /* Red background for error messages */
+    border-color: #ff3333;
+}
+
+.alert-dismissible {
+    position: relative;
+    padding-right: 4rem;
+    margin: 0 auto; /* Center the alert */
+    max-width: 500px; /* Set a maximum width */
+}
+
+.btn-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.5rem 1rem;
+    color: inherit;
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+}
+
+/* Additional styles for success and error messages */
+.alert-danger, .alert-success {
+    font-weight: bold;
 }
 
 .container {
@@ -22,20 +73,31 @@
     justify-content: space-around;
 }
 
+/* Define keyframes animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Apply animation to .training-items */
 .training-items {
     height: auto;
-    min-height: 400px; /* Set minimum height to prevent content from overflowing */
+    min-height: 400px;
     flex-basis: 23%;
     text-align: center;
     margin: 10px 0px;
     padding: 20px 0px;
     background: white;
+    border-radius: 5px;
     box-shadow: 0px 0px 10px 3px lightgray;
+    animation: fadeIn 0.5s ease-in-out; /* Apply animation */
 }
 
-.training-items h3 {
-    padding: 10px 0px;
-}
+
 
 .training-items p {
     font-size: 15px;
@@ -49,7 +111,18 @@
     border-radius: 10px;
 }
 
-@media only screen and (min-width: 200px) and (max-width: 767px) {
+.container a,
+.container a:hover {
+    text-decoration: none;
+}
+/* Add hover effect */
+.training-items:hover {
+    transform: translateY(-10px); /* Move the card up by 5 pixels on hover */
+    transition: transform 0.3s ease; /* Add transition effect */
+}
+
+/* Mobile View */
+@media only screen and (max-width: 575px) {
     .container {
         width: 100%;
         flex-direction: column;
@@ -57,5 +130,42 @@
 
     .training-items {
         margin: 10px;
+        flex-basis: calc(100% - 20px); /* Full width for mobile */
+    }
+}
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+    .container {
+        width: 90%;
+        margin: auto;
+    }
+
+    .training-items {
+        margin: 10px;
+        flex-basis: calc(50% - 20px); /* Two items per row */
+    }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    .container {
+        width: 90%;
+        margin: auto;
+    }
+
+    .training-items {
+        margin: 10px;
+        flex-basis: calc(33.33% - 20px); /* Three items per row */
+    }
+}
+
+/* Large Desktop View */
+@media only screen and (min-width: 992px) {
+    .container {
+        width: 90%;
+        margin: auto;
+    }
+
+    .training-items {
+        margin: 10px;
+        flex-basis: calc(25% - 20px); /* Four items per row */
     }
 }

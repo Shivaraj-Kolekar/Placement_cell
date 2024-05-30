@@ -1,98 +1,95 @@
-{%extends 'base.html'%}
+{%extends 'base_admin.html'%}
   {% block head %}
   
-  {% block css %}
   {%load static %}
   <link rel="stylesheet" href="{% static 'css/signup.css' %}">
 
 {% endblock %}
 
-{%endblock%}
+
 {% block body %}
+  {% if messages %}
+  <ul>
+      {% for message in messages %}
+          <li>{{ message }}</li>
+      {% endfor %}
+  </ul>
+{% endif %}
+
+<form  id="signup-form"  action="{% url 'do_update_job' data.job_id %}" method="post" enctype="multipart/form-data">
+
+	{% csrf_token %}
+  <!-- Step 1: Personal Information -->
+  <div class="step" id="step1">
+    
+    <h2>Step 1: job Role Information</h2>
+
+    <label for="job_id" >Job Id</label>
+    <input type="text" id="job_id" name="job_id" value={{data.job_id}} required>
+    <br><br>
    
+    <label for="job_title" >Job Title</label>
+    <input type="text" id="job_title" name="job_title"  placeholder="Enter Job Title" value={{data.job_title}} required><br>
 
- <div class="container">
-     <h2  class="form-title">Modify Job Details</h2>
-     <form action="{% url 'do_update_job' data.job_id %}" method="post" enctype="multipart/form-data">
-         {% csrf_token %}
-         <div class="main-user-info">
+
+    <label for="company_name">Company Name</label>
+    <input type="text" id="company_name" name="company_name" placeholder="Enter Company Name" value={{data.company_name}} required><br>
+    <label for="company_logo">Company Logo</label>
+    <input type="file" id="company_logo" name="company_logo"  required><br>
+
+    <label for="location">Location</label>
+    <input type="text" id="location" name="location" placeholder="Enter Job Location" value={{data.location}} required><br>
+
+    <label for="salary" >Salary</label>
+    <input type="number" id="salary" name="salary" placeholder="Enter Salary" value={{data.salary}} required><br>
+
+    <button type="button" onclick="nextStep(1)">Next</button>
+  </div>
+
+  <!-- Step 2: Academic Details -->
+  <div class="step" id="step2">
+    <h2>Step 2: Academic Details</h2>
+    <label for="required_CGPA">Required CGPA</label>
+    <input type="text" id="required_CGPA" name="required_CGPA" placeholder="Enter Required CGPA" value={{data.required_CGPA}}  required><br>
     
-            <div class="user-input-box">
-            <label for="job_id" >Job Id</label>
-                             <input type="text" id="job_id" name="job_id" value={{data.job_id}} required>
-                         </div>
-                         <div class="user-input-box">
-                             <label for="job_title">Job Title</label>
-                             <input type="text" id="job_title" name="job_title" value={{data.job_title}} required>
-                         </div>
-                        
+    <label for="required_marks">Required Percentages</label>
+    <input type="text" id="required_marks" name="required_marks" placeholder="Enter Required Marks" value={{data.required_marks}} required><br>
 
-                         <div class="user-input-box">
-                             <label for="company_name" >Company Name</label>
-                             <input type="text" id="company_name" name="company_name"  value={{data.company_name}} required>
-                         </div>
-
-                         <div class="user-input-box">
-                             <label for="company_logo" >Company Logo</label>
-                             <input type="file" id="company_logo" name="company_logo"  value={{data.company_logo}} >
-                         </div>
-
-                         <div class="user-input-box">
-                             <label for="location" >Location</label>
-                             <input type="text" id="location" name="location"  value={{data.location}} required>
-                         </div>
-
-                         <div class="user-input-box">
-                             <label for="salary" >Salary</label>
-                             <input type="Number" id="salary" name="salary"  value={{data.salary}} required>
-                         </div>
-
-                        
-
-                            <div class="user-input-box">
-                                <label for="required_CGPA">Required CGPA</label>
-                                <input type="text" id="required_CGPA" name="required_CGPA" placeholder="Enter Required CGPA"  value={{data.required_CGPA}} required>
-                            </div>
-                            <div class="user-input-box">
-                                <label for="required_marks">Required Percentages</label>
-                                <input type="text" id="required_marks" name="required_marks" placeholder="Enter Required Marks" value={{data.required_marks}} required>
-                            </div>
-                            <div class="user-input-box">
-                                <label for="date_exam" >Last Date </label>
-                                <input type="datetime-local" id="date_last" name="date_last" placeholder="Enter Exam Date" value={{data.date_last}} required>
-                            </div>
-                            <div class="user-input-box">
-                                <label for="date_exam">Date of Exam</label>
-                                <input type="datetime-local" id="date_exam" name="date_exam" placeholder="Enter Exam Date" value= {{data.date_exam}} required>
-                            </div>
-                            <div class="user-input-box">
-                                <label for="venue" >Venue</label>
-                                <input type="text" id="venue" name="venue" placeholder="Enter Venue"  value= {{data.venue}} required>
-                            </div>
-
-                            <div class="user-input-box-1">
-                                <label >Select Branches</label>
-                                <div class="checkbox-options">
-                                    <label><input type="checkbox" name="required_branchs" value="IT"> Information Technology</label>
-                                    <label><input type="checkbox" name="required_branchs" value="ME"> Mechanical Engineering</label>
-                                    <label><input type="checkbox" name="required_branchs" value="CS"> Computer Science</label>
-                                    <label><input type="checkbox" name="required_branchs" value="EE"> Electrical Engineering</label>
-                                    <label><input type="checkbox" name="required_branchs" value="ENTC"> ENTC</label>
-                                    <label><input type="checkbox" name="required_branchs" value="Printing"> Printing</label>
-                                    <label><input type="checkbox" name="required_branchs" value="AIDS"> AIDS</label>
-                                </div>
+    <label >Select Branches</label><br>
     
-                        
-                         <input type="hidden" id="system_time" name="system_time">
+        <label><input type="checkbox" name="required_branchs" value="IT"> Information Technology</label><br>
+        <label><input type="checkbox" name="required_branchs" value="ME"> Mechanical Engineering</label><br>
+        <label><input type="checkbox" name="required_branchs" value="CS"> Computer Science</label><br>
+        <label><input type="checkbox" name="required_branchs" value="EE"> Electrical Engineering</label><br>
+        <label><input type="checkbox" name="required_branchs" value="ENTC"> ENTC</label><br>
+        <label><input type="checkbox" name="required_branchs" value="Printing"> Printing</label><br>
+        <label><input type="checkbox" name="required_branchs" value="AIDS"> AIDS</label><br>
+    <button type="button" onclick="prevStep(2)">Previous</button>
+    <button type="button" onclick="nextStep(2)">Next</button>
+  </div>
 
-                     </div>
-                    </div>
-                     <div class="form-submit-btn">
-                        <input type="submit" value="Modify">
-                      </div>
-     </form>
- </section>
+  <!-- Step 3: Placement Status -->
+  <div class="step" id="step3">
+    <h2>Step 3: Exam Daetails </h2>
 
- {%block footer%}{%endblock%}
+    <label for="date_last">Last Date</label><br>
+    <input type="datetime-local" id="date_last" name="date_last" placeholder="Enter Last Date" value="{% if data.date_last %}{{ data.date_last|date:'Y-m-d' }}T{{ data.date_last|date:'H:i' }}{% endif %}" required><br>
+    
+    <label for="date_exam">Date of Exam</label><br>
+    <input type="datetime-local" id="date_exam" name="date_exam" placeholder="Enter Exam Date" value="{% if data.date_exam %}{{ data.date_exam|date:'Y-m-d' }}T{{ data.date_exam|date:'H:i' }}{% endif %}" required><br>
+    
+    <label for="venue">Venue</label><br>
+    <input type="text" id="venue" name="venue" placeholder="Enter Venue" value="{{ data.venue }}" required><br><br>
+    
+    <input type="hidden" id="system_time" name="system_time">
+    
+    
+    <button type="button" onclick="prevStep(3)">Previous</button>
+    <button type="submit">Submit</button>
+  </div>
+
+  
+</form>
+<script src="{% static 'js/signup.js' %}"></script>
+
 {%endblock%}
-

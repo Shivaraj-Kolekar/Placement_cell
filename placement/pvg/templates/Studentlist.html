@@ -1,112 +1,85 @@
-{% extends "base.html" %}
-    {%block head %}
-        {%load static %}
-        <link rel="stylesheet" href="{% static 'css/studentlist.css' %}">
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  {%endblock%}
-   {%block body%}
-{%block nav_student %}
-<nav>
-    <input type="checkbox" id="check" name="" value="">
-    <label for="check" id="checkbtn"><i class="fa fa-bars"></i></label>
-    <label class="logo">PVG</label>
-    <ul>
-        <li><a class="navbar-link" href="{%url 'admin_home'%}">Home</a></li>
-    <li><a class="navbar-link" href="#">Profile</a></li>
-    <li><a class="navbar-link" href="{% url 'job_list_admin' page=1 %}">Job List</a></li>
-    <li><a class="navbar-link" href="{% url 'add_job_details' %}">Add Job</a></li>
-   
-    <li><a class="navbar-link" href="{% url 'studentlist' page=1 %}">Student List</a></li>
-    <li><a class="navbar-link" href="{% url 'application_list_search' %}">Application List</a></li>
-   
-    <li><a class="navbar-link" href="{%url 'my_logout'%}" >Logout</a></li>
-    </ul>
-</nav>
-{%endblock%}
-<div class="container">
+{% extends "base_admin.html" %}
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/studentlist.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css">
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">   
     <h1>Student List</h1>
+    <div class="table-responsive"> 
+        <table id="example" class="table table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>CRN Number</th>
+                    <th>Name</th> 
+                    <th>Branch</th> 
+                    <th>Year</th> 
+                    <th>Gender</th> 
+                    <th>Email</th>
+                    <th>Mobile Number</th>             
+                    <th>CGPA</th>
+                    <th>Aggregate Marks</th>                
+                    <th>10th Marks</th>
+                    <th>12th Marks</th>                
+                    <th>Diploma Marks</th>
+                    <th>Active Backlog</th>               
+                    <th>Year Down</th>
+                    <th>Remark</th>
+                    <th>Delete</th>
+                    <th>Update</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in ServiceData %}
+                <tr>
+                    <td>{{ item.crn_number }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.branch }}</td>
+                    <td>{{ item.year }}</td>
+                    <td>{{ item.gender }}</td>
+                    <td>{{ item.email }}</td>
+                    <td>{{ item.mobile_number }}</td>
+                    <td>{{ item.CGPA }}</td>
+                    <td>{{ item.aggregate_marks }}</td>
+                    <td>{{ item.mark_10th }}</td>
+                    <td>{{ item.mark_12th }}</td>
+                    <td>{{ item.diploma_marks }}</td>
+                    <td>{{ item.active_backlog }}</td>
+                    <td>{{ item.year_down }}</td>
+                    <td>{{ item.remarks }}</td>
 
-    <form method="GET" action="{% url 'studentlist' page=1 %}">
-        <input type="text" name="q" placeholder="Search">
-        <button type="submit">Search</button>
-    </form>
+                    <td>
+                        <a href="{% url 'delete_std' item.crn_number %}" class="error"><i class="fa-solid fa-trash"></i></a>
+                    </td>
+                    <td>
+                        <a href="{% url 'update_std' item.crn_number %}" class="success"><i class="fa-solid fa-pen"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>CRN Number</th>
-                <th>Name</th> 
-                <th>Branch</th> 
-                <th>Year</th> 
-                <th>Gender</th> 
-                <th>Email</th>
-                <th>Mobile Number</th>             
-                <th>CGPA</th>
-                <th>Aggregate Marks </th>                
-                <th>10th Marks</th>
-                <th>12th Marks</th>                
-                <th>Diploma Marks</th>
-                <th>Active Backlog</th>               
-                <th>Year Down</th>
-                <th>Remark</th>
-                <th>Delete</th>
-                <th>Update</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in ServiceData %}
-            <tr>
-                <td>{{ item.crn_number }}</td>
-                <td>{{ item.name }}</td>
-                <td>{{ item.branch }}</td>
-                <td>{{ item.year }}</td>
-                <td>{{ item.gender }}</td>
-                <td>{{ item.email }}</td>
-                <td>{{ item.mobile_number }}</td>
-                <td>{{ item.CGPA }}</td>
-                <td>{{ item.aggregate_marks }}</td>
-                <td>{{ item.mark_10th }}</td>
-                <td>{{ item.mark_12th }}</td>
-                <td>{{ item.diploma_marks }}</td>
-                <td>{{ item.active_backlog }}</td>
-                <td>{{ item.year_down }}</td>
-                <td>{{ item.remarks }}</td>
-
-                <td>
-                    <a href="{% url 'delete_std' item.crn_number %}" class="error">Delete</a>
-                </td>
-                <td>
-                    <a href="{% url 'update_std' item.crn_number %}" class="success ">Modify</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <nav>
-        <ul class="pagination">
-            {% if ServiceData.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page=1" tabindex="-1">First</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ ServiceData.previous_page_number }}" tabindex="-1">Previous</a>
-                </li>
-            {% endif %}
-            {% for i in ServiceData.paginator.page_range %}
-                <li class="page-item {% if i == ServiceData.number %}active{% endif %}">
-                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
-                </li>
-            {% endfor %}
-            {% if ServiceData.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ ServiceData.next_page_number }}">Next</a>
-                </li>
-            {% endif %}
-        </ul>
-    </nav>
-
-    <a href="{% url 'download_excel' %}" class="btn-primary">Download Excel</a>
-    <a href="{% url 'download_pdf' %}" class="btn-primary">Download PDF</a>
+    <a href="{% url 'download_excel' %}" class="btn btn-primary">Download Excel</a>
+    <a href="{% url 'download_pdf' %}" class="btn btn-primary">Download PDF</a>
 </div>
-{%endblock%}
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
+<script>
+    $(document).ready(function() {
+        var table = $('#example').DataTable();
+
+        // Add search functionality
+        $('#example_filter input').on('keyup', function () {
+            table.search(this.value).draw();
+        });
+    });
+</script>
+{% endblock %}

@@ -7,8 +7,9 @@ from .import views
 
 urlpatterns = [
      path("",views.index,name="PVG HOME"),
+     
      path('signup/', views.signup, name='signup'),
-     path('student_login/',views.student_login,name='student_login'),
+     path('login/',views.student_login,name='student_login'),
      path("student_home/",views.student_home,name="student_home"),
      path("my_logout/",views.my_logout,name="my_logout"),
 

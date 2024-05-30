@@ -10,15 +10,15 @@
 :root{
     /* ===== Colors ===== */
     --primary-color: #0E4BF1;
-    --panel-color: #FFF;
+    --panel-color: hsl(246, 59%, 53%);
     --text-color: #000;
     --black-light-color: #707070;
-    --border-color: #e6e5e5;
-    --toggle-color: #DDD;
+    --border-color: #452525;
+    --toggle-color: #361010;
     --box1-color: #4DA3FF;
     --box2-color: #FFE6AC;
-    --box3-color: #E7D1FC;
-    --title-icon-color: #fff;
+    --box3-color: #4d0a8c;
+    --title-icon-color: #103aad;
     
     /* ====== Transition ====== */
     --tran-05: all 0.5s ease;
@@ -36,18 +36,18 @@ body.dark{
     --text-color: #CCC;
     --black-light-color: #CCC;
     --border-color: #4D4C4C;
-    --toggle-color: #FFF;
+    --toggle-color: #1e1515;
     --box1-color: #3A3B3C;
     --box2-color: #3A3B3C;
     --box3-color: #3A3B3C;
-    --title-icon-color: #CCC;
+    --title-icon-color: #7b2727;
 }
 /* === Custom Scroll Bar CSS === */
 ::-webkit-scrollbar {
     width: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: #7a1111;
 }
 ::-webkit-scrollbar-thumb {
     background: var(--primary-color);

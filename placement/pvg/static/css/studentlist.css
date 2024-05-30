@@ -1,6 +1,7 @@
-/* Define your custom CSS styles here */
+
 .container {
     margin-top: 50px;
+   
 }
 
 h1 {
@@ -29,37 +30,47 @@ th {
 tr {
     border-bottom: 1px solid #dee2e6; /* Add bottom border to table rows */
 }
-
-.error{
-    text-decoration: none;
-    background-color: red;
-    color: white;
-    width: 10px;
-    height: 10px;
-    padding: 5px;
-    border-radius: 5px;
+.thumbnail-img {
+    max-width: 100px; /* Set maximum width */
+    max-height: 100px; /* Set maximum height */
 }
-.success{
+.error, .success  {
     text-decoration: none;
-    background-color: green;
     color: white;
-    border-color: green;
-    width: 10px;
-    height: 10px;
+    width: 50px;
+    height: 30px;
     padding: 5px;
     border-radius: 5px;
+    display: inline-block;
+    text-align: center;
+}
+.error {
+    background-color: red;
+}
+
+.success {
+    background-color: green;
 }
 .btn-primary{
-    background-color: #2d3dcc;
-    color:white;
-    width: 10px;
-    height: 20px;
-    padding: 10px;
-    border-radius: 5px;
     text-decoration: none;
-
+    color: white;
+    width: 130px;
+    height: 30px; 
+    padding: 5px;
+    border-radius: 5px;
+    display: inline-block;
+    text-align: center;
 }
-.btn-primary:hover{
+
+
+.btn-primary {
+    background-color: #2d3dcc;
+}
+
+.btn-primary:hover {
     background-color: #0a1157;
 }
 
+.down_link{
+    padding-top:5px ;
+}

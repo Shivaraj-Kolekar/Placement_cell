@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
+
 class Student(models.Model):
     crn_number = models.IntegerField(primary_key=True)
     BRANCH_CHOICES = [
@@ -22,12 +24,12 @@ class Student(models.Model):
     year = models.CharField(max_length=20, choices=student_year)
     email = models.CharField(max_length=50, null=True, blank=True)
     password = models.CharField(max_length=20, null=True, blank=True)
-    CGPA = models.FloatField(null=True, blank=True)  # Change to FloatField
+    CGPA = models.FloatField(null=True, blank=True)  
     mobile_number = models.CharField(max_length=15, blank=True)
-    mark_10th = models.FloatField(null=True, blank=True)  # Change to FloatField
-    mark_12th = models.FloatField(null=True, blank=True)  # Change to FloatField
-    diploma_marks = models.FloatField(null=True, blank=True)  # Change to FloatField
-    aggregate_marks = models.FloatField(null=True, blank=True)  # Change to FloatField
+    mark_10th = models.FloatField(null=True, blank=True)  
+    mark_12th = models.FloatField(null=True, blank=True)  
+    diploma_marks = models.FloatField(null=True, blank=True)  
+    aggregate_marks = models.FloatField(null=True, blank=True)  
     year_down = models.CharField(max_length=5, blank=True)
     active_backlog = models.CharField(max_length=15, blank=True)
     placement_status=models.CharField(max_length=100,default=None, null=True, blank=True)
@@ -38,6 +40,20 @@ class Student(models.Model):
         ('Female', 'Female')
     ]
     gender = models.CharField(max_length=10, choices=gender_select, blank=True)
+    company_name = models.CharField(max_length=100,default=None, null=True, blank=True)
+    salary = models.IntegerField(default=None, null=True, blank=True)
+   
+    ON_CAMPUS = 'On Campus'
+    OFF_CAMPUS = 'Off Campus'
+    PLACEMENT_CHOICES = [
+        (ON_CAMPUS, 'On Campus'),
+        (OFF_CAMPUS, 'Off Campus')
+    ]
+    placement_type = models.CharField(max_length=20, choices=PLACEMENT_CHOICES, default=ON_CAMPUS)
+    
+    # Define a default user
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='student', default=None, null=True, blank=True)
+
     def __str__(self):
         return self.name
 
@@ -59,7 +75,7 @@ class Admin(models.Model):
         ('AIDS', 'AIDS')
     ]
     admin_branch = models.CharField(max_length=20, choices=BRANCH_CHOICES, default='')
-
+    
     def __str__(self):
         return self.admin_name  # You can consider returning admin_id or a combination of admin_id and admin_name for better identification
 
@@ -109,20 +125,4 @@ class JobApplication(models.Model):
 
     def __str__(self):
         return f"{self.student.name} - {self.job.job_id}"
-
-class Placement(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    company_name = models.CharField(max_length=100,default=None, null=True, blank=True)
-    salary = models.IntegerField(default=None, null=True, blank=True)
-   
-    ON_CAMPUS = 'On Campus'
-    OFF_CAMPUS = 'Off Campus'
-    PLACEMENT_CHOICES = [
-        (ON_CAMPUS, 'On Campus'),
-        (OFF_CAMPUS, 'Off Campus')
-    ]
-    placement_type = models.CharField(max_length=20, choices=PLACEMENT_CHOICES)
-    def __str__(self):
-        return f"{self.student.name} - {self.company_name}"
-        
 
