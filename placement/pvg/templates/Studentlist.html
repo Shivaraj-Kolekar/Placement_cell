@@ -2,9 +2,11 @@
 
 {% block head %}
     {% load static %}
+    
     <link rel="stylesheet" href="{% static 'css/studentlist.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css">
+
 {% endblock %}
 
 {% block body %}
@@ -34,29 +36,28 @@
                 </tr>
             </thead>
             <tbody>
-                {% for item in ServiceData %}
+                {% for student in ServiceData %}
                 <tr>
-                    <td>{{ item.crn_number }}</td>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.branch }}</td>
-                    <td>{{ item.year }}</td>
-                    <td>{{ item.gender }}</td>
-                    <td>{{ item.email }}</td>
-                    <td>{{ item.mobile_number }}</td>
-                    <td>{{ item.CGPA }}</td>
-                    <td>{{ item.aggregate_marks }}</td>
-                    <td>{{ item.mark_10th }}</td>
-                    <td>{{ item.mark_12th }}</td>
-                    <td>{{ item.diploma_marks }}</td>
-                    <td>{{ item.active_backlog }}</td>
-                    <td>{{ item.year_down }}</td>
-                    <td>{{ item.remarks }}</td>
-
+                    <td>{{ student.crn_number }}</td>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.branch }}</td>
+                    <td>{{ student.year }}</td>
+                    <td>{{ student.gender }}</td>
+                    <td>{{ student.email }}</td>
+                    <td>{{ student.mobile_number }}</td>
+                    <td>{{ student.CGPA }}</td>
+                    <td>{{ student.aggregate_marks }}</td>
+                    <td>{{ student.mark_10th }}</td>
+                    <td>{{ student.mark_12th }}</td>
+                    <td>{{ student.diploma_marks }}</td>
+                    <td>{{ student.active_backlog }}</td>
+                    <td>{{ student.year_down }}</td>
+                    <td>{{ student.remarks }}</td>
                     <td>
-                        <a href="{% url 'delete_std' item.crn_number %}" class="error"><i class="fa-solid fa-trash"></i></a>
+                        <a href="{% url 'delete_std' student.crn_number %}" class="error"><i class="fa-solid fa-trash"></i></a>
                     </td>
                     <td>
-                        <a href="{% url 'update_std' item.crn_number %}" class="success"><i class="fa-solid fa-pen"></i></a>
+                        <a href="{% url 'update_std' student.crn_number %}" class="success"><i class="fa-solid fa-pen"></i></a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -66,20 +67,36 @@
 
     <a href="{% url 'download_excel' %}" class="btn btn-primary">Download Excel</a>
     <a href="{% url 'download_pdf' %}" class="btn btn-primary">Download PDF</a>
+
+    <!-- Pagination -->
+    <div class="row mt-4 " >
+        <div class="col-sm-12 col-md-7">
+            <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
+                <ul class="pagination">
+                    {% for num in ServiceData.paginator.page_range %}
+                        {% if num == ServiceData.number %}
+                            <li class="paginate_button page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% else %}
+                            <li class="paginate_button page-item"><a href="?page={{ num }}" class="page-link">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if ServiceData.has_next %}
+                        <li class="paginate_button page-item"><a href="?page={{ ServiceData.next_page_number }}" class="page-link">Next</a></li>
+                    {% else %}
+                        <li class="paginate_button page-item disabled"><span class="page-link">Next</span></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
-<script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
 <script>
     $(document).ready(function() {
-        var table = $('#example').DataTable();
-
-        // Add search functionality
-        $('#example_filter input').on('keyup', function () {
-            table.search(this.value).draw();
+        $('#example').DataTable({
+            paging: false // Disable pagination
         });
     });
 </script>
+
 {% endblock %}

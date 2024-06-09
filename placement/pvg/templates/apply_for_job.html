@@ -2,8 +2,7 @@
 {% block head %}
   {% load static %}
  <style>
-    /* job_details.css */
-
+   /* Common styles */
 .apply_for_container {
     display: flex;
     justify-content: center;
@@ -49,50 +48,36 @@ button {
 button:hover {
     background: darkblue;
 }
-@media only screen and (max-width: 576px) {
+
+/* Media queries */
+@media screen and (max-width: 600px) {
+    .apply_for_container {
+        padding: 20px;
+    }
+
     .card {
-        width: 90%; 
+        width: 90%;
     }
 }
 
-@media only screen and (min-width: 576px) and (max-width: 767px) {
+@media screen and (min-width: 601px) and (max-width: 1024px) {
     .card {
-        width: 80%; 
-    }
-    .company-logo {
-        width: 120px; 
-        height: 120px; 
-    }
-    .form-label {
-        font-size: 18px;
+        width: 70%;
     }
 }
 
-@media only screen and (min-width: 768px) and (max-width: 991px) {
+@media screen and (min-width: 1025px) and (max-width: 1440px) {
     .card {
         width: 60%;
     }
-    .company-logo {
-        width: 130px; 
-        height: 130px;
-    }
-    .form-label {
-        font-size: 20px; 
+}
+
+@media screen and (min-width: 1441px) {
+    .card {
+        width: 50%;
     }
 }
 
-@media only screen and (min-width: 992px) {
-    .card {
-        width: 50%; 
-    }
-    .company-logo {
-        width: 150px; 
-        height: 150px;
-    }
-    .form-label {
-        font-size: 22px; 
-    }
-}
 
  </style>
 

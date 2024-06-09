@@ -1,16 +1,18 @@
 {% extends "base_admin.html" %}
-{%block head %}
 
-{%load static%}
-<link rel="stylesheet" href="{% static 'css/studentlist.css' %}">
+{% block head %}
+    {% load static %}
+    
+    <link rel="stylesheet" href="{% static 'css/studentlist.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css">
 
-{%endblock%}
+{% endblock %}
+
 
 {% block body %}
-    <div class="container-fluid">
-        <h1>Job List</h1>
+<div class="container-fluid">   
+    <h1>Job List</h1>
       <div class="table-responsive"> 
         <table id="example" class="table table-striped" style="width:100%">           
              <thead>
@@ -66,17 +68,36 @@
     </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
-<script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
-<script>
-    $(document).ready(function() {
-        var table = $('#example').DataTable();
+ <!-- Pagination -->
+ <div class="row mt-4 " >
+    <div class="col-sm-12 col-md-7">
+        <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
+            <ul class="pagination">
+                {% for num in ServiceData.paginator.page_range %}
+                    {% if num == ServiceData.number %}
+                        <li class="paginate_button page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% else %}
+                        <li class="paginate_button page-item"><a href="?page={{ num }}" class="page-link">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if ServiceData.has_next %}
+                    <li class="paginate_button page-item"><a href="?page={{ ServiceData.next_page_number }}" class="page-link">Next</a></li>
+                {% else %}
+                    <li class="paginate_button page-item disabled"><span class="page-link">Next</span></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+</div>
+    
+    <a href="{% url 'download_excel' %}" class="btn btn-primary">Download Excel</a>
+    <a href="{% url 'download_pdf' %}" class="btn btn-primary">Download PDF</a>
 
-        // Add search functionality
-        $('#example_filter input').on('keyup', function () {
-            table.search(this.value).draw();
+  <script>
+    $(document).ready(function() {
+        $('#example').DataTable({
+            paging: false // Disable pagination
         });
     });
 </script>

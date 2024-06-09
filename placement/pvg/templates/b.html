@@ -1,24 +1,82 @@
-<html>
-   <head>
-    {%load static %}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
-   </head>
-   <body> 
-          <div class="container">
-              <div class="head">
-                  <h1> Signup page </h1>
-
-              </div>
-              <form>
-                  <input type="text" placeholder="Enter Name" >
-                  <input type="text">
-                  <button type="submit" >Aniket</button>
-
-              </form>
-
-          </div>
-   </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    /* Custom styles */
+    body {
+      padding: 20px;
+    }
+    .profile-info {
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <h1 class="text-center">User Profile</h1>
+        <!-- User Information -->
+        <div class="profile-info">
+          <h3>User Information</h3>
+          <ul class="list-group">
+            <li class="list-group-item"><strong>Name:</strong> John Doe</li>
+            <li class="list-group-item"><strong>Email:</strong> john@example.com</li>
+            <li class="list-group-item"><strong>Phone:</strong> +1234567890</li>
+            <li class="list-group-item"><strong>Address:</strong> 123 Main St, City, Country</li>
+          </ul>
+        </div>
+        <!-- Applied History -->
+        <div class="applied-history">
+          <h3>Applied History</h3>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Job ID</th>
+                <th>Title</th>
+                <th>Applied Date</th>
+                <th>Exam Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>12345</td>
+                <td>Software Engineer</td>
+                <td>2024-05-15</td>
+                <td>2024-06-01</td>
+                <td>Pending</td>
+              </tr>
+              <tr>
+                <td>12346</td>
+                <td>Data Analyst</td>
+                <td>2024-05-20</td>
+                <td>2024-06-05</td>
+                <td>Approved</td>
+              </tr>
+              <tr>
+                <td>12347</td>
+                <td>Marketing Specialist</td>
+                <td>2024-05-25</td>
+                <td>-</td>
+                <td>Processing</td>
+              </tr>
+              <tr>
+                <td>12348</td>
+                <td>Sales Representative</td>
+                <td>2024-06-01</td>
+                <td>-</td>
+                <td>Rejected</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
 </html>

@@ -75,7 +75,15 @@ def student_login(request):
                 # Check user role
                 if role == 'Student' and not user.is_staff:
                     login(request, user)
-                    return redirect('student_home')
+                    # Retrieve CRN number associated with the user
+                    try:
+                        student = Student.objects.get(user=user)
+                        crn_number = student.crn_number
+                        # Store crn_number in session
+                        request.session['crn_number'] = crn_number
+                        return redirect('student_home')
+                    except Student.DoesNotExist:
+                        error_message = "Profile not found."
                 elif role == 'Admin' and user.is_staff:
                     login(request, user)
                     return redirect('admin_home')
@@ -83,6 +91,8 @@ def student_login(request):
                     error_message = "Invalid role for the provided credentials."
             else:
                 error_message = "Invalid email or password. Please try again."
+        else:
+            error_message = "Form data is not valid."
     else:
         form = StudentLoginForm()
         error_message = None
@@ -91,17 +101,21 @@ def student_login(request):
 
 def my_logout(request):
     if request.user.is_authenticated:
-        # Redirect to the login page
-        next_url = '/login'  # Or whatever your login page URL is
-        response = redirect(next_url)
-
         # Clear any sensitive session data
         request.session.flush()
 
-        return response
+        # Redirect to the login page
+        return redirect('student_login')
 
     # If the user is not authenticated, redirect to login page
     return redirect('student_login')
+
+    # Prevent caching of pages after logout
+    response = HttpResponse()
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'  # HTTP 1.1
+    response['Pragma'] = 'no-cache'  # HTTP 1.0
+    response['Expires'] = '0'  # Proxies
+    return response
 
 def admin_home(request):
     total_registrations = Student.objects.count()
@@ -285,7 +299,7 @@ def apply_for_job2(request, job_id):
             return redirect('student_home')
 
         if student.placement_status == "Placed":
-            if student.salary + 2.5 >= job.salary:
+            if student.salary is not None and student.salary + 2.5 >= job.salary:
                 messages.error(request, 'Your salary is not sufficient to apply for this job.')
                 return redirect('student_home')
         else:

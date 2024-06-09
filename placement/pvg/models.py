@@ -85,7 +85,7 @@ class JobDetail(models.Model):
     job_title = models.CharField(max_length=100)
     company_logo = models.ImageField(upload_to='company_logos/')
     company_name = models.CharField(max_length=100)
-    salary = models.IntegerField( default=None, null=True, blank=True)
+    salary = models.FloatField(default=None, null=True, blank=True)
     BRANCH_CHOICES = [
         ('ME', 'Mechanical Engineering'),
         ('IT', 'Information Technology'),

@@ -7,6 +7,31 @@ body {
     align-items: center;
     background-color: #f0f0f0; /* background color */
 }
+
+.navbar {
+  background-color: #f8f9fa; /* Light gray */
+}
+
+  .navbar a {
+      text-decoration: none;
+      text-align: center;
+      
+      padding: 8px 16px;
+      border-radius: 5px;
+  }
+
+  /* Hover effect */
+  .navbar a:hover {
+      background-color: lightblue;
+      box-shadow: 0px 0px 10px rgba(0, 0, 255, 0.5);
+  }
+  
+  .navbar-nav .nav-item .nav-link {
+    margin-right: 15px; /* Add gap between nav links */
+  }
+  .navbar-toggler {
+    width: 50px; /* Adjust the width of the menu icon */
+  }
 .container1{
     margin-top: 100px;
     display: flex;
@@ -15,19 +40,22 @@ body {
 }
 
 .login-container {
-   
+  padding: 20px;
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 90%;}
+
+.menu-open {
     position: absolute;
-    top: 50%;
+    top: 30%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 9999; /* Ensure it's above other content */
-    
-    background-color: rgba(255, 255, 255, 0.7); /* transparent background */
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px 0px rgba(248, 219, 219, 0.5); /* shadow effect */
-    width: 500px;
+    transform: translate(-50%, 10px); /* Adjust the value as needed */
 }
+
 
 .login-container h2 {
     text-align: center;

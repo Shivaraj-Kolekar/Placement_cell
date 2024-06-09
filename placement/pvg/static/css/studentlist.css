@@ -3,7 +3,9 @@
     margin-top: 50px;
    
 }
-
+.pagination-container {
+    display: none;
+}
 h1 {
     font-size: 24px;
     margin-bottom: 20px;
