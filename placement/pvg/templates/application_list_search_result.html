@@ -7,7 +7,7 @@
 
 {% block body %}
 <div class="container-fluid">
-    <h1>Applied Student List</h1>
+    <h1>Applied Student List - {{ company_name }}</h1>
 
     {% if messages %}
     {% for message in messages %}
@@ -37,6 +37,7 @@
                     <th>Active Backlog</th>
                     <th>Year Down</th>
                     <th>Remark</th>
+                    <th>Attendance</th> <!-- New column for attendance -->
                     <th>Delete</th>
                     <th>Update</th>
                 </tr>
@@ -44,26 +45,36 @@
             <tbody>
                 {% for item in students %}
                 <tr>
-                    <td>{{ item.crn_number }}</td>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.branch }}</td>
-                    <td>{{ item.year }}</td>
-                    <td>{{ item.gender }}</td>
-                    <td>{{ item.email }}</td>
-                    <td>{{ item.mobile_number }}</td>
-                    <td>{{ item.CGPA }}</td>
-                    <td>{{ item.aggregate_marks }}</td>
-                    <td>{{ item.mark_10th }}</td>
-                    <td>{{ item.mark_12th }}</td>
-                    <td>{{ item.diploma_marks }}</td>
-                    <td>{{ item.active_backlog }}</td>
-                    <td>{{ item.year_down }}</td>
-                    <td>{{ item.remarks }}</td>
+                    <td>{{ item.student.crn_number }}</td>
+                    <td>{{ item.student.name }}</td>
+                    <td>{{ item.student.branch }}</td>
+                    <td>{{ item.student.year }}</td>
+                    <td>{{ item.student.gender }}</td>
+                    <td>{{ item.student.email }}</td>
+                    <td>{{ item.student.mobile_number }}</td>
+                    <td>{{ item.student.CGPA }}</td>
+                    <td>{{ item.student.aggregate_marks }}</td>
+                    <td>{{ item.student.mark_10th }}</td>
+                    <td>{{ item.student.mark_12th }}</td>
+                    <td>{{ item.student.diploma_marks }}</td>
+                    <td>{{ item.student.active_backlog }}</td>
+                    <td>{{ item.student.year_down }}</td>
+                    <td>{{ item.student.remarks }}</td>
+
                     <td>
-                        <a href="{% url 'delete_std' item.crn_number %}" class="error"><i class="fa-solid fa-trash"></i></a>
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <input type="hidden" name="application_id" value="{{ item.id }}">
+                            <input type="radio" name="attendance_status" value="Present" {% if item.is_present == 'Present' %}checked{% endif %}> Present <br>
+                            <input type="radio" name="attendance_status" value="Absent" {% if item.is_present == 'Absent' %}checked{% endif %}> Absent
+                            <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                        </form>
                     </td>
                     <td>
-                        <a href="{% url 'update_std' item.crn_number %}" class="success"><i class="fa-solid fa-pen"></i></a>
+                        <a href="{% url 'delete_std' item.student.crn_number %}" class="error"><i class="fa-solid fa-trash"></i></a>
+                    </td>
+                    <td>
+                        <a href="{% url 'update_std' item.student.crn_number %}" class="success"><i class="fa-solid fa-pen"></i></a>
                     </td>
                 </tr>
                 {% endfor %}

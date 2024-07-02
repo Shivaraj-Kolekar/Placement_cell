@@ -1,7 +1,9 @@
 from django.urls import path
 from . import views  # Import views from the current application
 
+
 urlpatterns = [
+
     path("", views.index, name="PVG HOME"),  # Ensure views.index is correctly imported
     path('a/', views.a, name='a'), 
     path('signup/', views.signup, name='signup'),

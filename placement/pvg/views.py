@@ -617,26 +617,36 @@ def application_list_search(request):
 
 def application_list_search_result(request):
     search_applications = request.GET.get('search_applications')
-    students = []
+    job_applications = []
     job_id = ''
+    company_name = ''
 
     if search_applications:
         try:
             job_id = int(search_applications)
             job_applications = JobApplication.objects.filter(Q(job__job_id=job_id) | Q(job__job_title__icontains=search_applications))
-            students = [job_app.student for job_app in job_applications]
+            if job_applications.exists():
+                company_name = job_applications.first().job.company_name
         except ValueError:
             # Handle cases where the search term is not a valid integer
             job_applications = JobApplication.objects.filter(job__job_title__icontains=search_applications)
-            students = [job_app.student for job_app in job_applications]
 
-        if not students:
+        if not job_applications:
             messages.error(request, 'No applications found for the given search term.')
             return redirect('application_list_search')
 
+    if request.method == 'POST':
+        application_id = request.POST.get('application_id')
+        attendance_status = request.POST.get('attendance_status')
+        job_application = get_object_or_404(JobApplication, id=application_id)
+        job_application.is_present = attendance_status
+        job_application.save()
+        messages.success(request, 'Attendance status updated successfully.')
+
     context = {
-        'students': students,
-        'job_id': job_id
+        'students': job_applications,  # Pass JobApplication objects directly
+        'job_id': job_id,
+        'company_name': company_name
     }
     return render(request, 'application_list_search_result.html', context)
 
@@ -713,3 +723,11 @@ def add_placement(request):
         form = PlacementForm(instance=student)
     
     return render(request, 'add_placement.html', {'form': form})
+
+
+def toggle_attendance(request, application_id):
+    application = get_object_or_404(JobApplication, id=application_id)
+    application.is_present = not application.is_present
+    application.save()
+    messages.success(request, f"Attendance status for {application.student.name} has been updated.")
+    return redirect('applied_student_list') 
