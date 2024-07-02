@@ -10,6 +10,40 @@
   <title>Signup Form</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+  <style>
+   .error-list {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f8d7da; /* Red background color for error */
+    border: 1px solid #f5c6cb; /* Red border color for error */
+    border-radius: 4px;
+}
+
+.error-message {
+    color: #721c24; /* Dark red text color for error message */
+    margin-bottom: 5px; /* Add spacing between error messages */
+}
+
+.btn-close {
+    float: right; /* Align close button to the right */
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.btn-close:hover {
+    color: #721c24; /* Dark red text color on hover */
+}
+
+.hidden {
+    display: none;
+}
+
+
+  </style>
+</head>
 <body>
    <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
@@ -43,7 +77,52 @@
                     <script>console.log("{{ message }}")</script>
                 </div>
             {% endfor %}
+            
         {% endif %}
+
+
+        {% if form.errors %}
+    <div class="error-list">
+        <ul>
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <li class="error-message">
+                        {{ error }}
+                        <button type="button" class="btn-close" aria-label="Close" onclick="closeErrorMessage(this);">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<script>
+    // Function to close error message
+    function closeErrorMessage(button) {
+        const errorMessage = button.parentElement;
+        errorMessage.style.display = 'none';
+
+        // Check if there are any visible error messages left
+        const errorMessages = document.querySelectorAll('.error-message');
+        let visibleErrors = false;
+        errorMessages.forEach(message => {
+            if (message.style.display !== 'none') {
+                visibleErrors = true;
+            }
+        });
+
+        // If no visible errors left, hide the error-list container
+        if (!visibleErrors) {
+            document.querySelector('.error-list').style.display = 'none';
+        }
+    }
+</script>
+
+    
+    
+    
 
     {% csrf_token %}
     <!-- Step 1: Personal Information -->

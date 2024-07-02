@@ -1,16 +1,17 @@
 {% extends 'base_admin.html' %}
 
-{% block head %}
 {% load static %}
-<title>Application Search Page</title>
-<link rel="stylesheet" href="{% static 'css/login.css' %}">
-{% endblock %}
+
+{% block head %}
+    <title>Application Search Page</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock head %}  <!-- Ensure you close the block here -->
 
 {% block body %}
 <div class="alert-container mt-5">
     {% if messages %}
         {% for message in messages %}
-        <div class=" alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible" role="alert">
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible" role="alert">
             {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -20,13 +21,12 @@
 
 <div class="login-container">
     <h2>Application Search</h2>
-    <!-- Display error messages -->
 
     <form method="GET" action="{% url 'application_list_search_result' %}">
         {% csrf_token %}
         <label for="search_applications">Enter Job ID or Title</label>
-        <input type='text' id='search_applications' name="search_applications" class='transparent-input' required>
+        <input type="text" id="search_applications" name="search_applications" class="transparent-input" required>
         <input type="submit" value="Search">
     </form>
 </div>
-{% endblock %}
+{% endblock body %}  <!-- Ensure you close the block for body here -->

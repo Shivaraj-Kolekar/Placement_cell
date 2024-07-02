@@ -15,6 +15,8 @@ from .forms import StudentForm, JobDetailForm, StudentLoginForm, AdminDetailForm
 from .helpers import studentlist_pdf, studentlist_xls
 from xhtml2pdf import pisa
 import logging
+from django.urls import reverse
+
 from io import BytesIO
 from django.contrib.auth.tokens import default_token_generator
 from django.template.loader import render_to_string
@@ -32,30 +34,15 @@ def index(request):
 
 def a(request):
     return render(request,'a.html')
+
 def signup(request):
     if request.method == 'POST':
         form = StudentForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data['email']
-            crn_number = form.cleaned_data['crn_number']
-            
-            email_exists = User.objects.filter(email=email).exists()
-            crn_exists = Student.objects.filter(crn_number=crn_number).exists()
-
-            
-            if email_exists:
-                messages.error(request, 'Email already exists.')
-                return render(request, 'signup.html', {'form': form})
-            
-            if crn_exists:
-                messages.error(request, 'CRN number already exists.')
-                return render(request, 'signup.html', {'form': form})
-
-            # Proceed with account creation
             user = User.objects.create_user(
-                username=email,
-                email=email,
-                password=form.cleaned_data['password'],  
+                username=form.cleaned_data['email'],
+                email=form.cleaned_data['email'],
+                password=form.cleaned_data['password'],
                 is_staff=False
             )
 
@@ -67,25 +54,28 @@ def signup(request):
             subject = "PVG Placement cell registration"
             message = f"Dear {form.cleaned_data['name']},\n\nYou have successfully registered in PVG Placement cell.\n\nThank you!"
             from_email = 'your-email@example.com'
-            recipient_list = [email]
+            recipient_list = [form.cleaned_data['email']]
             send_mail(subject, message, from_email, recipient_list)
 
             # Log in the user after signing up
             user = authenticate(username=user.username, password=form.cleaned_data['password'])
             if user is not None:
                 login(request, user)
-                request.session['crn_number'] = crn_number
+                request.session['crn_number'] = form.cleaned_data['crn_number']
                 messages.success(request, 'You have successfully signed up!')
                 return redirect('student_home')
             else:
                 messages.error(request, 'Authentication failed. Please try logging in.')
         else:
-            messages.error(request, 'Invalid form submission.')
-
+            # We rely on form.errors to display the errors, no need to add extra messages
+            print("")  # Debugging print
     else:
         form = StudentForm()
 
     return render(request, 'signup.html', {'form': form})
+
+
+
 
 def student_login(request):
     if request.method == 'POST':
@@ -620,6 +610,7 @@ def render_to_pdf(template_src, context_dict):
     return None
 
 
+
 def application_list_search(request):
     if request.method == 'GET':
         return render(request, 'application_list_search.html')
@@ -635,26 +626,34 @@ def application_list_search_result(request):
             job_applications = JobApplication.objects.filter(Q(job__job_id=job_id) | Q(job__job_title__icontains=search_applications))
             students = [job_app.student for job_app in job_applications]
         except ValueError:
+            # Handle cases where the search term is not a valid integer
             job_applications = JobApplication.objects.filter(job__job_title__icontains=search_applications)
             students = [job_app.student for job_app in job_applications]
 
+        if not students:
+            messages.error(request, 'No applications found for the given search term.')
+            return redirect('application_list_search')
+
     context = {
         'students': students,
-        'job_id': job_id,
-        'search_applications': search_applications,
+        'job_id': job_id
     }
-    
-    # Check if students list is empty
-    if not students:
-        messages.error(request, f"No applications found for '{search_applications}'")
-
-    return render(request, 'application_list_search.html', context)
+    return render(request, 'application_list_search_result.html', context)
 
 
-def download_application_pdf(request,job_id):
-    job_application = get_object_or_404(JobApplication, job__job_id=job_id)
+
+def download_application_pdf(request, job_id):
+    try:
+        job_application = JobApplication.objects.get(job__job_id=job_id)
+    except JobApplication.DoesNotExist:
+        messages.error(request, 'No job application found with the given job ID.')
+        return redirect('application_list_search')
     
     students = Student.objects.filter(jobapplication__job__job_id=job_id)
+    if not students.exists():
+        messages.error(request, 'No students found for the given job application.')
+        return redirect('application_list_search')
+
     context = {'students': students}
     pdf = render_to_pdf('application_list_pdf.html', context)
     if pdf:
@@ -663,12 +662,20 @@ def download_application_pdf(request,job_id):
         return response
     else:
         return HttpResponse('Error generating PDF', status=500)
-    
+
 def download_application_excel(request, job_id):
-    job_application = get_object_or_404(JobApplication, job__job_id=job_id)
-   
-    student = Student.objects.filter(jobapplication__job__job_id=job_id)
-    context = {'student': student}  
+    try:
+        job_application = JobApplication.objects.get(job__job_id=job_id)
+    except JobApplication.DoesNotExist:
+        messages.error(request, 'No job application found with the given job ID.')
+        return redirect('application_list_search')
+    
+    students = Student.objects.filter(jobapplication__job__job_id=job_id)
+    if not students.exists():
+        messages.error(request, 'No students found for the given job application.')
+        return redirect('application_list_search')
+
+    context = {'students': students}
 
     # Generate Excel content using the custom function
     xls_content = studentlist_xls(context)  

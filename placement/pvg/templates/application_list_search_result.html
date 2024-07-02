@@ -1,7 +1,7 @@
 {% extends "base_admin.html" %}
 {% block head %}
 {% load static %}
-<title>Applied Student List</title>/>
+<title>Applied Student List</title>
 <link rel="stylesheet" type="text/css" href="{% static 'css/studentlist.css' %}">
 {% endblock %}
 
@@ -16,9 +16,9 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     {% endfor %}
-{% endif %}
+    {% endif %}
+    
     <div class="table-responsive">
-
         <table id="example" class="table table-striped" style="width:100%">
             <thead>
                 <tr>
@@ -30,7 +30,7 @@
                     <th>Email</th>
                     <th>Mobile Number</th>
                     <th>CGPA</th>
-                    <th>Aggregate Marks </th>
+                    <th>Aggregate Marks</th>
                     <th>10th Marks</th>
                     <th>12th Marks</th>
                     <th>Diploma Marks</th>
@@ -59,14 +59,11 @@
                     <td>{{ item.active_backlog }}</td>
                     <td>{{ item.year_down }}</td>
                     <td>{{ item.remarks }}</td>
-
                     <td>
-                        <a href="{% url 'delete_std' item.crn_number %}" class="error"><i
-                                class="fa-solid fa-trash"></i></a>
+                        <a href="{% url 'delete_std' item.crn_number %}" class="error"><i class="fa-solid fa-trash"></i></a>
                     </td>
                     <td>
-                        <a href="{% url 'update_std' item.crn_number %}" class="success"><i
-                                class="fa-solid fa-pen"></i></a>
+                        <a href="{% url 'update_std' item.crn_number %}" class="success"><i class="fa-solid fa-pen"></i></a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -95,18 +92,13 @@
                 </li>
                 {% endif %}
             </ul>
-
         </nav>
-
-        <!-- Download links -->
 
         <!-- Download links -->
         {% if job_id %}
         <a href="{% url 'download_application_excel' job_id=job_id %}" class="btn btn-primary">Download Excel</a>
         <a href="{% url 'download_application_pdf' job_id=job_id %}" class="btn btn-primary">Download PDF</a>
         {% endif %}
-
-
-
     </div>
-    {% endblock %}
+</div>
+{% endblock %}
