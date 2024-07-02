@@ -1,5 +1,6 @@
-{% extends 'base_admin.html' %}
+{% extends 'base.html' %}
 {% block head %}
+<title>{{ job_detail.job_title }} Details</title>
   {% load static %}
  <style>
    /* Common styles */
@@ -21,6 +22,9 @@
 .form-label {
     font-weight: bold;
     margin-top: 10px;
+    text-align: center;
+    color: #653196;
+    font-size: large;
 }
 
 .media-image {
@@ -93,7 +97,7 @@ button:hover {
             </div>
             <p class="form-label"><b>{{ job_detail.job_title }}</b></p>
             <p><b>Company:</b> {{ job_detail.company_name }}</p>
-            <p><b>Salary: RS</b>{{ job_detail.salary }}</p>
+            <p><b>Salary: RS </b>{{ job_detail.salary }} /year</p>
             <p><b>Location: </b>{{ job_detail.location }}</p>
             <p><b>Required Branch:</b> {{ job_detail.required_branchs }}</p>
             <p><b>Required CGPA: </b>{{ job_detail.required_CGPA }}</p>
@@ -106,4 +110,15 @@ button:hover {
         </form>
     </div>
 </div>
+<script>
+    document.getElementById('applyForm').addEventListener('submit', function(event) {
+        var lastDate = new Date("{{ job_detail.date_last }}"); // Get the job's last date from Django template
+
+        // Compare current date with last date
+        if (new Date() > lastDate) {
+            event.preventDefault(); // Prevent form submission
+            alert('The application period for this job has ended.'); // Display a message to the user
+        }
+    });
+</script>
 {% endblock %}

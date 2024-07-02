@@ -1,19 +1,27 @@
 {% extends 'base_admin.html' %}
+
 {% block head %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style1.css' %}">
+{% load static %}
+<title>Application Search Page</title>
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
 {% endblock %}
+
 {% block body %}
+<div class="alert-container mt-5">
+    {% if messages %}
+        {% for message in messages %}
+        <div class=" alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
 <div class="login-container">
     <h2>Application Search</h2>
     <!-- Display error messages -->
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+
     <form method="GET" action="{% url 'application_list_search_result' %}">
         {% csrf_token %}
         <label for="search_applications">Enter Job ID or Title</label>

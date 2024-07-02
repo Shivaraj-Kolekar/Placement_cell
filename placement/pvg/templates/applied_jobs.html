@@ -2,40 +2,51 @@
 {% block title %}Applied Jobs{% endblock %}
 {% block head %}
     {% load static %}
+    <title>Application List</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/studentlist.css' %}">
+
 {% endblock %}
 
 {% block body %}
     <div class="container-fluid">
         <h1>My applications</h1>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Company Name</th>
-                     <th>Profile</th> 
-                     <th>Salary</th> 
-                     <th>Location</th> 
-                     <th>Exam Date</th> 
-                     <th>Applied Date</th>
-                    <th>Application Status</th>             
-                </tr>
-            </thead>
-            <tbody>
-               
-                {% for application in job_applications %}
-                <tr>
-                    <td>{{ application.company_name }}</td>
-                    <td>{{ application.job_title }}</td>
-                    <td>{{ application.salary }}</td>
-                    <td>{{ application.location }}</td>
-                    <td>{{ application.date_exam }}</td>
-                    <td>{{ application.applied_time }}</td>
-                    <td>{{ application.is_present }}</td>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-width">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Company Name</th>
+                        <th scope="col">Profile</th> 
+                        <th scope="col">Salary</th> 
+                        <th scope="col">Location</th> 
+                        <th scope="col">Exam Date</th> 
+                        <th scope="col">Applied Date</th>
+                        <th scope="col">Application Status</th>             
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for application in job_applications %}
+                        <tr>
+                            <td>{{ application.company_name }}</td>
+                            <td>{{ application.job_title }}</td>
+                            <td>{{ application.salary }}</td>
+                            <td>{{ application.location }}</td>
+                            <td>{{ application.date_exam }}</td>
+                            <td>{{ application.applied_time }}</td>
+                            <td>{{ application.is_present }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock %}
-

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Validation</title>
+    <style>
+        .input-group {
+            margin-bottom: 1em;
+            position: relative;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 0.5em;
+            box-sizing: border-box;
+        }
+        .input-group .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        .error {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<form id="passwordForm">
+    <div class="input-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <span class="toggle-password" onclick="togglePasswordVisibility('password')">👁️</span>
+    </div>
+    <div class="input-group">
+        <label for="retype-password">Retype Password:</label>
+        <input type="password" id="retype-password" name="retype-password" required>
+        <span class="toggle-password" onclick="togglePasswordVisibility('retype-password')">👁️</span>
+    </div>
+    <p class="error" id="password-error">Passwords do not match.</p>
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+    function togglePasswordVisibility(fieldId) {
+        const passwordField = document.getElementById(fieldId);
+        const passwordFieldType = passwordField.type === 'password' ? 'text' : 'password';
+        passwordField.type = passwordFieldType;
+    }
+
+    document.getElementById('passwordForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const password = document.getElementById('password').value;
+        const retypePassword = document.getElementById('retype-password').value;
+
+        if (password !== retypePassword) {
+            document.getElementById('password-error').style.display = 'block';
+        } else {
+            document.getElementById('password-error').style.display = 'none';
+            alert('Passwords match. Form submitted!');
+            // Proceed with form submission or further processing
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,69 +1,60 @@
-{%extends 'base.html'%}
-  {% block head %}
-  
-  {% block css %}
-  {%load static %}
-  <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+{%extends 'base_admin.html'%}
+{% block head %}
+
+{% block css %}
+{%load static %}
+<title>Add Admin</title>
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
 
 {% endblock %}
 
 {%endblock%}
 {% block body %}
 
-    <div class="container">
+{% if messages %}
+{% for message in messages %}
+    <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <script>console.log("{{ message }}")</script>
+    </div>
+{% endfor %}
+{% endif %}
+
+<div class="login-container" id="loginContainer">
+    <h2>Add Admin</h2>
+
+    <form action="{% url 'add_admin' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+                <label for="admin_name">Admin ID</label>
+                <input type="text" id="admin_id" name="admin_id" placeholder="Enter New Admin ID" required>
        
-        <h1 class="form-title" >Add Admin</h1>
-        <div class="error_msg"> 
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-    {% endif %} 
-                <form action="{% url 'add_admin' %}" method="post" enctype="multipart/form-data">
-                       {% csrf_token %}
-                     <div class="main-user-info">
-
-                        <div class="user-input-box">
-                            <label for="admin_name" >Admin ID</label>
-                            <input type="text" id="admin_id" name="admin_id" placeholder="Enter New Admin ID" required>
-                        </div>
-                    <div class="user-input-box">
-                    <label for="admin_name" >Admin Name</label>
-                    <input type="text" id="admin_name" name="admin_name" placeholder="Enter New Admin Name" required>
-                </div>
-                <div class="user-input-box">
-                    <label for="admin_email" >Email</label>
-                    <input type="text" id="admin_email" name="admin_email" placeholder="Enter Email ID" required>
-                </div>
-                <div class="user-input-box">
-                    <label for="company_name" >Generate Password</label>
-                    <input type="text" id="admin_password" name="admin_password" placeholder="Generate Admin Password" required>
-                </div>
+            
+                <label for="admin_name">Admin Name</label>
+                <input type="text" id="admin_name" name="admin_name" placeholder="Enter New Admin Name" required>
         
-                <div class="user-input-box">
-                    <label for="select_branch" >Branch</label>
-                    <select id='admin_branch' name='admin_branch' required>
-                        <option value='IT'>Information Technology</option>
-                        <option value='CS'>Computer Science</option>
-                        <option value='EE'>Electrical Engineering</option>
-                        <option value='ENTC'>ENTC</option>
-                        <option value='ME'>Mechnical Engineering</option>
-                        <option value='Printing'>Printing</option>
-                        <option value='AIDS'>AIDS</option>
+                <label for="admin_email">Email</label>
+                <input type="text" id="admin_email" name="admin_email" placeholder="Enter Email ID" required>
+          
+                <label for="company_name">Generate Password</label>
+                <input type="text" id="admin_password" name="admin_password" placeholder="Generate Admin Password"
+                    required>
+            
+                <label for="select_branch">Branch</label>
+                <select id='admin_branch' name='admin_branch' required>
+                    <option value='IT'>Information Technology</option>
+                    <option value='CS'>Computer Science</option>
+                    <option value='EE'>Electrical Engineering</option>
+                    <option value='ENTC'>ENTC</option>
+                    <option value='ME'>Mechnical Engineering</option>
+                    <option value='Printing'>Printing</option>
+                    <option value='AIDS'>AIDS</option>
+                </select>
+            <input type="submit" value="Submit">
+    </form>
+</div>
 
-                    </select>             
-               </div>
-            </div>
-            <div class="form-submit-btn">
-                <input type="submit" value="Submit">
-              </div>
-        </form>
-    </div>
-    
 
-    {%block footer%}{%endblock%}
+{%block footer%}{%endblock%}
 {%endblock%}
-

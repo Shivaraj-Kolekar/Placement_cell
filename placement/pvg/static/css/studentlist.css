@@ -9,32 +9,40 @@
 h1 {
     font-size: 24px;
     margin-bottom: 20px;
+    text-align: center;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    border: 1px solid #ccc; /* Add border to the table */
+    border: 1px solid #ccc; 
+    padding: 20px; 
+    margin: 20px 0;
+}
+.table-width {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 th, td {
     padding: 8px;
     text-align: left;
-    border-bottom: 1px solid #dee2e6; /* Bootstrap's table border color */
-    border-right: 1px solid #dee2e6; /* Add right border to cells */
+    border-bottom: 1px solid #dee2e6; 
+    border-right: 1px solid #dee2e6; 
 }
 
 th {
     font-weight: bold;
-    border-top: 1px solid #dee2e6; /* Add top border to table header */
+    border-top: 1px solid #dee2e6; 
 }
 
 tr {
-    border-bottom: 1px solid #dee2e6; /* Add bottom border to table rows */
+    border-bottom: 1px solid #dee2e6; 
 }
 .thumbnail-img {
-    max-width: 100px; /* Set maximum width */
-    max-height: 100px; /* Set maximum height */
+    max-width: 100px; 
+    max-height: 100px; 
 }
 .error, .success  {
     text-decoration: none;
@@ -75,4 +83,59 @@ tr {
 
 .down_link{
     padding-top:5px ;
+}
+
+.container {
+    display: flex;
+}
+
+.download_link {
+   
+    display: flex; /* Use flexbox for layout */
+    gap: 20px; /* Adjust the gap between the links */
+}
+
+
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+}
+
+.pagination {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.paginate_button {
+    margin: 0 5px; 
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+@media (max-width: 768px) {
+    .table-width {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .table-width {
+        width: 100%;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
 }

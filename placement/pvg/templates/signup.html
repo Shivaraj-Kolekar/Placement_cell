@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <title>Signup Form</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/signup.css' %}">
-</head>
 <body>
    <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
@@ -31,23 +32,39 @@
             </div>
         </div>
     </nav>
+    
 
-  <form id="signup-form" action="{% url 'signup' %}" method="post" enctype="multipart/form-data">
+  <form id="signup-form" action="{% url 'signup' %}" method="post" onsubmit="return validateForm()" enctype="multipart/form-data">
+    {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <script>console.log("{{ message }}")</script>
+                </div>
+            {% endfor %}
+        {% endif %}
+
     {% csrf_token %}
     <!-- Step 1: Personal Information -->
     <div class="step" id="step1">
       <h2>Step 1: Personal Information</h2>
       <label for="crn_number">CRN Number:</label>
-      <input type="text" id="crn_number" name="crn_number" placeholder="Enter CRN Number" required><br>
+      <input type="text" id="crn_number" name="crn_number" placeholder="Enter CRN Number" ><br>
+      <b><span class="formerror" id="crn_number_error"></span></b><br>
+      
       <label for="name">Name:</label>
-      <input type="text" id="name" name="name" placeholder="Enter Your Name" required><br>
+      <input type="text" id="name" name="name" placeholder="Enter Your Name" ><br>
+      <b><span class="formerror" id="name_error"></span></b><br>
+
       <label for="gender">Gender:</label>
-      <select id="gender" name="gender" required>
+      <select id="gender" name="gender" >
         <option value="Male">Male</option>
         <option value="Female">Female</option>
       </select><br>
+
       <label for="branch">Branch:</label>
-      <select id="branch" name="branch" required>
+      <select id="branch" name="branch" >
         <option value="IT">Information Technology</option>
         <option value="CS">Computer Science</option>
         <option value="EE">Electrical Engineering</option>
@@ -56,15 +73,19 @@
         <option value="Printing">Printing</option>
         <option value="AIDS">AIDS</option>
       </select><br>
+      
       <label for="year">Class:</label>
-      <select id="year" name="year" required>
+      <select id="year" name="year" >
         <option value="FE">First Year</option>
         <option value="SE">Second Year</option>
         <option value="TE">Third Year</option>
         <option value="BE">Final Year</option>
       </select><br>
+      
       <label for="mobile_number">Mobile Number:</label>
-      <input type="text" id="mobile_number" name="mobile_number" placeholder="Enter Mobile Number" pattern="[0-9]{10}" required>
+      <input type="text" id="mobile_number" name="mobile_number" placeholder="Enter Mobile Number" >
+      <b><span class="formerror" id="mobile_number_error"></span></b><br>
+
       <button type="button" onclick="nextStep(1)">Next</button>
     </div>
 
@@ -72,26 +93,38 @@
     <div class="step" id="step2">
       <h2>Step 2: Academic Details</h2>
       <label for="CGPA">CGPA:</label>
-      <input type="text" id="CGPA" name="CGPA" placeholder="Enter Your CGPA" required><br>
+      <input type="text" id="CGPA" name="CGPA" placeholder="Enter Your CGPA" ><br>
+      <b><span class="formerror" id="cgpa_error"></span></b><br>
+
       <label for="aggregate_marks">Aggregate Marks:</label>
-      <input type="text" id="aggregate_marks" name="aggregate_marks" placeholder="Enter Aggregate Marks" required><br>
+      <input type="text" id="aggregate_marks" name="aggregate_marks" placeholder="Enter Aggregate Marks"><br>
+      <b><span class="formerror" id="aggregate_marks_error"></span></b><br>
+
+
       <label for="mark_10th">10th Marks:</label>
       <input type="text" id="mark_10th" name="mark_10th" placeholder="Enter 10th Marks" required><br>
+      <b><span class="formerror" id="mark_10th_error"></span></b><br>
+
       <label for="mark_12th">12th Marks:</label>
-      <input type="text" id="mark_12th" name="mark_12th" placeholder="Enter 12th Marks"><br>
+      <input type="text" id="mark_12th" name="mark_12th" placeholder="Enter 12th Percentage" onchange="toggleDiplomaMarks()"><br>
+      <b><span class="formerror" id="12th_marks_error"></span></b><br>
+
       <label for="diploma_marks">Diploma Marks:</label>
-      <input type="text" id="diploma_marks" name="diploma_marks" placeholder="Enter Diploma Marks"><br>
+      <input type="text" id="diploma_marks" name="diploma_marks" placeholder="Enter Diploma Percentage" onchange="toggle12thMarks()" ><br>
+      <b><span class="formerror" id="diploma_marks_error"></span></b><br>
+
       <label for="year_down">Year Down:</label>
-      <select id="year_down" name="year_down" required>
-        <option value="YES">Yes</option>
+      <select id="year_down" name="year_down" >
         <option value="NO">No</option>
+        <option value="YES">Yes</option>
       </select><br>
+
       <label for="active_backlog">Active Backlog:</label>
-      <select id="active_backlog" name="active_backlog" required>
-        <option value="YES">Yes</option>
+      <select id="active_backlog" name="active_backlog" >
         <option value="NO">No</option>
+        <option value="YES">Yes</option>
       </select>
-      <input type="hidden" id="remarks" value="No" name="remarks">
+      <input type="hidden" id="remarks" value="NO" name="remarks">
       <button type="button" onclick="prevStep(2)">Previous</button>
       <button type="button" onclick="nextStep(2)">Next</button>
     </div>
@@ -100,7 +133,7 @@
     <div class="step" id="step3">
       <h2>Step 3: Placement Status</h2>
       <label for="placement_status">Placement Status:</label>
-      <select id="placement_status" name="placement_status" required onchange="toggleFields()">
+      <select id="placement_status" name="placement_status"  onchange="toggleFields()">
         <option value="Not Placed">Not Placed</option>
         <option value="Placed">Placed</option>
       </select><br>
@@ -112,8 +145,11 @@
         </select><br>
         <label for="company_name">Company Name:</label>
         <input type="text" id="company_name" name="company_name"><br>
+        <b><span class="formerror" id="company_name_error"></span></b><br>
+
         <label for="salary">Salary:</label>
         <input type="text" id="salary" name="salary"><br>
+        <b><span class="formerror" id="salary_error"></span></b><br>
       </div>
       <button type="button" onclick="prevStep(3)">Previous</button>
       <button type="button" onclick="nextStep(3)">Next</button>
@@ -123,15 +159,30 @@
     <div class="step" id="step4">
       <h2>Step 4: Generate ID</h2>
       <label for="email">Username:</label>
-      <input type="email" id="email" name="email" placeholder="Enter College Email Id" required><br>
-      <label for="password">Password:</label><br>
-      <input type="password" id="password" name="password" placeholder="Create Password" required><br>
+      <input type="email" id="email" name="email" placeholder="Enter College Email Id"><br>
+      <b><span class="formerror" id="email_error"></span></b><br>
+
+      
+
+      <div class="input-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <span class="toggle-password" onclick="togglePasswordVisibility(this)"><i class="far fa-eye"></i></span>
+    </div>
+    <div class="input-group">
+        <label for="retype-password">Retype Password:</label>
+        <input type="password" id="retype-password" name="retype-password" required>
+        <span class="toggle-password" onclick="togglePasswordVisibility(this)"><i class="far fa-eye"></i></span>
+    </div>
+    <p class="error" id="password-error">Passwords do not match.</p>
+
       <button type="button" onclick="prevStep(4)">Previous</button>
       <button type="submit">Submit</button>
     </div>
-    <p class="signin-link"><a href="#">Login</a></p>
+    <p class="signin-link"><a href="{%url 'student_login'%}">Login</a></p>
   </form>
-  <script src="{% static 'js/signup.js' %}"></script>
+
  
+  <script src="{% static 'js/signup.js' %}"></script>
 </body>
 </html>

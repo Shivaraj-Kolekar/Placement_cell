@@ -1,32 +1,41 @@
 {% extends "base_admin.html" %}
-{% block title %}Applied Student List{% endblock %}
 {% block head %}
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/studentlist.css' %}">
+{% load static %}
+<title>Applied Student List</title>/>
+<link rel="stylesheet" type="text/css" href="{% static 'css/studentlist.css' %}">
 {% endblock %}
 
 {% block body %}
-    <div class="container-fluid">
-        <h1>Applied Student List</h1>
-        <div class="table-responsive"> 
+<div class="container-fluid">
+    <h1>Applied Student List</h1>
+
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+    <div class="table-responsive">
 
         <table id="example" class="table table-striped" style="width:100%">
             <thead>
                 <tr>
                     <th>CRN Number</th>
-                     <th>Name</th> 
-                     <th>Branch</th> 
-                     <th>Year</th> 
-                     <th>Gender</th> 
-                     <th>Email</th>
-                    <th>Mobile Number</th>             
+                    <th>Name</th>
+                    <th>Branch</th>
+                    <th>Year</th>
+                    <th>Gender</th>
+                    <th>Email</th>
+                    <th>Mobile Number</th>
                     <th>CGPA</th>
-                    <th>Aggregate Marks </th>                
+                    <th>Aggregate Marks </th>
                     <th>10th Marks</th>
-                    <th>12th Marks</th>                
+                    <th>12th Marks</th>
                     <th>Diploma Marks</th>
-                    <th>Active Backlog</th>               
-                     <th>Year Down</th>
+                    <th>Active Backlog</th>
+                    <th>Year Down</th>
                     <th>Remark</th>
                     <th>Delete</th>
                     <th>Update</th>
@@ -50,14 +59,16 @@
                     <td>{{ item.active_backlog }}</td>
                     <td>{{ item.year_down }}</td>
                     <td>{{ item.remarks }}</td>
-    
+
                     <td>
-                        <a href="{% url 'delete_std' item.crn_number %}" class="error"><i class="fa-solid fa-trash"></i></a>
+                        <a href="{% url 'delete_std' item.crn_number %}" class="error"><i
+                                class="fa-solid fa-trash"></i></a>
                     </td>
                     <td>
-                        <a href="{% url 'update_std' item.crn_number %}" class="success"><i class="fa-solid fa-pen"></i></a>
+                        <a href="{% url 'update_std' item.crn_number %}" class="success"><i
+                                class="fa-solid fa-pen"></i></a>
                     </td>
-                    </tr>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
@@ -66,36 +77,36 @@
         <nav>
             <ul class="pagination">
                 {% if students.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1" tabindex="-1">First</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ students.previous_page_number }}" tabindex="-1">Previous</a>
-                    </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=1" tabindex="-1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ students.previous_page_number }}" tabindex="-1">Previous</a>
+                </li>
                 {% endif %}
                 {% for i in students.paginator.page_range %}
-                    <li class="page-item {% if i == students.number %}active{% endif %}">
-                        <a class="page-link" href="?page={{ i }}">{{ i }}</a>
-                    </li>
+                <li class="page-item {% if i == students.number %}active{% endif %}">
+                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                </li>
                 {% endfor %}
                 {% if students.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ students.next_page_number }}">Next</a>
-                    </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ students.next_page_number }}">Next</a>
+                </li>
                 {% endif %}
             </ul>
-            
+
         </nav>
 
         <!-- Download links -->
-        
-       <!-- Download links -->
-{% if job_id %}
-<a href="{% url 'download_application_excel' job_id=job_id %}" class="btn btn-primary">Download Excel</a>
-<a href="{% url 'download_application_pdf' job_id=job_id %}" class="btn btn-primary">Download PDF</a>
-{% endif %}
+
+        <!-- Download links -->
+        {% if job_id %}
+        <a href="{% url 'download_application_excel' job_id=job_id %}" class="btn btn-primary">Download Excel</a>
+        <a href="{% url 'download_application_pdf' job_id=job_id %}" class="btn btn-primary">Download PDF</a>
+        {% endif %}
 
 
 
     </div>
-{% endblock %}
+    {% endblock %}

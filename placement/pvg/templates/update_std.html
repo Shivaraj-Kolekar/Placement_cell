@@ -1,46 +1,63 @@
 {% extends "base_admin.html" %}
-{%block head %}
-
-{%load static%}
+{% block head %}
+{% load static %}
+<title>Student Details Update</title>
 <link rel="stylesheet" href="{% static 'css/signup.css' %}">
-{%endblock%}
-
+{% endblock %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible" role="alert">
+  {{ message }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
 {% block body %}
-<form id="signup-form" action="{% url 'do_update_std' data.crn_number %}" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
+<form id="signup-form" action="{% url 'do_update_std' data.crn_number %}" method="post" onsubmit="return validateForm()" enctype="multipart/form-data">
+  {% csrf_token %}
   <!-- Step 1: Personal Information -->
   <div class="step" id="step1">
     <h2>Step 1: Personal Information</h2>
     <label for="crn_number">CRN Number:</label>
-    <input type="text" id="crn_number" name="crn_number" value='{{data.crn_number}}' readonly><br>
+    <input type="text" id="crn_number" name="crn_number" placeholder="Enter CRN Number" value='{{data.crn_number}}' readonly><br>
+    <b><span class="formerror" id="crn_number_error"></span></b><br>
+
     <label for="email">Email</label>
-	<input type="email" id="email" name="email" placeholder="Enter College Email Id"value='{{data.email}}' required><br>
+    <input type="email" id="email" name="email" placeholder="Enter College Email Id" value='{{data.email}}'><br>
+    <b><span class="formerror" id="email_error"></span></b><br>
+
     <label for="name">Name:</label>
-    <input type="text" id="name" name="name" placeholder="Enter Your Name"value='{{data.name}}' required><br>
+    <input type="text" id="name" name="name" placeholder="Enter Your Name" value='{{data.name}}'><br>
+    <b><span class="formerror" id="name_error"></span></b><br>
+
     <label for="gender">Gender:</label>
-    <select id="gender" name="gender" value='{{data.gender}}' required>
-      <option value="Male">Male</option>
-      <option value="Female">Female</option>
+    <select id="gender" name="gender">
+        <option value="Male" {% if data.gender == "Male" %}selected{% endif %}>Male</option>
+        <option value="Female" {% if data.gender == "Female" %}selected{% endif %}>Female</option>
     </select><br>
+
     <label for="branch">Branch:</label>
-    <select id="branch" name="branch"  value='{{data.branch}}' required>
-      <option value="IT">Information Technology</option>
-      <option value="CS">Computer Science</option>
-      <option value="EE">Electrical Engineering</option>
-      <option value="ENTC">ENTC</option>
-      <option value="ME">Mechanical Engineering</option>
-      <option value="Printing">Printing</option>
-      <option value="AIDS">AIDS</option>
+    <select id="branch" name="branch">
+        <option value="IT" {% if data.branch == "IT" %}selected{% endif %}>Information Technology</option>
+        <option value="CS" {% if data.branch == "CS" %}selected{% endif %}>Computer Science</option>
+        <option value="EE" {% if data.branch == "EE" %}selected{% endif %}>Electrical Engineering</option>
+        <option value="ENTC" {% if data.branch == "ENTC" %}selected{% endif %}>ENTC</option>
+        <option value="ME" {% if data.branch == "ME" %}selected{% endif %}>Mechanical Engineering</option>
+        <option value="Printing" {% if data.branch == "Printing" %}selected{% endif %}>Printing</option>
+        <option value="AIDS" {% if data.branch == "AIDS" %}selected{% endif %}>AIDS</option>
     </select><br>
+
     <label for="year">Class:</label>
-    <select id="year" name="year" value='{{data.year}}' required>
-      <option value="FE">First Year</option>
-      <option value="SE">Second Year</option>
-      <option value="TE">Third Year</option>
-      <option value="BE">Final Year</option>
+    <select id="year" name="year">
+        <option value="FE" {% if data.year == "FE" %}selected{% endif %}>First Year</option>
+        <option value="SE" {% if data.year == "SE" %}selected{% endif %}>Second Year</option>
+        <option value="TE" {% if data.year == "TE" %}selected{% endif %}>Third Year</option>
+        <option value="BE" {% if data.year == "BE" %}selected{% endif %}>Final Year</option>
     </select><br>
+
     <label for="mobile_number">Mobile Number:</label>
-    <input type="text" id="mobile_number" name="mobile_number" placeholder="Enter Mobile Number" value='{{data.mobile_number}}' pattern="[0-9]{10}" required>
+    <input type="text" id="mobile_number" name="mobile_number" placeholder="Enter Mobile Number" value='{{data.mobile_number}}'>
+    <b><span class="formerror" id="mobile_number_error"></span></b><br>
 
     <button type="button" onclick="nextStep(1)">Next</button>
   </div>
@@ -49,58 +66,79 @@
   <div class="step" id="step2">
     <h2>Step 2: Academic Details</h2>
     <label for="CGPA">CGPA:</label>
-    <input type="text" id="CGPA" name="CGPA" placeholder="Enter Your CGPA" value='{{data.CGPA}}' required><br>
+    <input type="text" id="CGPA" name="CGPA" placeholder="Enter Your CGPA" value='{{data.CGPA}}'><br>
+    <b><span class="formerror" id="cgpa_error"></span></b><br>
+
     <label for="aggregate_marks">Aggregate Marks:</label>
-    <input type="text" id="aggregate_marks" name="aggregate_marks" placeholder="Enter Aggregate Marks" value='{{data.aggregate_marks}}' required><br>
+    <input type="text" id="aggregate_marks" name="aggregate_marks" placeholder="Enter Aggregate Marks" value='{{data.aggregate_marks}}'><br>
+    <b><span class="formerror" id="aggregate_marks_error"></span></b><br>
+
     <label for="mark_10th">10th Marks:</label>
-    <input type="text" id="mark_10th" name="mark_10th" placeholder="Enter 10th Marks" value='{{data.mark_10th}}' required><br>
+    <input type="text" id="mark_10th" name="mark_10th" placeholder="Enter 10th Marks" value='{{data.mark_10th}}'><br>
+    <b><span class="formerror" id="mark_10th_error"></span></b><br>
+
+   
     <label for="mark_12th">12th Marks:</label>
-    <input type="text" id="mark_12th" name="mark_12th" placeholder="Enter 12th Marks" value='{{data.mark_12th}}'><br>
-    <label for="diploma_marks">Diploma Marks:</label>
-    <input type="text" id="diploma_marks" name="diploma_marks" placeholder="Enter Diploma Marks" value='{{data.diploma_marks}}'><br>
+<input type="text" id="mark_12th" name="mark_12th" placeholder="Enter 12th Percentage" 
+       value='{{ data.mark_12th }}' 
+       {% if data.mark_12th is none %}disabled{% endif %} 
+       onchange="toggleDiplomaMarks()"><br>
+<b><span class="formerror" id="12th_marks_error"></span></b><br>
+
+<label for="diploma_marks">Diploma Marks:</label>
+<input type="text" id="diploma_marks" name="diploma_marks" placeholder="Enter Diploma Percentage" 
+       value='{% if data.diploma_marks %}{{ data.diploma_marks }}{% endif %}' 
+       {% if data.diploma_marks is none %}disabled{% endif %} 
+       onchange="toggle12thMarks()"><br>
+<b><span class="formerror" id="diploma_marks_error"></span></b><br>
+
     <label for="year_down">Year Down:</label>
-    <select id="year_down" name="year_down"  value='{{data.year_down}}' required>
-      <option value="YES">Yes</option>
-      <option value="NO">No</option>
+    <select id="year_down" name="year_down">
+        <option value="NO" {% if data.year_down == "NO" %}selected{% endif %}>No</option>
+        <option value="YES" {% if data.year_down == "YES" %}selected{% endif %}>Yes</option>
     </select><br>
+
     <label for="active_backlog">Active Backlog:</label>
-    <select id="active_backlog" name="active_backlog" value='{{data.active_backlog}}' required>
-      <option value="YES">Yes</option>
-      <option value="NO">No</option>
-    </select>
-    <input type="hidden" id="remarks" name="remarks"  value='{{data.remarks}}'>
+    <select id="active_backlog" name="active_backlog">
+        <option value="NO" {% if data.active_backlog == "NO" %}selected{% endif %}>No</option>
+        <option value="YES" {% if data.active_backlog == "YES" %}selected{% endif %}>Yes</option>
+    </select><br>
+    <label for="remarks"> Remark</label>
+    <input type="text" id="remarks" name="remarks" value='{{data.remarks}}'>
     <button type="button" onclick="prevStep(2)">Previous</button>
     <button type="button" onclick="nextStep(2)">Next</button>
   </div>
 
   <!-- Step 3: Placement Status -->
-<div class="step" id="step3">
+  <div class="step" id="step3">
     <h2>Step 3: Placement Status</h2>
+
     <label for="placement_status">Placement Status:</label>
-    <select id="placement_status" name="placement_status" value='{{data.placement_status}}' required onchange="toggleFields()">
-      <option value="Not Placed">Not Placed</option>
-      <option value="Placed">Placed</option>
+    <select id="placement_status" name="placement_status" onchange="toggleFields()">
+        <option value="Not Placed" {% if data.placement_status == "Not Placed" %}selected{% endif %}>Not Placed</option>
+        <option value="Placed" {% if data.placement_status == "Placed" %}selected{% endif %}>Placed</option>
     </select><br>
-    <div class="user-input-box hidden" id="additionalFields">
-      <label for="placement_type">Placement Type:</label>
-      <select id="placement_type" name="placement_type" value='{{data.placement_type}}'>
-        <option value="On Campus">On Campus</option>
-        <option value="Off Campus">Off Campus</option>
-      </select><br>
-      <label for="company_name">Company Name:</label>
-      <input type="text" id="company_name" name="company_name" value='{{data.company_name}}'><br>
-      <label for="salary">Salary:</label>
-      <input type="text" id="salary" name="salary" value='{{data.salary}}'><br>
-    </div>
-  
+
+    <div class="user-input-box {% if data.placement_status != 'Placed' %}hidden{% endif %}" id="additionalFields">
+        <label for="placement_type">Placement Type:</label>
+        <select id="placement_type" name="placement_type">
+            <option value="On Campus" {% if data.placement_type == "On Campus" %}selected{% endif %}>On Campus</option>
+            <option value="Off Campus" {% if data.placement_type == "Off Campus" %}selected{% endif %}>Off Campus</option>
+        </select><br>
+
+        <label for="company_name">Company Name:</label>
+        <input type="text" id="company_name" name="company_name" value='{% if data.company_name %}{{ data.company_name }}{% endif %}'><br>
+        <b><span class="formerror" id="company_name_error"></span></b><br>
+
+        <label for="salary">Salary:</label>
+        <input type="text" id="salary" name="salary" value='{% if data.salary %}{{ data.salary }}{% endif %}'><br>
+        <b><span class="formerror" id="salary_error"></span></b><br>
+    </div> 
     <button type="button" onclick="prevStep(3)">Previous</button>
     <button type="submit">Submit</button>
   </div>
-  
-  <a href="{% url 'student_login' %}">Sign In</a>
 </form>
-
 
 <script src="{% static 'js/signup.js' %}"></script>
 
-{%endblock%}
+{% endblock %}

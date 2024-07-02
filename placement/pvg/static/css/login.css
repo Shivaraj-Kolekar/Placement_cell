@@ -1,0 +1,136 @@
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0; /* background color */
+}
+
+.container1 {
+  margin-top: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-container {
+  padding: 20px;
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 90%;
+}
+
+.menu-open {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, 10px); /* Adjust the value as needed */
+}
+
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-container label {
+  margin-bottom: 10px;
+}
+
+.login-container input,
+.login-container select {
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.login-container input[type="submit"] {
+  background-color: #007bff; /* button color */
+  color: #fff; /* button text color */
+  cursor: pointer;
+}
+
+.login-container input[type="submit"]:hover {
+  background-color: #0056b3; /* button hover color */
+}
+
+.forgot-password {
+  text-align: center; /* Center the text */
+  margin-top: 10px; /* Add some space */
+}
+
+.forgot-password a {
+  text-decoration: none;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+.forgot-password a:hover {
+  color: #007bff;
+}
+
+.formerror {
+  color: red;
+}
+
+.input-group {
+  margin-bottom: 1em;
+  position: relative;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.5em;
+  box-sizing: border-box;
+}
+
+.input-group .toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #999; /* Default color for the eye icon */
+}
+
+.input-group .toggle-password:hover {
+  color: #333; /* Color when hovered */
+}
+
+@media only screen and (max-width: 600px) {
+  /* Styles for smaller devices */
+  .login-container {
+      width: 90%; /* Adjust width for smaller screens */
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  /* Styles for tablets and larger devices */
+  .login-container {
+      max-width: 600px;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  /* Styles for tablets and larger devices */
+  .login-container {
+      max-width: 768px;
+  }
+}
+
+@media only screen and (min-width: 992px) {
+  /* Styles for desktop */
+  .login-container {
+      max-width: 992px;
+  }
+}

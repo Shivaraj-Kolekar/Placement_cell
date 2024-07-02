@@ -1,0 +1,46 @@
+/* alerts.css */
+.alert {
+    position: relative;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+}
+
+/* Error alert */
+.alert-danger {
+    color: white;
+    background-color: #dc3545; /* Red background for error messages */
+    border: 1px solid #dc3545;
+}
+
+/* Success alert */
+.alert-success {
+    color: white;
+    background-color: #28a745; /* Green background for success messages */
+    border: 1px solid #28a745;
+}
+
+/* Dismissible alert */
+.alert-dismissible {
+    position: relative;
+    padding-right: 4rem;
+    margin: 0 auto; /* Center the alert */
+    max-width: 500px; /* Set a maximum width */
+}
+
+/* Close button inside alert */
+.btn-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.5rem 1rem;
+    color: inherit;
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+}
+
+/* Additional styles for success and error messages */
+.alert-danger, .alert-success {
+    font-weight: bold;
+}

@@ -1,40 +1,85 @@
 {% extends 'base.html' %}
 {% block head %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/job_list.css' %}">
-
-    <title>Student Home Page</title>
-    {% endblock %}
+{% load static %}
+<title>Student Home</title>
+<link rel="stylesheet" href="{% static 'css/job_list.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+{% endblock %}
 
 {% block body %}
-    {% if messages %}
-        <div class="alert alert-dismissible {% if messages.tags %}alert-{{ messages.tags }}{% endif %}" role="alert">
-            {% for message in messages %}
-                {{ message }}
-            {% endfor %}
+<h1>Our Placement Cell</h1>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible" role="alert">
+            {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    {% endif %}
-    <h1>Our Placement Cell</h1>
+    {% endfor %}
+{% endif %}
 
-    <div class="container">
-        {% if job_details %}
-            {% for job_detail in job_details %}
-                <div class="training-items">
-                    <p><b>{{ job_detail.job_title }}</b></p>
-                    <p><b>Job:</b> {{ job_detail.job_id }}</p>
-                    <p><b>Company:</b> {{ job_detail.company_name }}</p>
-                    <p><b>Salary:</b> RS {{ job_detail.salary }}</p>
-                    <p><b>Time:</b> <span class="timeAgo"></span></p>
-                    {% if job_detail.job_id %}
-                        <button><a href="{% url 'apply_for_job' job_id=job_detail.job_id %}">View Details</a></button>
-                    {% else %}
-                        <p class="text-red-500">Job ID not available</p>
-                    {% endif %}
-                </div>
-            {% endfor %}
+
+
+<div class="container">
+    {% if job_details %}
+    {% for job_detail in job_details %}
+    <div class="training-items">
+        <p><b>{{ job_detail.job_title }}</b></p>
+        <p><b>Job:</b> {{ job_detail.job_id }}</p>
+        <p><b>Company:</b> {{ job_detail.company_name }}</p>
+        <p><b>Salary:</b> RS {{ job_detail.salary }}</p>
+        <p><b>Posted:</b> <span class="timeAgo" data-time="{{ job_detail.system_time|date:'c' }}"></span></p>
+        {% if job_detail.job_id %}
+        <button><a href="{% url 'apply_for_job' job_id=job_detail.job_id %}">View Details</a></button>
         {% else %}
-            <p>No job details available.</p>
+        <p class="text-red-500">Job ID not available</p>
         {% endif %}
     </div>
+    {% endfor %}
+    {% else %}
+    <p>No job details available.</p>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function timeAgo(date) {
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+            let interval = Math.floor(seconds / 31536000);
+
+            if (interval >= 1) {
+                return interval + " year" + (interval === 1 ? "" : "s") + " ago";
+            }
+            interval = Math.floor(seconds / 2592000);
+            if (interval >= 1) {
+                return interval + " month" + (interval === 1 ? "" : "s") + " ago";
+            }
+            interval = Math.floor(seconds / 86400);
+            if (interval >= 1) {
+                return interval + " day" + (interval === 1 ? "" : "s") + " ago";
+            }
+            interval = Math.floor(seconds / 3600);
+            if (interval >= 1) {
+                return interval + " hour" + (interval === 1 ? "" : "s") + " ago";
+            }
+            interval = Math.floor(seconds / 60);
+            if (interval >= 1) {
+                return interval + " minute" + (interval === 1 ? "" : "s") + " ago";
+            }
+            return Math.floor(seconds) + " second" + (seconds === 1 ? "" : "s") + " ago";
+        }
+
+        const timeElements = document.querySelectorAll('.timeAgo');
+        timeElements.forEach(element => {
+            const timeString = element.getAttribute('data-time');
+            const time = new Date(timeString);
+            if (!isNaN(time.getTime())) {
+                element.innerText = timeAgo(time);
+            } else {
+                element.innerText = "Invalid time";
+            }
+        });
+    });
+</script>
 {% endblock %}

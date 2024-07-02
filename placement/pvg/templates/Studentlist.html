@@ -1,34 +1,47 @@
 {% extends "base_admin.html" %}
 
 {% block head %}
-    {% load static %}
-    
-    <link rel="stylesheet" href="{% static 'css/studentlist.css' %}">
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/studentlist.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css">
+<title>Student List</title>
 
 {% endblock %}
 
 {% block body %}
-<div class="container-fluid">   
+<div class="container-fluid">
     <h1>Student List</h1>
-    <div class="table-responsive"> 
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible"
+        role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+
+    
+    <div class="table-responsive">
         <table id="example" class="table table-striped" style="width:100%">
             <thead>
                 <tr>
                     <th>CRN Number</th>
-                    <th>Name</th> 
-                    <th>Branch</th> 
-                    <th>Year</th> 
-                    <th>Gender</th> 
+                    <th>Name</th>
+                    <th>Branch</th>
+                    <th>Year</th>
+                    <th>Gender</th>
                     <th>Email</th>
-                    <th>Mobile Number</th>             
+                    <th>Mobile Number</th>
                     <th>CGPA</th>
-                    <th>Aggregate Marks</th>                
+                    <th>Aggregate Marks</th>
                     <th>10th Marks</th>
-                    <th>12th Marks</th>                
+                    <th>12th Marks</th>
                     <th>Diploma Marks</th>
-                    <th>Active Backlog</th>               
+                    <th>Active Backlog</th>
                     <th>Year Down</th>
                     <th>Remark</th>
                     <th>Delete</th>
@@ -54,10 +67,12 @@
                     <td>{{ student.year_down }}</td>
                     <td>{{ student.remarks }}</td>
                     <td>
-                        <a href="{% url 'delete_std' student.crn_number %}" class="error"><i class="fa-solid fa-trash"></i></a>
+                        <a href="{% url 'delete_std' student.crn_number %}" class="error"><i
+                                class="fa-solid fa-trash"></i></a>
                     </td>
                     <td>
-                        <a href="{% url 'update_std' student.crn_number %}" class="success"><i class="fa-solid fa-pen"></i></a>
+                        <a href="{% url 'update_std' student.crn_number %}" class="success"><i
+                                class="fa-solid fa-pen"></i></a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -65,38 +80,43 @@
         </table>
     </div>
 
-    <a href="{% url 'download_excel' %}" class="btn btn-primary">Download Excel</a>
-    <a href="{% url 'download_pdf' %}" class="btn btn-primary">Download PDF</a>
+    <div class="container">
+        <div class="download_link">
+            <a href="{% url 'download_excel' %}" class="btn btn-primary">Excel</a>
+            <a href="{% url 'download_pdf' %}" class="btn btn-primary"> PDF</a>
+        </div>
+    </div>
 
     <!-- Pagination -->
-    <div class="row mt-4 " >
-        <div class="col-sm-12 col-md-7">
+    <div class="row mt-4 justify-content-center">
+        <div class="col-auto">
             <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
                 <ul class="pagination">
                     {% for num in ServiceData.paginator.page_range %}
-                        {% if num == ServiceData.number %}
-                            <li class="paginate_button page-item active"><span class="page-link">{{ num }}</span></li>
-                        {% else %}
-                            <li class="paginate_button page-item"><a href="?page={{ num }}" class="page-link">{{ num }}</a></li>
-                        {% endif %}
+                    {% if num == ServiceData.number %}
+                    <li class="paginate_button page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% else %}
+                    <li class="paginate_button page-item"><a href="?page={{ num }}" class="page-link">{{ num }}</a></li>
+                    {% endif %}
                     {% endfor %}
                     {% if ServiceData.has_next %}
-                        <li class="paginate_button page-item"><a href="?page={{ ServiceData.next_page_number }}" class="page-link">Next</a></li>
+                    <li class="paginate_button page-item"><a href="?page={{ ServiceData.next_page_number }}"
+                            class="page-link">Next</a></li>
                     {% else %}
-                        <li class="paginate_button page-item disabled"><span class="page-link">Next</span></li>
+                    <li class="paginate_button page-item disabled"><span class="page-link">Next</span></li>
                     {% endif %}
                 </ul>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    $(document).ready(function() {
-        $('#example').DataTable({
-            paging: false // Disable pagination
+
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable({
+                paging: false // Disable pagination
+            });
         });
-    });
-</script>
+    </script>
 
-{% endblock %}
+    {% endblock %}

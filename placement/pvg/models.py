@@ -98,7 +98,7 @@ class JobDetail(models.Model):
     required_branchs = models.CharField(max_length=20, choices=BRANCH_CHOICES, default='')
     location = models.CharField(max_length=50, default='')
     system_time = models.DateTimeField()
-    required_CGPA = models.IntegerField( default=None, null=True, blank=True)
+    required_CGPA =  models.FloatField(null=True, blank=True)  
     required_marks = models.IntegerField(default=None, null=True, blank=True)
     date_exam = models.DateTimeField(default=timezone.now)
     date_last = models.DateTimeField(default=timezone.now)

@@ -1,9 +1,9 @@
 {% extends "base_admin.html" %}
 
 {% block head %}
-    {% load static %}
-    
-    <link rel="stylesheet" href="{% static 'css/studentlist.css' %}">
+{% load static %}
+<title>Job List</title>
+<link rel="stylesheet" href="{% static 'css/studentlist.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css">
 
@@ -11,11 +11,20 @@
 
 
 {% block body %}
-<div class="container-fluid">   
+<div class="container-fluid">
     <h1>Job List</h1>
-      <div class="table-responsive"> 
-        <table id="example" class="table table-striped" style="width:100%">           
-             <thead>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible"
+        role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    <div class="table-responsive">
+        <table id="example" class="table table-striped" style="width:100%">
+            <thead>
                 <tr>
                     <th>Job Id</th>
                     <th>Job Role</th>
@@ -34,68 +43,69 @@
             </thead>
             <tbody>
                 {% for item in ServiceData %}
-                    <tr>
-                        <td>{{ item.job_id }}</td>
-                        <td>{{ item.job_title }}</td>
-                        <td>{{ item.company_name }}</td>
-                        <td class="logo-cell">
-                            <img src="{{ item.company_logo.url }}" alt="Company Logo" class="thumbnail-img">
-                        </td>
-                        <td>{{ item.location }}</td>
-                        <td>{{ item.salary }}</td>
-                        <td>
-                            {% for branch in item.required_branchs %}
-                            {{ branch }}
-                            {% if not forloop.last %}{% endif %}
-                            {% endfor %}
+                <tr>
+                    <td>{{ item.job_id }}</td>
+                    <td>{{ item.job_title }}</td>
+                    <td>{{ item.company_name }}</td>
+                    <td class="logo-cell">
+                        <img src="{{ item.company_logo.url }}" alt="Company Logo" class="thumbnail-img">
+                    </td>
+                    <td>{{ item.location }}</td>
+                    <td>{{ item.salary }}</td>
+                    <td>
+                        {% for branch in item.required_branchs %}
+                        {{ branch }}{% if not forloop.last %} {% endif %}
+                        {% endfor %}
+                    </td>
 
-                        </td>
-                        
-                        <td>{{ item.required_CGPA }}</td>
-                        <td>{{ item.required_marks }}</td>
-                        <td>{{ item.date_last }}</td>
-                        <td>{{ item.date_exam }}</td>
-                        <td>
-                            <a href="{% url 'delete_job' item.job_id %}" class="error"><i class="fa-solid fa-trash"></i></a>
-                        </td>
-                        <td>
-                            <a href="{% url 'update_job' item.job_id %}" class="success"><i class="fa-solid fa-pen"></i></a>
-                        </td>
-                    </tr>
+
+
+                    <td>{{ item.required_CGPA }}</td>
+                    <td>{{ item.required_marks }}</td>
+                    <td>{{ item.date_last }}</td>
+                    <td>{{ item.date_exam }}</td>
+                    <td>
+                        <a href="{% url 'delete_job' item.job_id %}" class="error"><i class="fa-solid fa-trash"></i></a>
+                    </td>
+                    <td>
+                        <a href="{% url 'update_job' item.job_id %}" class="success"><i class="fa-solid fa-pen"></i></a>
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-    </div>
+</div>
 
- <!-- Pagination -->
- <div class="row mt-4 " >
-    <div class="col-sm-12 col-md-7">
+
+<!-- Pagination -->
+<div class="row mt-4 justify-content-center">
+    <div class="col-auto">
         <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
             <ul class="pagination">
                 {% for num in ServiceData.paginator.page_range %}
-                    {% if num == ServiceData.number %}
-                        <li class="paginate_button page-item active"><span class="page-link">{{ num }}</span></li>
-                    {% else %}
-                        <li class="paginate_button page-item"><a href="?page={{ num }}" class="page-link">{{ num }}</a></li>
-                    {% endif %}
+                {% if num == ServiceData.number %}
+                <li class="paginate_button page-item active"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                <li class="paginate_button page-item"><a href="?page={{ num }}" class="page-link">{{ num }}</a></li>
+                {% endif %}
                 {% endfor %}
                 {% if ServiceData.has_next %}
-                    <li class="paginate_button page-item"><a href="?page={{ ServiceData.next_page_number }}" class="page-link">Next</a></li>
+                <li class="paginate_button page-item"><a href="?page={{ ServiceData.next_page_number }}"
+                        class="page-link">Next</a></li>
                 {% else %}
-                    <li class="paginate_button page-item disabled"><span class="page-link">Next</span></li>
+                <li class="paginate_button page-item disabled"><span class="page-link">Next</span></li>
                 {% endif %}
             </ul>
         </div>
     </div>
 </div>
-</div>
-    
-    <a href="{% url 'download_excel' %}" class="btn btn-primary">Download Excel</a>
-    <a href="{% url 'download_pdf' %}" class="btn btn-primary">Download PDF</a>
 
-  <script>
-    $(document).ready(function() {
+
+
+
+<script>
+    $(document).ready(function () {
         $('#example').DataTable({
             paging: false // Disable pagination
         });

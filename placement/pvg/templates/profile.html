@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block head %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/job_list.css' %}">
+
+<title>{{ student.name }}'s Profile</title>
+{% endblock %}
+
+{% block body %}
+
+<style>
+    .profile-container {
+        margin: 30px auto;
+        /* Auto margins to center horizontally */
+        max-width: 800px;
+        /* Optional: Set a maximum width for better readability */
+        /* Existing styles */
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+        display: flex;
+        flex-wrap: wrap;
+        padding: 20px;
+    }
+
+    .profile-image-container {
+        text-align: center;
+        flex: 1 1 100%;
+        margin-bottom: 20px;
+    }
+
+    .profile-image {
+        max-width: 150px;
+        max-height: 150px;
+        border-radius: 50%;
+        border: 3px solid #dee2e6;
+    }
+
+    .personal-info {
+        flex: 1 1 100%;
+        margin-top: 20px;
+    }
+
+    .other-info {
+        flex: 2 1 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .profile-section {
+        padding: 15px;
+        border-radius: 10px;
+        color: #fff;
+        width: 100%;
+    }
+
+    .profile-section h3 {
+        border-bottom: 2px solid #dee2e6;
+        padding-bottom: 10px;
+    }
+
+    .profile-info p {
+        margin-bottom: 10px;
+    }
+
+    .personal-info-section {
+        background-color: #007bff;
+    }
+
+    .educational-info {
+        background-color: #28a745;
+    }
+
+    .placement-info {
+        background-color: #ffc107;
+    }
+
+    .additional-info {
+        background-color: #17a2b8;
+    }
+</style>
+{% if messages %}
+{% for message in messages %}
+<div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible"
+    role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="container profile-container">
+    <div class="profile-image-container">
+        {% if student.profile_image %}
+        <img src="{{ student.profile_image.url }}" alt="{{ student.name }}'s Profile Image" class="profile-image">
+        {% else %}
+        <img src="https://via.placeholder.com/150" alt="Default Profile Image" class="profile-image">
+        {% endif %}
+        <h2 class="user-name">{{ student.name }}</h2> <!-- Display user name below the profile image -->
+
+    </div>
+    <div class="personal-info">
+        <div class="profile-section personal-info-section">
+            <h3>Personal Info</h3>
+            <p><strong>CRN Number:</strong> {{ student.crn_number }}</p>
+            <p><strong>Branch:</strong> {{ student.get_branch_display }}</p>
+            <p><strong>Year:</strong> {{ student.get_year_display }}</p>
+            <p><strong>Email:</strong> {{ student.email }}</p>
+            <p><strong>Mobile Number:</strong> {{ student.mobile_number }}</p>
+            <p><strong>Gender:</strong> {{ student.get_gender_display }}</p>
+        </div>
+    </div>
+    <div class="other-info">
+        <div class="profile-section educational-info">
+            <h3>Educational Info</h3>
+            <p><strong>CGPA:</strong> {{ student.CGPA }}</p>
+            <p><strong>10th Marks:</strong> {{ student.mark_10th }}</p>
+            <p><strong>12th Marks:</strong> {{ student.mark_12th }}</p>
+            <p><strong>Diploma Marks:</strong> {{ student.diploma_marks }}</p>
+            <p><strong>Aggregate Marks:</strong> {{ student.aggregate_marks }}</p>
+            <p><strong>Year Down:</strong> {{ student.year_down }}</p>
+            <p><strong>Active Backlog:</strong> {{ student.active_backlog }}</p>
+        </div>
+        <div class="profile-section placement-info">
+            <h3>Placement Info</h3>
+            {% if student.placement_status == "Not Placed" %}
+            <p>Not Placed Yet</p>
+            {% else %}
+            {% if student.company_name %}
+            <p><strong>Company Name:</strong> {{ student.company_name }}</p>
+            {% endif %}
+            {% if student.salary %}
+            <p><strong>Salary:</strong> {{ student.salary }}</p>
+            {% endif %}
+            {% if student.placement_type %}
+            <p><strong>Placement Type:</strong> {{ student.get_placement_type_display }}</p>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+{% endblock %}

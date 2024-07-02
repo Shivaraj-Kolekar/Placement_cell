@@ -6,12 +6,19 @@
 
 h1 {
     text-align: center;
-   
+
 }
-a{
+
+a {
     text-decoration: none;
     color: white;
 }
+
+a:hover {
+    text-decoration: none;
+    color: white;
+}
+
 .training-section {
     width: 100%;
     background-size: cover;
@@ -20,49 +27,6 @@ a{
 .training-section h1 {
     text-align: center;
     padding: 25px 0px;
-}
-/* CSS for alert messages */
-.alert {
-    width: 100%;
-    text-align: center;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 0.25rem;
-}
-
-.alert-success {
-    color: white;
-    background-color: #4caf50; /* Green background for success messages */
-    border-color: #4caf50;
-}
-
-.alert-danger {
-    color: white;
-    background-color: #ff3333; /* Red background for error messages */
-    border-color: #ff3333;
-}
-
-.alert-dismissible {
-    position: relative;
-    padding-right: 4rem;
-    margin: 0 auto; /* Center the alert */
-    max-width: 500px; /* Set a maximum width */
-}
-
-.btn-close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 0.5rem 1rem;
-    color: inherit;
-    background-color: transparent;
-    border: 0;
-    cursor: pointer;
-}
-
-/* Additional styles for success and error messages */
-.alert-danger, .alert-success {
-    font-weight: bold;
 }
 
 .container {
@@ -78,6 +42,7 @@ a{
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -94,7 +59,8 @@ a{
     background: white;
     border-radius: 5px;
     box-shadow: 0px 0px 10px 3px lightgray;
-    animation: fadeIn 0.5s ease-in-out; /* Apply animation */
+    animation: fadeIn 0.5s ease-in-out;
+    
 }
 
 
@@ -105,20 +71,25 @@ a{
 }
 
 .training-items button {
-    background: blue;
     padding: 10px 25px;
     color: white;
     border-radius: 10px;
+    background-color: blue;
+
 }
 
 .container a,
 .container a:hover {
     text-decoration: none;
+    color: white;
 }
+
 /* Add hover effect */
 .training-items:hover {
-    transform: translateY(-10px); /* Move the card up by 5 pixels on hover */
-    transition: transform 0.3s ease; /* Add transition effect */
+    transform: translateY(-10px);
+    /* Move the card up by 5 pixels on hover */
+    transition: transform 0.3s ease;
+    /* Add transition effect */
 }
 
 @media screen and (max-width: 600px) {
@@ -127,16 +98,19 @@ a{
     }
 
     .training-items {
-        flex-basis: 100%; /* Full width for smaller screens */
+        flex-basis: 100%;
+        /* Full width for smaller screens */
     }
 }
+
 @media screen and (min-width: 601px) and (max-width: 1024px) {
     .container {
         width: 90%;
     }
 
     .training-items {
-        flex-basis: 45%; /* Two items per row */
+        flex-basis: 45%;
+        /* Two items per row */
     }
 }
 
@@ -146,7 +120,8 @@ a{
     }
 
     .training-items {
-        flex-basis: 30%; /* Three items per row */
+        flex-basis: 30%;
+        /* Three items per row */
     }
 }
 
@@ -156,6 +131,7 @@ a{
     }
 
     .training-items {
-        flex-basis: 22%; /* Four items per row */
+        flex-basis: 22%;
+        /* Four items per row */
     }
 }
