@@ -1,0 +1,44 @@
+<!-- graphical_representation.html -->
+
+{% extends 'base_admin.html' %}
+{% block head %}
+    {% load static %}
+    <title>Graph Visualization</title>
+    <link rel="stylesheet" href="{% static 'css/graphical_representation.css' %}">
+    <!-- Include Plotly CDN -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+{% endblock %}
+
+{% block body %}
+    <h1>Graph Visualization</h1>
+
+    <!-- Form to select year and graph type -->
+    <form method="get" action="{% url 'graphical_representation' %}">
+        <label for="year">Select Year:</label>
+        <select name="year" id="year">
+            <option value="">All Years</option>
+            {% for year in years %}
+                <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="graph_type">Select Graph Type:</label>
+        <select name="graph_type" id="graph_type">
+            <option value="bar" {% if selected_graph_type == 'bar' %}selected{% endif %}>Bar Chart</option>
+            <option value="line" {% if selected_graph_type == 'line' %}selected{% endif %}>Line Chart</option>
+            <option value="pie" {% if selected_graph_type == 'pie' %}selected{% endif %}>Pie Chart</option>
+            <option value="area" {% if selected_graph_type == 'area' %}selected{% endif %}>Area Chart</option>
+        </select>
+
+        <input type="submit" value="Show Graph">
+    </form>
+
+    <!-- Display selected graph -->
+    {% if graph_data %}
+        <div id="graph-container">
+            {{ graph_data|safe }}
+        </div>
+    {% else %}
+        <p>No data available for selected criteria.</p>
+    {% endif %}
+{% endblock %}

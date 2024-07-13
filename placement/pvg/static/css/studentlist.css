@@ -1,4 +1,12 @@
-
+body {
+    padding: 20px;
+}
+.container-fluid {
+    padding: 0;
+}
+.table-responsive {
+    overflow-x: auto;
+}
 .container {
     margin-top: 50px;
    
@@ -61,6 +69,8 @@ tr {
 .success {
     background-color: green;
 }
+
+
 .btn-primary{
     text-decoration: none;
     color: white;

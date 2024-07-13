@@ -16,91 +16,89 @@
     {% endfor %}
 {% endif %}
 
-  <div class="container mt-5">
-    
+<div class="container mt-5">
     <form id="signup-form" action="{% url 'add_job_details' %}" method="post" onsubmit="return jobValidation()" enctype="multipart/form-data">
-      {% csrf_token %}
-      <!-- Step 1: Personal Information -->
-  <div class="step" id="step1">
-    
-    <h2>Step 1: job Role Information</h2>
+        {% csrf_token %}
+        <!-- Step 1: Personal Information -->
+        <div class="step" id="step1">
+            <h2>Step 1: Job Role Information</h2>
 
-    <label for="job_id" >Job Id</label>
-    <input type="text" id="job_id" name="job_id" placeholder="Enter Job id" required><br>
-    <b><span class="formerror" id="job_id_error"></span></b><br>
+            <label for="job_id">Job Id</label>
+            <input type="text" id="job_id" name="job_id" placeholder="Enter Job id"><br>
+            <b><span class="formerror" id="job_id_error"></span></b><br>
 
-    
-    <label for="job_title" >Job Title</label>
-    <input type="text" id="job_title" name="job_title" placeholder="Enter Job Title" required><br>
-    <b><span class="formerror" id="job_title_error"></span></b><br>
+            <label for="job_title">Job Title</label>
+            <input type="text" id="job_title" name="job_title" placeholder="Enter Job Title"><br>
+            <b><span class="formerror" id="job_title_error"></span></b><br>
 
-    <label for="company_name">Company Name</label>
-    <input type="text" id="company_name" name="company_name" placeholder="Enter Company Name" required><br>
-    <b><span class="formerror" id="company_name_error"></span></b><br>
+            <label for="company_name">Company Name</label>
+            <input type="text" id="company_name" name="company_name" placeholder="Enter Company Name"><br>
+            <b><span class="formerror" id="company_name_error"></span></b><br>
 
-    <label for="company_logo">Company Logo</label>
-    <input type="file" id="company_logo" name="company_logo"  required><br>
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location" placeholder="Enter Job Location"><br>
+            <b><span class="formerror" id="location_error"></span></b><br>
 
-    <label for="location">Location</label>
-    <input type="text" id="location" name="location" placeholder="Enter Job Location" required><br>
-    <b><span class="formerror" id="location_error"></span></b><br>
+            <label for="salary">Salary</label>
+            <input type="text" id="salary" name="salary" placeholder="Enter Salary"><br>
+            <b><span class="formerror" id="salary_error"></span></b><br>
 
-    
-    <label for="salary" >Salary</label>
-    <input type="text" id="salary" name="salary" placeholder="Enter Salary" required><br>
-    <b><span class="formerror" id="salary_error"></span></b><br>
+            <button type="button" onclick="nextStep(1)">Next</button>
+        </div>
 
-    <button type="button" onclick="nextStep(1)">Next</button>
-  </div>
+        <!-- Step 2: Academic Details -->
+        <div class="step" id="step2">
+            <h2>Step 2: Academic Details</h2>
+            <label for="required_CGPA">Required CGPA</label>
+            <input type="text" id="required_CGPA" name="required_CGPA" placeholder="Enter Required CGPA"><br>
+            <b><span class="formerror" id="required_CGPA_error"></span></b><br>
 
-  <!-- Step 2: Academic Details -->
-  <div class="step" id="step2">
-    <h2>Step 2: Academic Details</h2>
-    <label for="required_CGPA">Required CGPA</label>
-    <input type="text" id="required_CGPA" name="required_CGPA" placeholder="Enter Required CGPA" required><br>
-    <b><span class="formerror" id="required_CGPA_error"></span></b><br>
-    
-    <label for="required_marks">Required Percentages</label>
-    <input type="text" id="required_marks" name="required_marks" placeholder="Enter Required Marks" required><br>
-    <b><span class="formerror" id="required_marks_error"></span></b><br>
+            <label for="required_marks">Required Percentages</label>
+            <input type="text" id="required_marks" name="required_marks" placeholder="Enter Required Marks"><br>
+            <b><span class="formerror" id="required_marks_error"></span></b><br>
 
-    <label >Select Branches</label><br>
-    
-        <label><input type="checkbox" name="required_branchs" value="IT"> Information Technology</label><br>
-        <label><input type="checkbox" name="required_branchs" value="ME"> Mechanical Engineering</label><br>
-        <label><input type="checkbox" name="required_branchs" value="CS"> Computer Science</label><br>
-        <label><input type="checkbox" name="required_branchs" value="EE"> Electrical Engineering</label><br>
-        <label><input type="checkbox" name="required_branchs" value="ENTC"> ENTC</label><br>
-        <label><input type="checkbox" name="required_branchs" value="Printing"> Printing</label><br>
-        <label><input type="checkbox" name="required_branchs" value="AIDS"> AIDS</label><br><br>
-    <button type="button" onclick="prevStep(2)">Previous</button>
-    <button type="button" onclick="nextStep(2)">Next</button>
-  </div>
+            <label for="required_passing_year">Required Passing Year</label>
+            <input type="text" id="required_passing_year" name="required_passing_year" placeholder="Enter Required Passing Year like 2024"><br>
+            <b><span class="formerror" id="required_passing_year_error"></span></b><br>
 
-  <!-- Step 3: Placement Status -->
-  <div class="step" id="step3">
-    <h2>Step 3: Exam Details </h2>
+            <label>Select Branches</label><br>
+            <label><input type="checkbox" name="required_branchs" value="IT"> Information Technology</label><br>
+            <label><input type="checkbox" name="required_branchs" value="ME"> Mechanical Engineering</label><br>
+            <label><input type="checkbox" name="required_branchs" value="CS"> Computer Science</label><br>
+            <label><input type="checkbox" name="required_branchs" value="EE"> Electrical Engineering</label><br>
+            <label><input type="checkbox" name="required_branchs" value="ENTC"> ENTC</label><br>
+            <label><input type="checkbox" name="required_branchs" value="Printing"> Printing</label><br>
+            <label><input type="checkbox" name="required_branchs" value="AIDS"> AIDS</label><br><br>
+            <b><span class="formerror" id="required_branchs_error"></span></b><br>
 
-    <label for="date_exam" >Last Date </label><br>
-    <input type="datetime-local" id="date_last" name="date_last" placeholder="Enter Exam Date" required><br>
-    <b><span class="formerror" id="date_last_error"></span></b><br>
+            <button type="button" onclick="prevStep(2)">Previous</button>
+            <button type="button" onclick="nextStep(2)">Next</button>
+        </div>
 
-      <label for="date_exam">Date of Exam</label><br>
-      <input type="datetime-local" id="date_exam" name="date_exam" placeholder="Enter Exam Date" required><br>
-      <b><span class="formerror" id="date_exam_error"></span></b><br>
+        <!-- Step 3: Exam Details -->
+        <div class="step" id="step3">
+            <h2>Step 3: Exam Details</h2>
 
-      <label for="venue" >Venue</label>
-     <input type="text" id="venue" name="venue" placeholder="Enter Venue" required><br>
-     <b><span class="formerror" id="venue_error"></span></b><br>
+            <label for="date_last">Last Date</label><br>
+            <input type="datetime-local" id="date_last" name="date_last" placeholder="Enter Exam Date"><br>
+            <b><span class="formerror" id="date_last_error"></span></b><br>
 
-        <input type="hidden" id="system_time" name="system_time">
+            <label for="date_exam">Date of Exam</label><br>
+            <input type="datetime-local" id="date_exam" name="date_exam" placeholder="Enter Exam Date"><br>
+            <b><span class="formerror" id="date_exam_error"></span></b><br>
 
-        <button type="button" onclick="prevStep(3)">Previous</button>
-        <button type="submit" onclick="setSystemTime()">Submit</button>
-      </div>
+            <label for="venue">Venue</label>
+            <input type="text" id="venue" name="venue" placeholder="Enter Venue"><br>
+            <b><span class="formerror" id="venue_error"></span></b><br>
+
+            <input type="hidden" id="system_time" name="system_time">
+
+            <button type="button" onclick="prevStep(3)">Previous</button>
+            <button type="submit" onclick="setSystemTime()">Submit</button>
+        </div>
     </form>
-  </div>
- 
-  <script src="{% static 'js/signup.js' %}"></script>
+</div>
+
+<script src="{% static 'js/signup.js' %}"></script>
 
 {% endblock %}

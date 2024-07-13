@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+
 {% block head %}
 {% load static %}
 <title>Job List</title>
@@ -16,16 +17,16 @@
     {% endfor %}
 {% endif %}
 <div class="container">
-    {% if job_details %}
-    {% for job_detail in job_details %}
+    {% if jobs %}
+    {% for job in jobs %}
     <div class="training-items">
-        <p><b>{{ job_detail.job_title }}</b></p>
-        <p><b>Job:</b> {{ job_detail.job_id }}</p>
-        <p><b>Company:</b> {{ job_detail.company_name }}</p>
-        <p><b>Salary:</b> RS {{ job_detail.salary }}</p>
-        <p><b>Posted:</b> <span class="timeAgo" data-time="{{ job_detail.system_time|date:'c' }}"></span></p>
-        {% if job_detail.job_id %}
-        <button><a href="{% url 'apply_for_job' job_id=job_detail.job_id %}">View Details</a></button>
+        <p><b>{{ job.job_title }}</b></p>
+        <p><b>Job:</b> {{ job.job_id }}</p>
+        <p><b>Company:</b> {{ job.company_name }}</p>
+        <p><b>Salary:</b> RS {{ job.salary }}</p>
+        <p><b>Posted:</b> <span class="timeAgo" data-time="{{ job.system_time|date:'c' }}"></span></p>
+        {% if job.job_id %}
+        <button><a href="{% url 'apply_for_job' job_id=job.job_id %}">View Details</a></button>
         {% else %}
         <p class="text-red-500">Job ID not available</p>
         {% endif %}

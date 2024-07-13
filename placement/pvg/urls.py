@@ -17,7 +17,12 @@ urlpatterns = [
     path('job_list/', views.job_list, name='job_list'),
     path('add_job_details/', views.add_job_details, name='add_job_details'),
     path('admin_home/', views.admin_home, name='admin_home'),
+    path('pvg/download_student_data/<str:branch>/<str:status>/<int:year>/', views.download_student_data, name='download_student_data'),
+    path('graphical_representation/', views.graphical_representation, name='graphical_representation'),
+
     path('add_admin/', views.add_admin, name='add_admin'),
+    path('admin_list/', views.admin_list, name='admin_list'),
+
     path('job_list_admin/<int:page>/', views.job_list_admin, name='job_list_admin'),
     path("job_list_admin/", views.job_list_admin, name="job_list_admin_default"),
     path("delete_job/<int:job_id>", views.delete_job, name="delete_job"),
@@ -26,6 +31,8 @@ urlpatterns = [
 
     path("studentlist/<int:page>", views.studentlist, name="studentlist"),
     path("studentlist/", views.studentlist, name="studentlist_default"),
+    
+    
     path('applied_jobs/', views.applied_jobs, name='applied_jobs'),
 
     path("delete_std/<int:crn_number>", views.delete_std, name="delete_std"),

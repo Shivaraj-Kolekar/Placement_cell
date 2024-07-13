@@ -1,113 +1,137 @@
 {% extends "base_admin.html" %}
+{% load static %}
 
 {% block head %}
-{% load static %}
-<title>Job List</title>
-<link rel="stylesheet" href="{% static 'css/studentlist.css' %}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css">
-
+    <title>Job List</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet">
+    <!-- Your custom CSS -->
+    <style>
+        /* Add your custom CSS styles here */
+    </style>
 {% endblock %}
-
 
 {% block body %}
 <div class="container-fluid">
-    <h1>Job List</h1>
+    <h2>Job List</h2>
+
+    <!-- Messages -->
     {% if messages %}
     {% for message in messages %}
     <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible"
         role="alert">
         {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
     {% endfor %}
     {% endif %}
+
+    <!-- Batch Year Selector -->
+    <form class="form-inline mb-3" method="get" action="">
+        <label class="my-1 mr-2" for="batch_year">Select Batch Year:</label>
+        <select class="custom-select my-1 mr-sm-2" id="batch_year" name="batch_year">
+            <option value="">All</option>
+            {% for year in batch_years %}
+            <option value="{{ year }}" {% if year == batch_year %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary my-1">Filter</button>
+    </form>
+
+    <!-- Job Table -->
     <div class="table-responsive">
-        <table id="example" class="table table-striped" style="width:100%">
+        <table id="jobTable" class="table table-striped">
             <thead>
                 <tr>
                     <th>Job Id</th>
                     <th>Job Role</th>
-                    <th>Comapny Name</th>
-                    <th>Comapny Logo</th>
+                    <th>Company Name</th>
                     <th>Location</th>
                     <th>Salary</th>
-                    <th>Branches </th>
+                    <th>Branches</th>
                     <th>CGPA</th>
                     <th>Percentages</th>
-                    <th>Last date</th>
-                    <th>Exam date</th>
+                    <th>Last Date</th>
+                    <th>Exam Date</th>
                     <th>Delete</th>
                     <th>Modify</th>
                 </tr>
             </thead>
             <tbody>
-                {% for item in ServiceData %}
+                {% for job in ServiceData %}
                 <tr>
-                    <td>{{ item.job_id }}</td>
-                    <td>{{ item.job_title }}</td>
-                    <td>{{ item.company_name }}</td>
-                    <td class="logo-cell">
-                        <img src="{{ item.company_logo.url }}" alt="Company Logo" class="thumbnail-img">
-                    </td>
-                    <td>{{ item.location }}</td>
-                    <td>{{ item.salary }}</td>
+                    <td>{{ job.job_id }}</td>
+                    <td>{{ job.job_title }}</td>
+                    <td>{{ job.company_name }}</td>
+                    <td>{{ job.location }}</td>
+                    <td>{{ job.salary }}</td>
                     <td>
-                        {% for branch in item.required_branchs %}
-                        {{ branch }}{% if not forloop.last %} {% endif %}
-                        {% endfor %}
+                        {% for branch in job.required_branchs %}
+                        {{ branch }}
+                        {% if not forloop.last %} {% endif %}
+                    {% endfor %}
+                    
                     </td>
-
-
-
-                    <td>{{ item.required_CGPA }}</td>
-                    <td>{{ item.required_marks }}</td>
-                    <td>{{ item.date_last }}</td>
-                    <td>{{ item.date_exam }}</td>
+                    <td>{{ job.required_CGPA }}</td>
+                    <td>{{ job.required_marks }}</td>
+                    <td>{{ job.date_last }}</td>
+                    <td>{{ job.date_exam }}</td>
                     <td>
-                        <a href="{% url 'delete_job' item.job_id %}" class="error"><i class="fa-solid fa-trash"></i></a>
+                        <a href="{% url 'delete_job' job.job_id %}" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i>
+                        </a>
                     </td>
                     <td>
-                        <a href="{% url 'update_job' item.job_id %}" class="success"><i class="fa-solid fa-pen"></i></a>
+                        <a href="{% url 'update_job' job.job_id %}" class="btn btn-success btn-sm">
+                            <i class="fas fa-pen"></i>
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-</div>
 
-
-<!-- Pagination -->
-<div class="row mt-4 justify-content-center">
-    <div class="col-auto">
-        <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
-            <ul class="pagination">
-                {% for num in ServiceData.paginator.page_range %}
-                {% if num == ServiceData.number %}
-                <li class="paginate_button page-item active"><span class="page-link">{{ num }}</span></li>
-                {% else %}
-                <li class="paginate_button page-item"><a href="?page={{ num }}" class="page-link">{{ num }}</a></li>
-                {% endif %}
-                {% endfor %}
-                {% if ServiceData.has_next %}
-                <li class="paginate_button page-item"><a href="?page={{ ServiceData.next_page_number }}"
-                        class="page-link">Next</a></li>
-                {% else %}
-                <li class="paginate_button page-item disabled"><span class="page-link">Next</span></li>
-                {% endif %}
-            </ul>
-        </div>
+    <!-- Pagination Links -->
+    <div class="container mt-4">
+        <ul class="pagination justify-content-center">
+            {% if ServiceData.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1{% if batch_year %}&batch_year={{ batch_year }}{% endif %}">First</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ ServiceData.previous_page_number }}{% if batch_year %}&batch_year={{ batch_year }}{% endif %}">Previous</a></li>
+            {% endif %}
+            <li class="page-item active"><a class="page-link" href="?page={{ ServiceData.number }}{% if batch_year %}&batch_year={{ batch_year }}{% endif %}">{{ ServiceData.number }}</a></li>
+            {% if ServiceData.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ ServiceData.next_page_number }}{% if batch_year %}&batch_year={{ batch_year }}{% endif %}">Next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ ServiceData.paginator.num_pages }}{% if batch_year %}&batch_year={{ batch_year }}{% endif %}">Last</a></li>
+            {% endif %}
+        </ul>
     </div>
 </div>
 
-
-
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- DataTables JavaScript -->
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
-    $(document).ready(function () {
-        $('#example').DataTable({
-            paging: false // Disable pagination
+    // Initialize DataTables with pagination, sorting, and searching
+    $(document).ready(function() {
+        $('#jobTable').DataTable({
+            "paging": false, // Enable pagination
+            "lengthChange": false,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true // Enable responsive design
         });
     });
 </script>

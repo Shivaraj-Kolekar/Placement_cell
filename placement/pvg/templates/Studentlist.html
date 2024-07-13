@@ -1,18 +1,22 @@
 {% extends "base_admin.html" %}
-
-{% block head %}
 {% load static %}
 
-<link rel="stylesheet" href="{% static 'css/studentlist.css' %}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css">
-<title>Student List</title>
-
+{% block head %}
+    <title>Student List</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet">
+    <!-- Your custom CSS -->
 {% endblock %}
 
 {% block body %}
 <div class="container-fluid">
-    <h1>Student List</h1>
+    <h2>Student List</h2>
+
+    <!-- Messages -->
     {% if messages %}
     {% for message in messages %}
     <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible"
@@ -23,10 +27,21 @@
     {% endfor %}
     {% endif %}
 
+    <!-- Batch Year Selector -->
+    <form class="form-inline mb-3" method="get" action="">
+        <label class="my-1 mr-2" for="batch_year">Select Batch Year:</label>
+        <select class="custom-select my-1 mr-sm-2" id="batch_year" name="batch_year">
+            <option value="">All</option>
+            {% for year in batch_years %}
+            <option value="{{ year }}" {% if year == batch_year %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary my-1">Filter</button>
+    </form>
 
-    
+    <!-- Student Table -->
     <div class="table-responsive">
-        <table id="example" class="table table-striped" style="width:100%">
+        <table id="studentTable" class="table table-striped">
             <thead>
                 <tr>
                     <th>CRN Number</th>
@@ -44,6 +59,7 @@
                     <th>Active Backlog</th>
                     <th>Year Down</th>
                     <th>Remark</th>
+                    <th>Package</th>
                     <th>Delete</th>
                     <th>Update</th>
                 </tr>
@@ -66,13 +82,12 @@
                     <td>{{ student.active_backlog }}</td>
                     <td>{{ student.year_down }}</td>
                     <td>{{ student.remarks }}</td>
+<td>{{ student.salary|default_if_none:"0" }}</td>
                     <td>
-                        <a href="{% url 'delete_std' student.crn_number %}" class="error"><i
-                                class="fa-solid fa-trash"></i></a>
+                        <a href="{% url 'delete_std' student.crn_number %}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
                     </td>
                     <td>
-                        <a href="{% url 'update_std' student.crn_number %}" class="success"><i
-                                class="fa-solid fa-pen"></i></a>
+                        <a href="{% url 'update_std' student.crn_number %}" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -80,43 +95,55 @@
         </table>
     </div>
 
-    <div class="container">
-        <div class="download_link">
-            <a href="{% url 'download_excel' %}" class="btn btn-primary">Excel</a>
-            <a href="{% url 'download_pdf' %}" class="btn btn-primary"> PDF</a>
+    <!-- Pagination Links -->
+    <div class="container mt-4">
+        <ul id="pagination" class="pagination justify-content-center">
+            {% if ServiceData.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1{% if batch_year %}&batch_year={{ batch_year }}{% endif %}">First</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ ServiceData.previous_page_number }}{% if batch_year %}&batch_year={{ batch_year }}{% endif %}">Previous</a></li>
+            {% endif %}
+            <li class="page-item active"><a class="page-link" href="?page={{ ServiceData.number }}{% if batch_year %}&batch_year={{ batch_year }}{% endif %}">{{ ServiceData.number }}</a></li>
+            {% if ServiceData.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ ServiceData.next_page_number }}{% if batch_year %}&batch_year={{ batch_year }}{% endif %}">Next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ ServiceData.paginator.num_pages }}{% if batch_year %}&batch_year={{ batch_year }}{% endif %}">Last</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-2 mt-3">
+            <a href="{% url 'download_excel' %}?batch_year={{ batch_year }}" class="btn btn-primary"> Download Excel</a>
+        </div>
+        <div class="col-md-6 mt-3">
+            <a href="{% url 'download_pdf' %}?batch_year={{ batch_year }}" class="btn btn-primary"> Download PDF</a>
         </div>
     </div>
-
-    <!-- Pagination -->
-    <div class="row mt-4 justify-content-center">
-        <div class="col-auto">
-            <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
-                <ul class="pagination">
-                    {% for num in ServiceData.paginator.page_range %}
-                    {% if num == ServiceData.number %}
-                    <li class="paginate_button page-item active"><span class="page-link">{{ num }}</span></li>
-                    {% else %}
-                    <li class="paginate_button page-item"><a href="?page={{ num }}" class="page-link">{{ num }}</a></li>
-                    {% endif %}
-                    {% endfor %}
-                    {% if ServiceData.has_next %}
-                    <li class="paginate_button page-item"><a href="?page={{ ServiceData.next_page_number }}"
-                            class="page-link">Next</a></li>
-                    {% else %}
-                    <li class="paginate_button page-item disabled"><span class="page-link">Next</span></li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </div>
+</div>
 
 
-    <script>
-        $(document).ready(function () {
-            $('#example').DataTable({
-                paging: false // Disable pagination
-            });
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- DataTables JavaScript -->
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    // Initialize DataTables with pagination, sorting, and searching
+    $(document).ready(function() {
+        $('#studentTable').DataTable({
+            "paging": false, // Enable pagination
+            "lengthChange": false,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true // Enable responsive design
         });
-    </script>
-
-    {% endblock %}
+    });
+</script>
+{% endblock %}

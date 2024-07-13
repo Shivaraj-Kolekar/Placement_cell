@@ -66,15 +66,20 @@ nav .logo-name{
     display: flex;
     align-items: center;
 }
-nav .logo-image{
+.logo-image {
     display: flex;
     justify-content: center;
-    min-width: 55px;
+    align-items: center;
+    height: 100px; 
+    width: 100%; 
+    background-color: #FFF; 
 }
-nav .logo-image img{
-    width: 70px;
-    object-fit: cover;
-    border-radius: 50%;
+
+.logo-image img {
+    max-height: 100%; 
+    max-width: 100%; 
+    object-fit: contain;
+    border-radius: 50%; 
 }
 
 nav .logo-name .logo_name{

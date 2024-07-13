@@ -18,43 +18,51 @@
     <nav>
         <div class="logo-name">
             <div class="logo-image">
-                <img src="{% static 'images/logo.jfif' %}" alt="PVG">
+                <img src="{% static 'images/PVG_new.jpg' %}" alt="PVG">
             </div>
-            <span class="logo_name">PVG</span>
+            <br>
         </div>
 
         <div class="menu-items">
             <ul class="nav-links">
                 <li><a href="{% static 'admin_home' %}">
-                        <i class="fa-solid fa-house"></i>
+                        <i class="fas fa-tachometer-alt"></i>
                         <span class="link-name">Dashboard</span>
                     </a></li>
                 <li><a href="{% url 'add_job_details' %}">
-                        <i class="fa-solid fa-pen"></i>
+                        <i class="fas fa-plus"></i>
                         <span class="link-name">Add Job</span>
                     </a></li>
                 <li>
                     <a href="{% url 'job_list_admin' page=1 %}">
-                        <i class="fa-solid fa-list-check"></i>
+                        <i class="fas fa-list-ul"></i>
                         <span class="link-name">Job List</span>
                     </a>
                 </li>
                 <li>
                     <a href="{% url 'studentlist' page=1 %}">
-                        <i class="fa-solid fa-list"></i>
+                        <i class="fas fa-users"></i>
                         <span class="link-name">Student List</span>
                     </a>
                 </li>
                 <li>
                     <a href="{% url 'application_list_search' %}">
-                        <i class="fa-solid fa-house"></i>
+                        <i class="fas fa-file-alt"></i>
                         <span class="link-name">Application List</span>
                     </a>
                 </li>
                 <li>
                     <a href="{% url 'add_admin' %}">
-                        <i class="fa-solid fa-house"></i>
+                        <i class="fas fa-user-plus"></i>
                         <span class="link-name">Add Admin</span>
+                    </a>
+                </li>
+
+
+                <li>
+                    <a href="{% url 'graphical_representation' %}">
+                        <i class="fas fa-chart-pie"></i>
+                        <span class="link-name">Graphical Representation</span>
                     </a>
                 </li>
             </ul>
@@ -104,7 +112,11 @@
                     <i class="fas fa-users"></i>
                     <span class="text">Department-wise list of students</span>
                 </div>
-
+                <form method="GET" action="{% url 'admin_home' %}">
+                    <input type="text" name="year" placeholder="Enter Year" value="{{ selected_year|default_if_none:'' }}" style="text-align: center;">
+                    <button type="submit">Search</button>
+                </form>
+                
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -116,18 +128,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Loop through department_wise_students -->
                             {% for department in department_wise_students %}
                             <tr>
                                 <th scope="row">{{ forloop.counter }}</th>
                                 <td>{{ department.branch }}</td>
-                                <td>{{ department.placed_students }}</td>
-                                <td>{{ department.unplaced_students }}</td>
+                                <td>
+                                    <a href="{% url 'download_student_data' department.branch 'Placed' selected_year|default_if_none:0 %}" style="text-decoration: none;">{{ department.placed_students }}</a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'download_student_data' department.branch 'Not Placed' selected_year|default_if_none:0 %}" style="text-decoration: none;">{{ department.unplaced_students }}</a>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
+                
+                
+                
             </div>
         </div>
     </section>

@@ -13,7 +13,7 @@
 {% endfor %}
 {% endif %}
 {% block body %}
-<form id="signup-form" action="{% url 'do_update_std' data.crn_number %}" method="post" onsubmit="return validateForm()" enctype="multipart/form-data">
+<form id="signup-form" action="{% url 'do_update_std' data.crn_number %}" method="post" onsubmit="return validatestdUpdate()" enctype="multipart/form-data">
   {% csrf_token %}
   <!-- Step 1: Personal Information -->
   <div class="step" id="step1">

@@ -36,7 +36,7 @@ class StudentLoginForm(forms.Form):
 class JobDetailForm(forms.ModelForm):
     class Meta:
         model = JobDetail
-        fields = ['job_id', 'job_title', 'company_logo', 'company_name', 'salary', 'required_branchs', 'location', 'system_time', 'required_CGPA', 'required_marks', 'date_exam', 'date_last', 'venue']
+        fields = ['job_id', 'job_title',  'company_name', 'salary', 'required_branchs','required_passing_year', 'location', 'system_time', 'required_CGPA', 'required_marks', 'date_exam', 'date_last', 'venue']
 
 class PlacementForm(forms.ModelForm):
     ON_CAMPUS = 'On Campus'

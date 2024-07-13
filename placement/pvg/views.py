@@ -16,6 +16,7 @@ from .helpers import studentlist_pdf, studentlist_xls
 from xhtml2pdf import pisa
 import logging
 from django.urls import reverse
+from django.utils import timezone
 
 from io import BytesIO
 from django.contrib.auth.tokens import default_token_generator
@@ -27,7 +28,8 @@ from django.contrib.sites.shortcuts import get_current_site
 
 from django.contrib.auth.views import PasswordResetCompleteView
 from django.urls import reverse_lazy
-
+import plotly.graph_objs as go
+import plotly.offline as py
 
 def index(request):
     return render(request, 'index.html')
@@ -39,6 +41,7 @@ def signup(request):
     if request.method == 'POST':
         form = StudentForm(request.POST)
         if form.is_valid():
+            # Create user object
             user = User.objects.create_user(
                 username=form.cleaned_data['email'],
                 email=form.cleaned_data['email'],
@@ -46,14 +49,16 @@ def signup(request):
                 is_staff=False
             )
 
+            # Save student profile with passing year
             user_profile = form.save(commit=False)
             user_profile.user = user
+            user_profile.passing_year = user_profile.calculate_passing_year()  # Calculate passing year
             user_profile.save()
 
             # Send registration email
             subject = "PVG Placement cell registration"
             message = f"Dear {form.cleaned_data['name']},\n\nYou have successfully registered in PVG Placement cell.\n\nThank you!"
-            from_email = 'your-email@example.com'
+            from_email = 'your-email@example.com'  # Update with your actual email
             recipient_list = [form.cleaned_data['email']]
             send_mail(subject, message, from_email, recipient_list)
 
@@ -67,8 +72,13 @@ def signup(request):
             else:
                 messages.error(request, 'Authentication failed. Please try logging in.')
         else:
-            # We rely on form.errors to display the errors, no need to add extra messages
-            print("")  # Debugging print
+            # Handle form errors gracefully
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'{field}: {error}')
+
+            # Re-render the form with errors and data
+            return render(request, 'signup.html', {'form': form})
     else:
         form = StudentForm()
 
@@ -118,35 +128,28 @@ def student_login(request):
 
 def my_logout(request):
     if request.user.is_authenticated:
-        # Clear any sensitive session data
-        request.session.flush()
+        # Log out the user
+        logout(request)
 
-        # Redirect to the login page
-        return redirect('student_login')
+        # Prevent caching of pages after logout
+        response = redirect('student_login')
+        response['Cache-Control'] = 'no-cache, no-store, must-revalidate'  # HTTP 1.1
+        response['Pragma'] = 'no-cache'  # HTTP 1.0
+        response['Expires'] = '0'  # Proxies
+        return response
 
     # If the user is not authenticated, redirect to login page
     return redirect('student_login')
 
-    # Prevent caching of pages after logout
-    response = HttpResponse()
-    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'  # HTTP 1.1
-    response['Pragma'] = 'no-cache'  # HTTP 1.0
-    response['Expires'] = '0'  # Proxies
-    return response
-
 User = get_user_model()
 
 def password_reset(request):
-    print("Password reset view called")
     if request.method == "POST":
-        print("POST request received")
         form = PasswordResetForm(request.POST)
         if form.is_valid():
-            print("Form is valid")
             email = form.cleaned_data['email']
             associated_users = User.objects.filter(email=email)
             if associated_users.exists():
-                print(f"Found users associated with email: {email}")
                 for user in associated_users:
                     subject = "Password Reset Requested"
                     email_template_name = "password_reset_email.txt"
@@ -159,75 +162,58 @@ def password_reset(request):
                         'token': default_token_generator.make_token(user),
                         'protocol': 'http',
                     }
-                    print(f"Context for email: {c}")
                     email = render_to_string(email_template_name, c)
                     try:
                         send_mail(subject, email, 'from@example.com', [user.email], fail_silently=False)
-                        print(f"Email sent to: {user.email}")
                     except BadHeaderError:
-                        print("BadHeaderError encountered")
                         return HttpResponse('Invalid header found.')
                 messages.success(request, 'A password reset link has been sent to your email.')
                 return redirect("student_login")
             else:
-                print("No users associated with the email")
                 messages.error(request, 'No user is associated with this email address.')
                 return redirect("password_reset")
     else:
-        print("GET request received")
         form = PasswordResetForm()
     return render(request, "password_reset.html", {"form": form})
 
 class PasswordResetConfirmViewCustom(View):
     def get(self, request, *args, **kwargs):
-        print("PasswordResetConfirmViewCustom GET called")
         try:
             uidb64 = kwargs['uidb64']
             token = kwargs['token']
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
-            print(f"User found: {user}")
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            print("Error decoding UID or user does not exist")
             user = None
 
         if user is not None and default_token_generator.check_token(user, token):
-            print("Token is valid")
             request.session['reset_user_id'] = user.id  # Store user id in session for security
 
             # Proceed with password reset form
             form = SetPasswordForm(user)
             return render(request, 'password_reset_confirm.html', {'form': form, 'uidb64': uidb64, 'token': token})
 
-        print("The reset link is no longer valid")
         messages.error(request, 'The reset link is no longer valid.')
         return redirect('password_reset')
 
     def post(self, request, *args, **kwargs):
-        print("PasswordResetConfirmViewCustom POST called")
         uidb64 = kwargs.get('uidb64')
         token = kwargs.get('token')
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
-            print(f"User found: {user}")
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            print("Error decoding UID or user does not exist")
             user = None
 
         if user is not None and default_token_generator.check_token(user, token):
-            print("Token is valid")
             form = SetPasswordForm(user, request.POST)
             if form.is_valid():
                 form.save()
-                print("Password has been set")
                 messages.success(request, 'Your password has been set. You may now log in.')
                 return redirect('student_login')
             else:
-                print("Form is invalid, errors: ", form.errors)
                 messages.error(request, 'Please correct the error below.')
         else:
-            print("The reset link is no longer valid")
             messages.error(request, 'The reset link is no longer valid.')
 
         return render(request, 'password_reset_confirm.html', {'form': form, 'uidb64': uidb64, 'token': token})
@@ -236,13 +222,11 @@ class PasswordResetCompleteRedirectView(TemplateView):
     template_name = 'student_login.html'  
 
     def get(self, request, *args, **kwargs):
-        print("Password reset complete, redirecting to login")
         messages.success(request, 'Password reset is complete. You may now log in.')
         return redirect(reverse_lazy('student_login'))
 
 
 
-@login_required
 def profile(request):
     crn_number = request.session.get('crn_number')
     if not crn_number:
@@ -252,82 +236,409 @@ def profile(request):
     student = get_object_or_404(Student, crn_number=crn_number)
     return render(request, 'profile.html', {'student': student})
 
-def admin_home(request):
-    total_registrations = Student.objects.count()
-    placed_students = Student.objects.filter(placement_status='Placed').count()
-    unplaced_students = Student.objects.filter(placement_status='Not Placed').count()
 
-    department_wise_students = []
-    branches = ['IT', 'CS', 'ME', 'EE', 'ENTC', 'Printing', 'AIDS']  # Add all your department choices here
-    for branch in branches:
-        placed_count = Student.objects.filter(branch=branch, placement_status='Placed').count()
-        unplaced_count = Student.objects.filter(branch=branch, placement_status='Not Placed').count()
-        department_wise_students.append({
-            'branch': branch,
-            'placed_students': placed_count,
-            'unplaced_students': unplaced_count
-        })
+
+def admin_home(request):
+    year = request.GET.get('year', None)  # Get the year parameter from the request
+
+    # Filter students based on the year parameter if provided
+    if year:
+        total_registrations = Student.objects.filter(passing_year=year).count()
+        placed_students = Student.objects.filter(passing_year=year, placement_status='Placed').count()
+        unplaced_students = Student.objects.filter(passing_year=year, placement_status='Not Placed').count()
+
+        department_wise_students = []
+        branches = ['IT', 'CS', 'ME', 'EE', 'ENTC', 'Printing', 'AIDS']  # Add all your department choices here
+        for branch in branches:
+            placed_count = Student.objects.filter(passing_year=year, branch=branch, placement_status='Placed').count()
+            unplaced_count = Student.objects.filter(passing_year=year, branch=branch, placement_status='Not Placed').count()
+            department_wise_students.append({
+                'branch': branch,
+                'placed_students': placed_count,
+                'unplaced_students': unplaced_count
+            })
+    else:
+        # If no year parameter is provided, show all data (default behavior)
+        total_registrations = Student.objects.count()
+        placed_students = Student.objects.filter(placement_status='Placed').count()
+        unplaced_students = Student.objects.filter(placement_status='Not Placed').count()
+
+        department_wise_students = []
+        branches = ['IT', 'CS', 'ME', 'EE', 'ENTC', 'Printing', 'AIDS']  # Add all your department choices here
+        for branch in branches:
+            placed_count = Student.objects.filter(branch=branch, placement_status='Placed').count()
+            unplaced_count = Student.objects.filter(branch=branch, placement_status='Not Placed').count()
+            department_wise_students.append({
+                'branch': branch,
+                'placed_students': placed_count,
+                'unplaced_students': unplaced_count
+            })
 
     context = {
         'total_registrations': total_registrations,
         'placed_students': placed_students,
         'unplaced_students': unplaced_students,
-        'department_wise_students': department_wise_students
+        'department_wise_students': department_wise_students,
+        'selected_year': year  # Pass the selected year to the template for display purposes
     }
     return render(request, 'admin_home.html', context)
 
 
 
+def download_student_data(request, branch, status, year):
+    # Prepare filter conditions based on branch, status, and year
+    if year and year != '0':
+        queryset = Student.objects.filter(branch=branch, placement_status=status, passing_year=year)
+    else:
+        queryset = Student.objects.filter(branch=branch, placement_status=status)
+
+    # Generate Excel content
+    xls_content = studentlist_xls({'student': queryset})
+
+    if xls_content:
+        filename = f'student_data_{branch}_{status}'
+        if year and year != '0':
+            filename += f'_{year}'
+        filename += '.xls'
+
+        response = HttpResponse(xls_content, content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+    else:
+        return HttpResponse('Error generating Excel file', status=500)
+
+
+
+
+def graphical_representation(request):
+    years = Student.objects.values_list('passing_year', flat=True).distinct().order_by('passing_year')
+    branches = ['IT', 'CS', 'ME', 'EE', 'ENTC', 'Printing', 'AIDS']  # List of department choices
+
+    selected_year = request.GET.get('year', None)
+    selected_graph_type = request.GET.get('graph_type', 'bar')  # Default to bar chart if not specified
+
+    if selected_year:
+        department_wise_data = []
+        for branch in branches:
+            placed_count = Student.objects.filter(passing_year=selected_year, branch=branch, placement_status='Placed').count()
+            unplaced_count = Student.objects.filter(passing_year=selected_year, branch=branch, placement_status='Not Placed').count()
+            department_wise_data.append({
+                'branch': branch,
+                'placed_students': placed_count,
+                'unplaced_students': unplaced_count
+            })
+
+        if selected_graph_type == 'bar':
+            graph_data = create_bar_chart(department_wise_data)
+        elif selected_graph_type == 'line':
+            graph_data = create_line_chart(department_wise_data)
+        elif selected_graph_type == 'pie':
+            graph_data = create_pie_chart(department_wise_data)
+        elif selected_graph_type == 'area':
+            graph_data = create_area_chart(department_wise_data)
+        else:
+            graph_data = create_bar_chart(department_wise_data)  # Default to bar chart
+
+        context = {
+            'years': years,
+            'branches': branches,
+            'selected_year': selected_year,
+            'selected_graph_type': selected_graph_type,
+            'graph_data': graph_data
+        }
+    else:
+        # If no year is selected, show aggregate data for landing page
+        aggregate_data = get_aggregate_data()
+        graph_data = create_pie_chart_aggregate(aggregate_data)
+
+        context = {
+            'years': years,
+            'branches': branches,
+            'selected_year': selected_year,
+            'selected_graph_type': 'pie',  # Default to pie chart for landing page
+            'graph_data': graph_data
+        }
+
+    return render(request, 'graphical_representation.html', context)
+
+def get_aggregate_data():
+    # Function to get aggregate data (total placed vs. unplaced students across all years and branches)
+    aggregate_data = {
+        'placed': Student.objects.filter(placement_status='Placed').count(),
+        'unplaced': Student.objects.filter(placement_status='Not Placed').count()
+    }
+    return aggregate_data
+
+def create_pie_chart_aggregate(data):
+    # Create a pie chart for aggregate data using Plotly
+    labels = ['Placed', 'Not Placed']
+    values = [data['placed'], data['unplaced']]
+
+    trace = go.Pie(labels=labels, values=values, hole=0.3)
+
+    layout = go.Layout(title='Aggregate Placement Status')
+
+    fig = go.Figure(data=[trace], layout=layout)
+    graph_div = py.plot(fig, output_type='div', include_plotlyjs=False)
+    return graph_div
+
+def create_bar_chart(data):
+    x_values = [item['branch'] for item in data]
+    placed_values = [item['placed_students'] for item in data]
+    unplaced_values = [item['unplaced_students'] for item in data]
+
+    trace1 = go.Bar(x=x_values, y=placed_values, name='Placed', marker=dict(color='blue'))
+    trace2 = go.Bar(x=x_values, y=unplaced_values, name='Not Placed', marker=dict(color='red'))
+
+    layout = go.Layout(title='Branch-wise Placement Status',
+                       xaxis=dict(title='Branch'),
+                       yaxis=dict(title='Number of Students'),
+                       barmode='stack')
+
+    fig = go.Figure(data=[trace1, trace2], layout=layout)
+    graph_div = py.plot(fig, output_type='div', include_plotlyjs=False)
+    return graph_div
+
+def create_line_chart(data):
+    x_values = [item['branch'] for item in data]
+    placed_values = [item['placed_students'] for item in data]
+    unplaced_values = [item['unplaced_students'] for item in data]
+
+    trace1 = go.Scatter(x=x_values, y=placed_values, mode='lines+markers', name='Placed', line=dict(color='green'))
+    trace2 = go.Scatter(x=x_values, y=unplaced_values, mode='lines+markers', name='Not Placed', line=dict(color='orange'))
+
+    layout = go.Layout(title='Branch-wise Placement Trends',
+                       xaxis=dict(title='Branch'),
+                       yaxis=dict(title='Number of Students'))
+
+    fig = go.Figure(data=[trace1, trace2], layout=layout)
+    graph_div = py.plot(fig, output_type='div', include_plotlyjs=False)
+    return graph_div
+
+def create_pie_chart(data):
+    labels = [item['branch'] for item in data]
+    values_placed = [item['placed_students'] for item in data]
+    values_unplaced = [item['unplaced_students'] for item in data]
+    total_students = [values_placed[i] + values_unplaced[i] for i in range(len(data))]
+
+    trace1 = go.Pie(labels=labels, values=values_placed, name='Placed', hole=0.3, 
+                    marker=dict(colors=['#7CB342', '#4CAF50', '#CDDC39']),
+                    hoverinfo='label+percent',
+                    textinfo='value+label',
+                    textposition='inside',
+                    insidetextorientation='radial',
+                    text=[f'Placed: {v}/{total_students[i]}' for i, v in enumerate(values_placed)])
+
+    trace2 = go.Pie(labels=labels, values=values_unplaced, name='Not Placed', hole=0.3, 
+                    marker=dict(colors=['#FF7043', '#FFA726', '#FFCC80']),
+                    hoverinfo='label+percent',
+                    textinfo='value+label',
+                    textposition='inside',
+                    insidetextorientation='radial',
+                    text=[f'Not Placed: {v}/{total_students[i]}' for i, v in enumerate(values_unplaced)])
+
+    layout = go.Layout(title='Distribution of Placed and Unplaced Students by Branch',
+                       legend=dict(orientation='h', x=0.5, y=-0.1),
+                       margin=dict(l=20, r=20, t=60, b=20))
+
+    fig = go.Figure(data=[trace1, trace2], layout=layout)
+    graph_div = py.plot(fig, output_type='div', include_plotlyjs=False)
+
+    return graph_div
+
+
+def create_area_chart(data):
+    x_values = [item['branch'] for item in data]
+    placed_values = [item['placed_students'] for item in data]
+    unplaced_values = [item['unplaced_students'] for item in data]
+
+    trace1 = go.Scatter(x=x_values, y=placed_values, mode='lines', fill='tozeroy', name='Placed', fillcolor='rgba(152, 251, 152, 0.5)')
+    trace2 = go.Scatter(x=x_values, y=unplaced_values, mode='lines', fill='tozeroy', name='Not Placed', fillcolor='rgba(255, 99, 71, 0.5)')
+
+    layout = go.Layout(title='Cumulative Placement Status by Branch',
+                       xaxis=dict(title='Branch'),
+                       yaxis=dict(title='Number of Students'))
+
+    fig = go.Figure(data=[trace1, trace2], layout=layout)
+    graph_div = py.plot(fig, output_type='div', include_plotlyjs=False)
+    return graph_div
+
+
 def add_admin(request):
-    form = AdminDetailForm() 
+    form = AdminDetailForm()
 
     if request.method == 'POST':
         form = AdminDetailForm(request.POST, request.FILES)
         if form.is_valid():
-            if User.objects.filter(email=form.cleaned_data['admin_email']).exists() or Admin.objects.filter(admin_id=form.cleaned_data['admin_id']).exists():
+            admin_email = form.cleaned_data['admin_email']
+            admin_id = form.cleaned_data['admin_id']
+            admin_password = form.cleaned_data['admin_password']
 
-                messages.error(request, 'Email already exists.')
+            # Check if email or admin_id already exists
+            if User.objects.filter(email=admin_email).exists() or Admin.objects.filter(admin_id=admin_id).exists():
+                messages.error(request, 'Email or Admin ID already exists.')
                 return render(request, 'add_admin.html', {'form': form})
-            else: 
-                user = User.objects.create_user(
-                    username=form.cleaned_data['admin_email'],
-                    email=form.cleaned_data['admin_email'],
-                    password=form.cleaned_data['admin_password']    
-                )
-                # Save the admin instance
-                admin_instance = form.save(commit=False)
-                admin_instance.save()
-                return redirect('admin_home')  
-
+            
+            # Create the User instance
+            user = User.objects.create_user(
+                username=admin_email,
+                email=admin_email,
+                password=admin_password,
+                is_staff=True,  # Grant admin role
+                is_superuser=False  # Not a superuser
+            )
+            
+            # Create the Admin instance
+            admin_instance = Admin(
+                admin_id=admin_id,
+                admin_name=form.cleaned_data['admin_name'],
+                admin_email=admin_email,
+                admin_password=admin_password,
+                admin_branch=form.cleaned_data['admin_branch']
+                # Add other fields as per your Admin model
+            )
+            admin_instance.save()
+            
+            # Send registration email to the admin
+            subject = "Welcome to Our Admin Panel"
+            message = f"Dear {admin_instance.admin_name},\n\nYou have been successfully added as an admin. Your admin ID is {admin_instance.admin_id}.\n\nThank you!"
+            from_email = 'aniketsonkamble07@gmail.com'  
+            recipient_list = [admin_email]
+            send_mail(subject, message, from_email, recipient_list)
+            
+            messages.success(request, 'Admin added successfully.')
+            return redirect('admin_home')  
+        
     return render(request, 'add_admin.html', {'form': form})
 
+def admin_list(request):
+    admins = Admin.objects.all()
+    return render(request, 'admin_list.html', {'admins': admins})
+
 def student_home(request):
-    job_details = JobDetail.objects.all().order_by('-system_time')  # Order by latest system_time
-    return render(request, 'student_home.html', {'job_details': job_details})
+    try:
+        # Ensure the user has a student profile
+        student = request.user.student
+    except Student.DoesNotExist:
+        # Handle the case where the user does not have a student profile
+        messages.error(request, 'You need to complete your student profile to access job details.')
+        return redirect('signup') 
+
+    # Filter jobs based on the student's branch
+    matching_jobs = JobDetail.objects.filter(required_branchs__icontains=student.branch)
+
+    if matching_jobs.exists():
+        return render(request, 'student_home.html', {'jobs': matching_jobs, 'student': student})
+    else:
+        messages.info(request, 'No job details available for your branch.')
+        return render(request, 'student_home.html', {'student': student})
 
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-
-def studentlist(request, page=1):
-    # Fetch all Student objects from the database
+def studentlist(request,page=1):
+    batch_year = request.GET.get('batch_year')
     students = Student.objects.all()
 
-    # Paginate the queryset
-    paginator = Paginator(students, 10)
-    page_number = request.GET.get('page')
-    ServiceData = paginator.get_page(page_number)
+    if batch_year and batch_year.isdigit():
+        students = students.filter(passing_year=batch_year)
 
-    # Pass the paginated queryset to the template context
-    context = {'ServiceData': ServiceData}
+    paginator = Paginator(students, 10)  # Show 10 students per page
+    page_number = request.GET.get('page')
+    try:
+        ServiceData = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        ServiceData = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        ServiceData = paginator.page(paginator.num_pages)
+
+    batch_years = Student.objects.values_list('passing_year', flat=True).distinct()
+
+    context = {
+        'ServiceData': ServiceData,
+        'batch_year': batch_year,
+        'batch_years': batch_years,
+    }
     return render(request, 'studentlist.html', context)
+
+
+#  Excel sheet Download
+
+def download_excel(request):
+    batch_year = request.GET.get('batch_year')
+    
+    queryset = Student.objects.all()
+    
+    if batch_year:
+        try:
+            queryset = queryset.filter(passing_year=int(batch_year))
+        except ValueError:
+            # Handle invalid batch_year format gracefully, or log the error
+            return HttpResponse('Invalid batch year format', status=400)
+    
+    xls_content = studentlist_xls(queryset)  # Pass queryset directly to studentlist_xls
+    
+    if xls_content:
+        response = HttpResponse(xls_content, content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=student_data.xls'
+        return response
+    else:
+        return HttpResponse('Error generating Excel file', status=500)
+
+# PDF Download
+def download_pdf(request):
+    batch_year = request.GET.get('batch_year')
+    
+    queryset = Student.objects.all()
+    
+    if batch_year:
+        try:
+            queryset = queryset.filter(passing_year=int(batch_year))
+        except ValueError:
+            # Handle invalid batch_year format gracefully, or log the error
+            return HttpResponse('Invalid batch year format', status=400)
+    
+    context = {'ServiceData': queryset}
+    
+    # Generate PDF content
+    pdf = render_to_pdf('studentlist_pdf.html', context)
+    
+    if pdf:
+        # Serve PDF as response
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'inline; filename=student_data.pdf'
+        return response
+    else:
+        return HttpResponse('Error generating PDF', status=500)
+
+def render_to_pdf(template_src, context_dict):
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    result = BytesIO()
+    
+    # Generate PDF
+    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
+    
+    if not pdf.err:
+        pdf_file = result.getvalue()
+        result.close()
+        return pdf_file
+    else:
+        result.close()
+        return None
+
 
 
 def delete_std(request, crn_number, page=1):
     try:
         student = Student.objects.get(pk=crn_number)
     except Student.DoesNotExist:
-        messages.error(request, "Student Data not found")
-        return HttpResponse("Student Data not found", status=404)
+        messages.error(request, "Student data not found")
+        return HttpResponse("Student data not found", status=404)
+
+    student_name = student.name
 
     # Check if the student has an associated user before trying to delete it
     if hasattr(student, 'user') and student.user is not None:
@@ -335,7 +646,7 @@ def delete_std(request, crn_number, page=1):
 
     # Delete the Student object
     student.delete()
-    messages.success(request, "Student Data deleted successfully.")
+    messages.success(request, f"Student data for {student_name} deleted successfully.")
 
     return redirect("studentlist", page=page)
     
@@ -375,7 +686,7 @@ def do_update_std(request, crn_number, page=1):
         
         try:
             student_instance.save()
-            messages.success(request, 'Student details updated successfully.')
+            messages.success(request, f'{student_instance.name} details updated successfully.')
         except Exception as e:
             messages.error(request, f'Error updating student details')
     
@@ -392,10 +703,14 @@ def add_job_details(request):
             # Get the list of selected branches from the form
             selected_branches = request.POST.getlist('required_branchs')
             job.required_branchs = selected_branches
+            
+            # Get the passing year from the form
+            passing_year = form.cleaned_data['required_passing_year']
+            job.passing_year = passing_year
             job.save()
 
-            # Send email to students
-            students = Student.objects.all()
+            # Filter students based on the selected branches and passing year
+            students = Student.objects.filter(branch__in=selected_branches, passing_year=passing_year)
             subject = 'New Job Opening Alert'
             for student in students:
                 message = f"""
@@ -418,23 +733,49 @@ def add_job_details(request):
                 Best regards,
                 The PVG Placement Cell
                 """
-                from_email = "aniketsonkamble07@gmail.com"
+                from_email = "your-email@example.com"  # Update with your email
                 to_email = student.email
                 send_mail(subject, message, from_email, [to_email], fail_silently=False)
 
             messages.success(request, 'Job details added and emails sent successfully.')
-            return redirect('job_list_admin', page=1)  
+            return redirect('job_list_admin', page=1)  # Redirect to admin job list view
         else:
-            messages.error(request, 'Job Id is already present. Please correct the errors and try again.')
+            messages.error(request, 'Job details form is not valid. Please correct the errors and try again.')
     else:
         form = JobDetailForm()
 
     return render(request, 'add_job_details.html', {'form': form})
 
 def job_list(request):
-    job_details = JobDetail.objects.all().order_by('-system_time')  # Order by latest system_time
-    return render(request, 'job_list.html', {'job_details': job_details})
+    try:
+        # Ensure the user has a student profile
+        student = request.user.student
+    except Student.DoesNotExist:
+        # Handle the case where the user does not have a student profile
+        messages.error(request, 'You need to complete your student profile to access job details.')
+        return redirect('profile_completion')  # Redirect to a profile completion page
 
+    # Filter jobs based on the student's branch
+    matching_jobs = JobDetail.objects.filter(required_branchs__icontains=student.branch)
+
+    # Pagination setup
+    paginator = Paginator(matching_jobs, 10)  # Show 10 jobs per page
+    page_number = request.GET.get('page')
+
+    try:
+        jobs = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        jobs = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        jobs = paginator.page(paginator.num_pages)
+
+    if matching_jobs.exists():
+        return render(request, 'job_list.html', {'jobs': jobs, 'student': student})
+    else:
+        messages.info(request, 'No job details available for your branch.')
+        return render(request, 'job_list.html', {'student': student})
 
 
 def apply_for_job(request, job_id):
@@ -501,15 +842,19 @@ def apply_for_job2(request, job_id):
 
 
 def applied_jobs(request):
-    crn_number = request.session.get('crn_number')  
+    crn_number = request.session.get('crn_number')
+    
     if crn_number:
         student_applications = JobApplication.objects.filter(student__crn_number=crn_number)
-        job_ids = student_applications.values_list('job_id', flat=True)
-        job_applications = JobDetail.objects.filter(job_id__in=job_ids).annotate(
-            applied_time=F('jobapplication__applied_time')
-        )
         
-        if job_applications.exists():
+        if student_applications.exists():
+            job_applications = JobDetail.objects.filter(
+                jobapplication__student__crn_number=crn_number
+            ).annotate(
+                applied_time=F('jobapplication__applied_time'),
+                is_present=F('jobapplication__is_present')
+            )
+            
             return render(request, 'applied_jobs.html', {'job_applications': job_applications})
         else:
             messages.error(request, "No applications found.")
@@ -517,7 +862,6 @@ def applied_jobs(request):
     else:
         messages.error(request, "CRN number not found in session.")
         return redirect('student_home')
-
 
 def delete_job(request, job_id, page=1):
     job = get_object_or_404(JobDetail, pk=job_id)
@@ -547,8 +891,7 @@ def do_update_job(request, job_id, page=1):
     data = get_object_or_404(JobDetail, pk=job_id)
 
     try:
-        if company_logo:
-            data.company_logo = company_logo
+
         
         data.job_title = job_title
         data.company_name = company_name
@@ -568,46 +911,35 @@ def do_update_job(request, job_id, page=1):
 
     return redirect("job_list_admin", page=page)
 
+
 def job_list_admin(request, page=1):
-    ServiceData = JobDetail.objects.all().order_by('-system_time')  # Order by latest system_time
-    paginator = Paginator(ServiceData, 10)
-    page_number = request.GET.get('page', page)
-    ServiceDataFinal = paginator.get_page(page_number)
-    data = {'ServiceData': ServiceDataFinal}
-    return render(request, 'job_list_admin.html', data)
+    batch_year = request.GET.get('batch_year')
+    jobs = JobDetail.objects.all().order_by('-system_time')
 
-#  Excel sheet Download
-def download_excel(request):
-    queryset = Student.objects.all()
-    context = {'student': queryset}  
-    xls_content = studentlist_xls(context)  
-    if xls_content:
-        response = HttpResponse(xls_content, content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=student_data.xls'
-        return response
-    else:
-        return HttpResponse('Error generating Excel file', status=500)
+    if batch_year and batch_year.isdigit():
+        jobs = jobs.filter(required_passing_year=batch_year)
 
-# PDF Download
-def download_pdf(request):
-    queryset = Student.objects.all()
-    context = {'ServiceData': queryset}
-    pdf = render_to_pdf('studentlist_pdf.html', context)
-    if pdf:
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = 'inline; filename=student_data.pdf'
-        return response
-    else:
-        return HttpResponse('Error generating PDF', status=500)
+    paginator = Paginator(jobs, 10)  # Show 10 jobs per page
+    page_number = request.GET.get('page')
 
-def render_to_pdf(template_src, context_dict):
-    template = get_template(template_src)
-    html  = template.render(context_dict)
-    result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
-    if not pdf.err:
-        return HttpResponse(result.getvalue(), content_type='application/pdf')
-    return None
+    try:
+        ServiceData = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        ServiceData = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        ServiceData = paginator.page(paginator.num_pages)
+
+    batch_years = JobDetail.objects.values_list('required_passing_year', flat=True).distinct()
+
+    context = {
+        'ServiceData': ServiceData,
+        'batch_year': batch_year,
+        'batch_years': batch_years,
+    }
+
+    return render(request, 'job_list_admin.html', context)
 
 
 
@@ -617,6 +949,7 @@ def application_list_search(request):
 
 def application_list_search_result(request):
     search_applications = request.GET.get('search_applications')
+    page_number = request.GET.get('page', 1)
     job_applications = []
     job_id = ''
     company_name = ''
@@ -625,77 +958,114 @@ def application_list_search_result(request):
         try:
             job_id = int(search_applications)
             job_applications = JobApplication.objects.filter(Q(job__job_id=job_id) | Q(job__job_title__icontains=search_applications))
-            if job_applications.exists():
-                company_name = job_applications.first().job.company_name
         except ValueError:
-            # Handle cases where the search term is not a valid integer
             job_applications = JobApplication.objects.filter(job__job_title__icontains=search_applications)
+            if job_applications.exists():
+                job_id = job_applications.first().job.job_id
 
-        if not job_applications:
+        if job_applications.exists():
+            company_name = job_applications.first().job.company_name
+        else:
             messages.error(request, 'No applications found for the given search term.')
             return redirect('application_list_search')
 
     if request.method == 'POST':
-        application_id = request.POST.get('application_id')
-        attendance_status = request.POST.get('attendance_status')
-        job_application = get_object_or_404(JobApplication, id=application_id)
-        job_application.is_present = attendance_status
-        job_application.save()
-        messages.success(request, 'Attendance status updated successfully.')
+        application_ids = request.POST.getlist('application_ids')
+        for app_id in application_ids:
+            attendance_status = request.POST.get(f'attendance_status_{app_id}')
+            salary = request.POST.get(f'salary_{app_id}')
+            placement_status = 'On Campus'
+            job_application = get_object_or_404(JobApplication, id=app_id)
+            
+            if attendance_status:
+                job_application.is_present = attendance_status
+                job_application.save()
+            
+            if salary is not None and salary != '':
+                job_application.student.salary = salary
+                job_application.student.placement_status = placement_status
+                job_application.student.company_name = job_application.job.company_name
+            else:
+                job_application.student.salary = None
+                job_application.student.placement_status = ''
+                job_application.student.company_name = ''
+                
+            job_application.student.save()
+                
+        messages.success(request, 'Details updated successfully for all selected students.')
+
+    paginator = Paginator(job_applications, 10)
+    paginated_applications = paginator.get_page(page_number)
 
     context = {
-        'students': job_applications,  # Pass JobApplication objects directly
+        'students': paginated_applications,
         'job_id': job_id,
-        'company_name': company_name
+        'company_name': company_name,
+        'search_applications': search_applications
     }
     return render(request, 'application_list_search_result.html', context)
 
 
-
 def download_application_pdf(request, job_id):
     try:
-        job_application = JobApplication.objects.get(job__job_id=job_id)
+        # Retrieve the job application based on the job_id or return a 404 error
+        job_application = get_object_or_404(JobApplication, job__job_id=job_id)
     except JobApplication.DoesNotExist:
+        # Handle case where no job application is found
         messages.error(request, 'No job application found with the given job ID.')
         return redirect('application_list_search')
     
+    # Retrieve students who have applied for the specified job
     students = Student.objects.filter(jobapplication__job__job_id=job_id)
+    
     if not students.exists():
+        # Handle case where no students are found for the job application
         messages.error(request, 'No students found for the given job application.')
         return redirect('application_list_search')
 
+    # Prepare context for rendering the PDF template
     context = {'students': students}
+    
+    # Generate PDF using render_to_pdf helper function
     pdf = render_to_pdf('application_list_pdf.html', context)
+    
     if pdf:
+        # If PDF generation is successful, create and return HTTP response
         response = HttpResponse(pdf, content_type='application/pdf')
         response['Content-Disposition'] = 'inline; filename=student_data.pdf'
         return response
     else:
-        return HttpResponse('Error generating PDF', status=500)
+        # Handle case where PDF generation fails
+        messages.error(request, 'Error generating PDF.')
+        return redirect('application_list_search')
+
+
 
 def download_application_excel(request, job_id):
     try:
-        job_application = JobApplication.objects.get(job__job_id=job_id)
+        # Retrieve the job application based on the job_id
+        job_application = get_object_or_404(JobApplication, job__job_id=job_id)
     except JobApplication.DoesNotExist:
+        # Handle case where no job application is found
         messages.error(request, 'No job application found with the given job ID.')
         return redirect('application_list_search')
     
+    # Retrieve students who have applied for the specified job
     students = Student.objects.filter(jobapplication__job__job_id=job_id)
+    
     if not students.exists():
+        # Handle case where no students are found for the job application
         messages.error(request, 'No students found for the given job application.')
         return redirect('application_list_search')
 
-    context = {'students': students}
-
     # Generate Excel content using the custom function
-    xls_content = studentlist_xls(context)  
+    xls_content = studentlist_xls(students)
 
-    if xls_content:
-        response = HttpResponse(xls_content, content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=student_data.xls'
-        return response
-    else:
-        return HttpResponse('Error generating Excel file', status=500)
+    # Create HTTP response for Excel download
+    response = HttpResponse(xls_content, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=student_data.xls'
+    return response
+
 
 def placement_list(request):
     placements = Placement.objects.all()
@@ -724,10 +1094,3 @@ def add_placement(request):
     
     return render(request, 'add_placement.html', {'form': form})
 
-
-def toggle_attendance(request, application_id):
-    application = get_object_or_404(JobApplication, id=application_id)
-    application.is_present = not application.is_present
-    application.save()
-    messages.success(request, f"Attendance status for {application.student.name} has been updated.")
-    return redirect('applied_student_list') 

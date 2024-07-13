@@ -1,100 +1,17 @@
 {% extends 'base.html' %}
 {% block head %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/apply_for_job.css' %}">
 <title>{{ job_detail.job_title }} Details</title>
-  {% load static %}
- <style>
-   /* Common styles */
-.apply_for_container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.card {
-    width: 400px;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px 3px lightgray;
-    padding: 20px;
-}
-
-.form-label {
-    font-weight: bold;
-    margin-top: 10px;
-    text-align: center;
-    color: #653196;
-    font-size: large;
-}
-
-.media-image {
-    text-align: center;
-}
-
-.company-logo {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 20%;
-    margin-bottom: 10px;
-}
-
-button {
-    background: blue;
-    padding: 10px 25px;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 15px;
-}
-
-button:hover {
-    background: darkblue;
-}
-
-/* Media queries */
-@media screen and (max-width: 600px) {
-    .apply_for_container {
-        padding: 20px;
-    }
-
-    .card {
-        width: 90%;
-    }
-}
-
-@media screen and (min-width: 601px) and (max-width: 1024px) {
-    .card {
-        width: 70%;
-    }
-}
-
-@media screen and (min-width: 1025px) and (max-width: 1440px) {
-    .card {
-        width: 60%;
-    }
-}
-
-@media screen and (min-width: 1441px) {
-    .card {
-        width: 50%;
-    }
-}
-
-
- </style>
-
+{% load static %}
 {% endblock %}
 
 {% block body %}
 <div class="apply_for_container">
     <div class="card">
-        <form method="post" action="{% url 'apply_for_job2' job_id=job_id %}">
+        <form id="applyForm" method="post" action="{% url 'apply_for_job2' job_id=job_id %}">
             {% csrf_token %}
-            <div class="media-image">
-                <img src="{{ job_detail.company_logo.url}}" alt="Job Image" class="company-logo">
-            </div>
+           
             <p class="form-label"><b>{{ job_detail.job_title }}</b></p>
             <p><b>Company:</b> {{ job_detail.company_name }}</p>
             <p><b>Salary: RS </b>{{ job_detail.salary }} /year</p>
@@ -102,23 +19,25 @@ button:hover {
             <p><b>Required Branch:</b> {{ job_detail.required_branchs }}</p>
             <p><b>Required CGPA: </b>{{ job_detail.required_CGPA }}</p>
             <p><b>Required Marks: </b>{{ job_detail.required_marks }}</p>
+            <p><b>Required Passing Year: </b>{{ job_detail.required_passing_year }}</p>
             <p><b>Last Date: </b>{{ job_detail.date_last }}</p>
             <p><b>Exam Date: </b>{{ job_detail.date_exam }}</p>
             <p><b>Venue: </b>{{ job_detail.venue }}</p>
             <input type="hidden" name="applied_time" value="{% now 'F j, Y, g:i a' %}">
-            <button type="submit">Apply</button>
+            <button type="button" onclick="validateAndSubmitForm()">Apply</button>
         </form>
     </div>
 </div>
 <script>
-    document.getElementById('applyForm').addEventListener('submit', function(event) {
+    function validateAndSubmitForm() {
         var lastDate = new Date("{{ job_detail.date_last }}"); // Get the job's last date from Django template
 
         // Compare current date with last date
         if (new Date() > lastDate) {
-            event.preventDefault(); // Prevent form submission
             alert('The application period for this job has ended.'); // Display a message to the user
+        } else {
+            document.getElementById('applyForm').submit(); // Submit the form if validation passes
         }
-    });
+    }
 </script>
 {% endblock %}

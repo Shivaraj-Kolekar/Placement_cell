@@ -1,115 +1,122 @@
 {% extends "base_admin.html" %}
-{% block head %}
 {% load static %}
-<title>Applied Student List</title>
-<link rel="stylesheet" type="text/css" href="{% static 'css/studentlist.css' %}">
+
+{% block head %}
+    <title>Applied Student List</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
 <div class="container-fluid">
-    <h1>Applied Student List - {{ company_name }}</h1>
+    <h1 class="text-center">Applied Student List - {{ company_name }}</h1>
 
     {% if messages %}
-    {% for message in messages %}
-        <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endfor %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
     {% endif %}
-    
-    <div class="table-responsive">
-        <table id="example" class="table table-striped" style="width:100%">
-            <thead>
-                <tr>
-                    <th>CRN Number</th>
-                    <th>Name</th>
-                    <th>Branch</th>
-                    <th>Year</th>
-                    <th>Gender</th>
-                    <th>Email</th>
-                    <th>Mobile Number</th>
-                    <th>CGPA</th>
-                    <th>Aggregate Marks</th>
-                    <th>10th Marks</th>
-                    <th>12th Marks</th>
-                    <th>Diploma Marks</th>
-                    <th>Active Backlog</th>
-                    <th>Year Down</th>
-                    <th>Remark</th>
-                    <th>Attendance</th> <!-- New column for attendance -->
-                    <th>Delete</th>
-                    <th>Update</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in students %}
-                <tr>
-                    <td>{{ item.student.crn_number }}</td>
-                    <td>{{ item.student.name }}</td>
-                    <td>{{ item.student.branch }}</td>
-                    <td>{{ item.student.year }}</td>
-                    <td>{{ item.student.gender }}</td>
-                    <td>{{ item.student.email }}</td>
-                    <td>{{ item.student.mobile_number }}</td>
-                    <td>{{ item.student.CGPA }}</td>
-                    <td>{{ item.student.aggregate_marks }}</td>
-                    <td>{{ item.student.mark_10th }}</td>
-                    <td>{{ item.student.mark_12th }}</td>
-                    <td>{{ item.student.diploma_marks }}</td>
-                    <td>{{ item.student.active_backlog }}</td>
-                    <td>{{ item.student.year_down }}</td>
-                    <td>{{ item.student.remarks }}</td>
 
-                    <td>
-                        <form method="post" action="">
-                            {% csrf_token %}
-                            <input type="hidden" name="application_id" value="{{ item.id }}">
-                            <input type="radio" name="attendance_status" value="Present" {% if item.is_present == 'Present' %}checked{% endif %}> Present <br>
-                            <input type="radio" name="attendance_status" value="Absent" {% if item.is_present == 'Absent' %}checked{% endif %}> Absent
-                            <button type="submit" class="btn btn-sm btn-primary">Update</button>
-                        </form>
-                    </td>
-                    <td>
-                        <a href="{% url 'delete_std' item.student.crn_number %}" class="error"><i class="fa-solid fa-trash"></i></a>
-                    </td>
-                    <td>
-                        <a href="{% url 'update_std' item.student.crn_number %}" class="success"><i class="fa-solid fa-pen"></i></a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <form method="post" action="">
+        {% csrf_token %}
+        <div class="table-responsive">
+            <table id="studentTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>CRN Number</th>
+                        <th>Name</th>
+                        <th>Branch</th>
+                        <th>Year</th>
+                        <th>Gender</th>
+                        <th>Email</th>
+                        <th>Mobile Number</th>
+                        <th>CGPA</th>
+                        <th>Aggregate Marks</th>
+                        <th>10th Marks</th>
+                        <th>12th Marks</th>
+                        <th>Diploma Marks</th>
+                        <th>Active Backlog</th>
+                        <th>Year Down</th>
+                        <th>Remark</th>
+                        <th>Attendance</th>
+                        <th>Package</th>
+                        <th>Delete</th>
+                        <th>Update</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in students %}
+                    <tr>
+                        <td>{{ item.student.crn_number }}</td>
+                        <td>{{ item.student.name }}</td>
+                        <td>{{ item.student.branch }}</td>
+                        <td>{{ item.student.year }}</td>
+                        <td>{{ item.student.gender }}</td>
+                        <td>{{ item.student.email }}</td>
+                        <td>{{ item.student.mobile_number }}</td>
+                        <td>{{ item.student.CGPA }}</td>
+                        <td>{{ item.student.aggregate_marks }}</td>
+                        <td>{{ item.student.mark_10th }}</td>
+                        <td>{{ item.student.mark_12th }}</td>
+                        <td>{{ item.student.diploma_marks }}</td>
+                        <td>{{ item.student.active_backlog }}</td>
+                        <td>{{ item.student.year_down }}</td>
+                        <td>{{ item.student.remarks }}</td>
+                        <td>
+                            <input type="hidden" name="application_ids" value="{{ item.id }}">
+                            <input type="radio" name="attendance_status_{{ item.id }}" value="Present" {% if item.is_present == 'Present' %}checked{% endif %}> Present<br>
+                            <input type="radio" name="attendance_status_{{ item.id }}" value="Absent" {% if item.is_present == 'Absent' %}checked{% endif %}> Absent
+                        </td>
+                        <td><input type="number" name="salary_{{ item.id }}" value="{{ item.student.salary }}"></td>
+                        <td>
+                            <a href="{% url 'delete_std' item.student.crn_number %}" class="btn btn-danger btn-sm" aria-label="Delete"><i class="fas fa-trash"></i></a>
+                        </td>
+                        <td>
+                            <a href="{% url 'update_std' item.student.crn_number %}" class="btn btn-success btn-sm" aria-label="Update"><i class="fas fa-pen"></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Update Details</button>
+    </form>
 
-        <!-- Pagination links -->
-        <nav>
-            <ul class="pagination">
-                {% if students.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page=1" tabindex="-1">First</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ students.previous_page_number }}" tabindex="-1">Previous</a>
-                </li>
-                {% endif %}
-                {% for i in students.paginator.page_range %}
-                <li class="page-item {% if i == students.number %}active{% endif %}">
-                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
-                </li>
-                {% endfor %}
-                {% if students.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ students.next_page_number }}">Next</a>
-                </li>
-                {% endif %}
-            </ul>
-        </nav>
-
-        <!-- Download links -->
-        {% if job_id %}
-        <a href="{% url 'download_application_excel' job_id=job_id %}" class="btn btn-primary">Download Excel</a>
+    <div class="mt-3">
+        <a href="{% url 'download_application_excel' job_id=job_id %}" class="btn btn-primary mr-2">Download Excel</a>
         <a href="{% url 'download_application_pdf' job_id=job_id %}" class="btn btn-primary">Download PDF</a>
-        {% endif %}
     </div>
 </div>
+
+<div class="container mt-3">
+    <ul class="pagination justify-content-center">
+        {% if students.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page=1&search_applications={{ search_applications }}" aria-label="First">First</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ students.previous_page_number }}&search_applications={{ search_applications }}" aria-label="Previous">Previous</a></li>
+        {% endif %}
+        <li class="page-item active"><a class="page-link" href="?page={{ students.number }}&search_applications={{ search_applications }}">{{ students.number }}</a></li>
+        {% if students.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ students.next_page_number }}&search_applications={{ search_applications }}" aria-label="Next">Next</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ students.paginator.num_pages }}&search_applications={{ search_applications }}" aria-label="Last">Last</a></li>
+        {% endif %}
+    </ul>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#studentTable').DataTable({
+            "paging": false,
+            "lengthChange": false,
+            "searching": true
+        });
+    });
+</script>
 {% endblock %}

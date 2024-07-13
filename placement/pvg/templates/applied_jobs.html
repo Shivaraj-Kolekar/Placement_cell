@@ -4,12 +4,11 @@
     {% load static %}
     <title>Application List</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/studentlist.css' %}">
-
 {% endblock %}
 
 {% block body %}
     <div class="container-fluid">
-        <h1>My applications</h1>
+        <h1>My Applications</h1>
 
         {% if messages %}
             {% for message in messages %}
@@ -30,23 +29,45 @@
                         <th scope="col">Location</th> 
                         <th scope="col">Exam Date</th> 
                         <th scope="col">Applied Date</th>
-                        <th scope="col">Application Status</th>             
+                        <th scope="col">Last Date</th>
+                        <th scope="col">Application Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for application in job_applications %}
+                    {% for job in job_applications %}
                         <tr>
-                            <td>{{ application.company_name }}</td>
-                            <td>{{ application.job_title }}</td>
-                            <td>{{ application.salary }}</td>
-                            <td>{{ application.location }}</td>
-                            <td>{{ application.date_exam }}</td>
-                            <td>{{ application.applied_time }}</td>
-                            <td>{{ application.is_present }}</td>
+                            <td>{{ job.company_name }}</td>
+                            <td>{{ job.job_title }}</td>
+                            <td>{{ job.salary }}</td>
+                            <td>{{ job.location }}</td>
+                            <td>{{ job.date_exam }}</td>
+                            <td>{{ job.applied_time }}</td>
+                            <td>{{ job.date_last }}</td>
+                            <td class="status" data-date-last="{{ job.date_last }}" data-is-present="{{ job.is_present }}">
+                                <!-- Status will be updated by JavaScript -->
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('.status');
+            const currentDate = new Date();
+
+            rows.forEach(function(row) {
+                const dateLast = new Date(row.getAttribute('data-date-last'));
+                const isPresent = row.getAttribute('data-is-present');
+                
+                if (dateLast < currentDate) {
+                    row.textContent = isPresent ? 'Present' : 'Absent';
+                } else {
+                    row.textContent = 'Progress';
+                }
+            });
+        });
+    </script>
 {% endblock %}

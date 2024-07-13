@@ -1,6 +1,7 @@
 {% extends 'base_admin.html' %}
 {% block head %}
     {% load static %}
+    <title>{{ data.job_title }} Update Page</title>
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
 {% endblock %}
 {% block body %}
@@ -15,33 +16,29 @@
 
 <form id="signup-form" action="{% url 'do_update_job' data.job_id %}" method="post" onsubmit="return jobValidation()" enctype="multipart/form-data">
     {% csrf_token %}
-    <!-- Step 1: Personal Information -->
+    <!-- Step 1: Job Role Information -->
     <div class="step" id="step1">
         <h2>Step 1: Job Role Information</h2>
         <label for="job_id">Job Id</label>
-        <input type="text" id="job_id" name="job_id" value="{{ data.job_id }}" required><br>
+        <input type="text" id="job_id" name="job_id" value="{{ data.job_id }}"><br>
         <b><span class="formerror" id="job_id_error"></span></b><br>
 
         <label for="job_title">Job Title</label>
-        <input type="text" id="job_title" name="job_title" placeholder="Enter Job Title" value="{{ data.job_title }}" required><br>
+        <input type="text" id="job_title" name="job_title" placeholder="Enter Job Title" value="{{ data.job_title }}"><br>
         <b><span class="formerror" id="job_title_error"></span></b><br>
 
         <label for="company_name">Company Name</label>
-        <input type="text" id="company_name" name="company_name" placeholder="Enter Company Name" value="{{ data.company_name }}" required><br>
+        <input type="text" id="company_name" name="company_name" placeholder="Enter Company Name" value="{{ data.company_name }}"><br>
         <b><span class="formerror" id="company_name_error"></span></b><br>
 
-        <label for="company_logo">Company Logo</label>
-        <input type="file" id="company_logo" name="company_logo"><br>
-        {% if data.company_logo %}
-            <img src="{{ data.company_logo.url }}" alt="Company Logo" class="thumbnail-img"><br>
-        {% endif %}
-
         <label for="location">Location</label>
-        <input type="text" id="location" name="location" placeholder="Enter Job Location" value="{{ data.location }}" required><br>
+        <input type="text" id="location" name="location" placeholder="Enter Job Location" value="{{ data.location }}"><br>
         <b><span class="formerror" id="location_error"></span></b><br>
 
         <label for="salary">Salary</label>
-        <input type="number" id="salary" name="salary" placeholder="Enter Salary" value="{{ data.salary }}" required><br>
+        <input type="text" id="salary" name="salary" placeholder="Enter Salary" value="{{ data.salary }}"><br>
+        <b><span class="formerror" id="salary_error"></span></b><br>
+
         <button type="button" onclick="nextStep(1)">Next</button>
     </div>
 
@@ -49,40 +46,42 @@
     <div class="step" id="step2">
         <h2>Step 2: Academic Details</h2>
         <label for="required_CGPA">Required CGPA</label>
-        <input type="text" id="required_CGPA" name="required_CGPA" placeholder="Enter Required CGPA" value="{{ data.required_CGPA }}" required><br>
+        <input type="text" id="required_CGPA" name="required_CGPA" placeholder="Enter Required CGPA" value="{{ data.required_CGPA }}"><br>
         <b><span class="formerror" id="required_CGPA_error"></span></b><br>
 
         <label for="required_marks">Required Percentages</label>
-        <input type="text" id="required_marks" name="required_marks" placeholder="Enter Required Marks" value="{{ data.required_marks }}" required><br>
+        <input type="text" id="required_marks" name="required_marks" placeholder="Enter Required Marks" value="{{ data.required_marks }}"><br>
         <b><span class="formerror" id="required_marks_error"></span></b><br>
 
         <label>Select Branches</label><br>
         {% for branch in branches %}
             <label><input type="checkbox" name="required_branchs" value="{{ branch }}" {% if branch in data.required_branchs %}checked{% endif %}> {{ branch }}</label><br>
         {% endfor %}
+        <b><span class="formerror" id="required_branchs_error"></span></b><br>
+
         <button type="button" onclick="prevStep(2)">Previous</button>
         <button type="button" onclick="nextStep(2)">Next</button>
     </div>
 
-    <!-- Step 3: Placement Status -->
+    <!-- Step 3: Exam Details -->
     <div class="step" id="step3">
         <h2>Step 3: Exam Details</h2>
 
         <label for="date_last">Last Date</label><br>
-        <input type="datetime-local" id="date_last" name="date_last" placeholder="Enter Last Date" value="{% if data.date_last %}{{ data.date_last|date:'Y-m-d' }}T{{ data.date_last|date:'H:i' }}{% endif %}" required><br>
+        <input type="datetime-local" id="date_last" name="date_last" placeholder="Enter Last Date" value="{% if data.date_last %}{{ data.date_last|date:'Y-m-d' }}T{{ data.date_last|date:'H:i' }}{% endif %}"><br>
         <b><span class="formerror" id="date_last_error"></span></b><br>
 
         <label for="date_exam">Date of Exam</label><br>
-        <input type="datetime-local" id="date_exam" name="date_exam" placeholder="Enter Exam Date" value="{% if data.date_exam %}{{ data.date_exam|date:'Y-m-d' }}T{{ data.date_exam|date:'H:i' }}{% endif %}" required><br>
+        <input type="datetime-local" id="date_exam" name="date_exam" placeholder="Enter Exam Date" value="{% if data.date_exam %}{{ data.date_exam|date:'Y-m-d' }}T{{ data.date_exam|date:'H:i' }}{% endif %}"><br>
         <b><span class="formerror" id="date_exam_error"></span></b><br>
 
         <label for="venue">Venue</label><br>
-        <input type="text" id="venue" name="venue" placeholder="Enter Venue" value="{{ data.venue }}" required><br><br>
+        <input type="text" id="venue" name="venue" placeholder="Enter Venue" value="{{ data.venue }}"><br>
         <b><span class="formerror" id="venue_error"></span></b><br>
 
         <input type="hidden" id="system_time" name="system_time">
         <button type="button" onclick="prevStep(3)">Previous</button>
-        <button type="submit">Submit</button>
+        <button type="submit" onclick="setSystemTime()">Submit</button>
     </div>
 </form>
 <script src="{% static 'js/signup.js' %}"></script>

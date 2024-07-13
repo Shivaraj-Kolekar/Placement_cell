@@ -128,9 +128,63 @@ body {
   }
 }
 
+
 @media only screen and (min-width: 992px) {
   /* Styles for desktop */
   .login-container {
       max-width: 992px;
+  }
+  
+}
+
+/* Navbar styling */
+.navbar {
+  background-color: #f8f9fa; /* Light gray background */
+  text-align: center; /* Center align the navbar items */
+  margin-top: 10px; /* Top margin for spacing */
+}
+
+.navbar a {
+  text-decoration: none; /* Remove default underline */
+  padding: 8px 16px; /* Padding inside each nav link */
+  border-radius: 5px; /* Rounded corners */
+}
+
+/* Hover effect */
+.navbar a:hover {
+  background-color: lightblue; /* Light blue background on hover */
+  box-shadow: 0px 0px 10px rgba(0, 0, 255, 0.5); /* Box shadow effect */
+}
+
+.navbar-nav .nav-item .nav-link {
+  margin-right: 15px; /* Add gap between nav links */
+}
+
+/* Responsive navbar media queries */
+@media (max-width: 992px) {
+  .navbar {
+      flex-direction: column; /* Stack the navbar items vertically */
+  }
+
+  .navbar-brand {
+      margin-bottom: 10px; /* Add margin below the brand logo */
+  }
+
+  .navbar-collapse {
+      text-align: center; /* Center align the navbar items */
+  }
+
+  .navbar-nav .nav-item {
+      margin-bottom: 10px; /* Add margin below each nav item */
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-collapse {
+      text-align: center; /* Center align the navbar items */
+  }
+
+  .navbar-nav .nav-item .nav-link {
+      margin-right: 0; /* Remove right margin from nav links */
   }
 }

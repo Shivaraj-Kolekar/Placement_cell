@@ -85,7 +85,7 @@ button:hover {
 }
 
 .signin-link a:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .formerror {

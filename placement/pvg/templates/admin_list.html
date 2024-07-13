@@ -1,0 +1,57 @@
+{% extends 'base_admin.html' %}
+
+{% block head %}
+    <title>Admin List</title>
+    <style>
+        .admin-list {
+            margin: 20px auto;
+            max-width: 800px;
+        }
+        .admin-list h2 {
+            text-align: center;
+        }
+        .admin-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-list th, .admin-list td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .admin-list th {
+            background-color: #f8f9fa;
+        }
+        
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container admin-list">
+        <h2>Admin List</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Admin ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Branch</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for admin in admins %}
+                <tr>
+                    <td>{{ admin.admin_id }}</td>
+                    <td>{{ admin.admin_name }}</td>
+                    <td>{{ admin.admin_email }}</td>
+                    <td>{{ admin.admin_branch }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    
+{% endblock %}

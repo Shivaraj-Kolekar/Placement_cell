@@ -15,19 +15,22 @@ def studentlist_pdf(template_source, context_dict={}):
         return result.getvalue()
     return None
 
-def studentlist_xls(context_dict={}):
+
+def studentlist_xls(queryset):
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet()
 
     # Write headers
-    headers = ['CRN Number', 'Name', 'Branch', 'Year','Gender','Email','Mobile Number', 'CGPA','Aggregate Marks','10th Marks','12th Marks','Diploma Marks','Active Backlog','Year Down' ,'Remarks']
+    headers = ['CRN Number', 'Name', 'Branch', 'Year', 'Gender', 'Email', 'Mobile Number',
+               'CGPA', 'Aggregate Marks', '10th Marks', '12th Marks', 'Diploma Marks',
+               'Active Backlog', 'Year Down', 'Remarks']
     for col, header in enumerate(headers):
         worksheet.write(0, col, header)
 
     # Write data
     row = 1
-    for student in context_dict.get('student', []):
+    for student in queryset:
         worksheet.write(row, 0, student.crn_number)
         worksheet.write(row, 1, student.name)
         worksheet.write(row, 2, student.branch)

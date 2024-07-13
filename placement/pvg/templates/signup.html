@@ -26,9 +26,7 @@
 
 .btn-close {
     float: right; /* Align close button to the right */
-    background: none;
-    border: none;
-    color: inherit;
+    
     cursor: pointer;
     font-size: 20px;
 }
@@ -40,7 +38,6 @@
 .hidden {
     display: none;
 }
-
 
   </style>
 </head>
@@ -70,33 +67,17 @@
 
   <form id="signup-form" action="{% url 'signup' %}" method="post" onsubmit="return validateForm()" enctype="multipart/form-data">
     {% if messages %}
-            {% for message in messages %}
-                <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    <script>console.log("{{ message }}")</script>
-                </div>
-            {% endfor %}
-            
-        {% endif %}
-
-
-        {% if form.errors %}
-    <div class="error-list">
-        <ul>
-            {% for field, errors in form.errors.items %}
-                {% for error in errors %}
-                    <li class="error-message">
-                        {{ error }}
-                        <button type="button" class="btn-close" aria-label="Close" onclick="closeErrorMessage(this);">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </li>
-                {% endfor %}
-            {% endfor %}
-        </ul>
-    </div>
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
 {% endif %}
+
+
+
+
 
 <script>
     // Function to close error message
@@ -181,7 +162,7 @@
 
 
       <label for="mark_10th">10th Marks:</label>
-      <input type="text" id="mark_10th" name="mark_10th" placeholder="Enter 10th Marks" required><br>
+      <input type="text" id="mark_10th" name="mark_10th" placeholder="Enter 10th Marks" ><br>
       <b><span class="formerror" id="mark_10th_error"></span></b><br>
 
       <label for="mark_12th">12th Marks:</label>
@@ -245,12 +226,12 @@
 
       <div class="input-group">
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
+        <input type="password" id="password" name="password" >
         <span class="toggle-password" onclick="togglePasswordVisibility(this)"><i class="far fa-eye"></i></span>
     </div>
     <div class="input-group">
         <label for="retype-password">Retype Password:</label>
-        <input type="password" id="retype-password" name="retype-password" required>
+        <input type="password" id="retype-password" name="retype-password">
         <span class="toggle-password" onclick="togglePasswordVisibility(this)"><i class="far fa-eye"></i></span>
     </div>
     <p class="error" id="password-error">Passwords do not match.</p>
