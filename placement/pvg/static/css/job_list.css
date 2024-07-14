@@ -1,137 +1,132 @@
 * {
-    margin: 0px;
-    padding: 0px;
-    font-family: sans-serif;
+  margin: 0px;
+  padding: 0px;
+  font-family: sans-serif;
 }
 
 h1 {
-    text-align: center;
-
+  text-align: center;
 }
 
 a {
-    text-decoration: none;
-    color: white;
+  text-decoration: none;
+  color: white;
 }
 
 a:hover {
-    text-decoration: none;
-    color: white;
+  text-decoration: none;
+  color: white;
 }
 
 .training-section {
-    width: 100%;
-    background-size: cover;
+  width: 100%;
+  background-size: cover;
 }
 
 .training-section h1 {
-    text-align: center;
-    padding: 25px 0px;
+  text-align: center;
+  padding: 25px 0px;
 }
 
 .container {
-    width: 90%;
-    margin: auto;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+  width: 90%;
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
 }
 
 /* Define keyframes animation */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
+  from {
+    opacity: 0;
+  }
 
-    to {
-        opacity: 1;
-    }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Apply animation to .training-items */
 .training-items {
-    height: auto;
-    min-height: 400px;
-    flex-basis: 23%;
-    text-align: center;
-    margin: 10px 0px;
-    padding: 20px 0px;
-    background: white;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px 3px lightgray;
-    animation: fadeIn 0.5s ease-in-out;
-    
+  height: auto;
+  min-height: auto;
+  flex-basis: 23%;
+  text-align: center;
+  margin: 10px 0px;
+  padding: 20px 0px;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px 3px lightgray;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
-
-
 .training-items p {
-    font-size: 15px;
-    padding: 10px;
+  font-size: 15px;
+  padding: 10px;
 }
 
 .training-items button {
-    padding: 10px 25px;
-    color: white;
-    border-radius: 10px;
-    background-color: blue;
-
+  padding: 10px 25px;
+  color: white;
+  border-radius: 10px;
+  background-color: rgb(70, 70, 255);
 }
 
 .container a,
 .container a:hover {
-    text-decoration: none;
-    color: white;
+  text-decoration: none;
+  color: white;
 }
 
 /* Add hover effect */
 .training-items:hover {
-    transform: translateY(-10px);
-    /* Move the card up by 5 pixels on hover */
-    transition: transform 0.3s ease;
-    /* Add transition effect */
+  transform: translateY(-10px);
+  /* Move the card up by 5 pixels on hover */
+  transition: transform 0.3s ease;
+  /* Add transition effect */
 }
 
 @media screen and (max-width: 600px) {
-    .container {
-        width: 100%;
-    }
+  .container {
+    width: 100%;
+  }
 
-    .training-items {
-        flex-basis: 100%;
-        /* Full width for smaller screens */
-    }
+  .training-items {
+    flex-basis: 100%;
+    /* Full width for smaller screens */
+  }
 }
 
 @media screen and (min-width: 601px) and (max-width: 1024px) {
-    .container {
-        width: 90%;
-    }
+  .container {
+    width: 90%;
+  }
 
-    .training-items {
-        flex-basis: 45%;
-        /* Two items per row */
-    }
+  .training-items {
+    flex-basis: 45%;
+    /* Two items per row */
+  }
 }
 
 @media screen and (min-width: 1025px) and (max-width: 1440px) {
-    .container {
-        width: 90%;
-    }
+  .container {
+    width: 90%;
+  }
 
-    .training-items {
-        flex-basis: 30%;
-        /* Three items per row */
-    }
+  .training-items {
+    flex-basis: 30%;
+    /* Three items per row */
+  }
 }
 
 @media screen and (min-width: 1441px) {
-    .container {
-        width: 90%;
-    }
+  .container {
+    width: 90%;
+  }
 
-    .training-items {
-        flex-basis: 22%;
-        /* Four items per row */
-    }
+  .training-items {
+    flex-basis: 22%;
+    /* Four items per row */
+  }
 }

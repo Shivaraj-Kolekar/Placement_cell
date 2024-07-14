@@ -2,30 +2,77 @@
 {% block head %}
 {% load static %}
 <title>Job List</title>
+<style>
+    body {
+        font-family: "DM sans";
+    }
+
+    .font-container {
+        font-family: "DM Sans", sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+    }
+
+    .head {
+        text-align: center;
+        margin-top: 40px;
+        margin-bottom: 40px;
+    }
+
+    .training-items {
+        border: 2px solid rgb(195, 195, 195);
+        padding: 16px;
+        margin: 10px !important;
+        width: auto !important;
+        min-height: 300px !important;
+        border-radius: 12px !important;
+
+
+    }
+
+    .content p {
+        margin: 0px;
+    }
+
+
+
+    .title {
+        text-align: start;
+    }
+
+    .content {
+        text-align: start;
+    }
+</style>
 <link rel="stylesheet" href="{% static 'css/job_list.css' %}">
 {% endblock %}
 
 {% block body %}
-<h1>Our Placement Cell</h1>
+<h1 class="head">Our Placement Cell</h1>
 {% if messages %}
-    {% for message in messages %}
-        <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endfor %}
+{% for message in messages %}
+<div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible"
+    role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
 {% endif %}
 <div class="container">
     {% if job_details %}
     {% for job_detail in job_details %}
-    <div class="training-items">
-        <p><b>{{ job_detail.job_title }}</b></p>
-        <p><b>Job:</b> {{ job_detail.job_id }}</p>
-        <p><b>Company:</b> {{ job_detail.company_name }}</p>
-        <p><b>Salary:</b> RS {{ job_detail.salary }}</p>
-        <p><b>Posted:</b> <span class="timeAgo" data-time="{{ job_detail.system_time|date:'c' }}"></span></p>
+    <div class="training-items px-3 h-96">
+        <h5 class="title"><b>{{ job_detail.job_title }}</b></h5>
+        <div class="content">
+            <p><b>Job:</b> {{ job_detail.job_id }}</p>
+            <p><b>Company:</b> {{ job_detail.company_name }}</p>
+            <p><b>Salary:</b> RS {{ job_detail.salary }}</p>
+            <p><b>Posted:</b> <span class="timeAgo" data-time="{{ job_detail.system_time|date:'c' }}"></span></p>
+        </div>
         {% if job_detail.job_id %}
-        <button><a href="{% url 'apply_for_job' job_id=job_detail.job_id %}">View Details</a></button>
+        <button class="btn btn-primary mt-4 mb-2 px-4 py-3"><a
+                href="{% url 'apply_for_job' job_id=job_detail.job_id %}">View
+                Details</a></button>
         {% else %}
         <p class="text-red-500">Job ID not available</p>
         {% endif %}

@@ -1,106 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
   <title>Signup Form</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/signup.css' %}">
   <style>
-   .error-list {
-    margin-bottom: 10px;
-    padding: 10px;
-    background-color: #f8d7da; /* Red background color for error */
-    border: 1px solid #f5c6cb; /* Red border color for error */
-    border-radius: 4px;
-}
+    body {
+      font-family: "DM sans";
+    }
 
-.error-message {
-    color: #721c24; /* Dark red text color for error message */
-    margin-bottom: 5px; /* Add spacing between error messages */
-}
+    .font-container {
+      font-family: "DM Sans", sans-serif;
+      font-optical-sizing: auto;
+      font-style: normal;
+    }
 
-.btn-close {
-    float: right; /* Align close button to the right */
-    background: none;
-    border: none;
-    color: inherit;
-    cursor: pointer;
-    font-size: 20px;
-}
+    .navbar a {
+      text-decoration: none;
+      text-align: center;
+      width: auto;
+      color: white;
+      font-size: large;
+      padding: 12px 20px;
+      border-radius: 4px;
+      margin: 2px;
+    }
 
-.btn-close:hover {
-    color: #721c24; /* Dark red text color on hover */
-}
+    /* Hover effect */
+    .navbar a:hover {
+      background-color: lightblue;
+      box-shadow: 0px 0px 10px rgba(0, 0, 255, 0.5);
+    }
 
-.hidden {
-    display: none;
-}
+    .navbar-nav .nav-item .nav-link {
+      margin-right: 15px;
+      /* Add gap between nav links */
+    }
 
 
+    .navbar {
+      background-color: rgb(8, 25, 54)
+        /* Light gray */
+    }
+
+    #nav-container {
+      background-color: rgb(8, 25, 54);
+      height: auto;
+      color: white;
+
+    }
+
+    .nav-link {
+      background-color: cornflowerblue;
+      color: white;
+    }
+
+    .error-list {
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #f8d7da;
+      /* Red background color for error */
+      border: 1px solid #f5c6cb;
+      /* Red border color for error */
+      border-radius: 4px;
+    }
+
+    .error-message {
+      color: #721c24;
+      /* Dark red text color for error message */
+      margin-bottom: 5px;
+      /* Add spacing between error messages */
+    }
+
+    .btn-close {
+      float: right;
+      /* Align close button to the right */
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .btn-close:hover {
+      color: #721c24;
+      /* Dark red text color on hover */
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 992px) {
+      .navbar {
+        flex-direction: column;
+        /* Stack the navbar items vertically */
+      }
+
+      .navbar-brand {
+        margin-bottom: 10px;
+        /* Add margin below the brand logo */
+      }
+
+      .navbar-collapse {
+        text-align: center;
+        /* Center align the navbar items */
+      }
+
+      .navbar-nav .nav-item {
+        margin-bottom: 10px;
+        /* Add margin below each nav item */
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar-collapse {
+        text-align: center;
+        /* Center align the navbar items */
+      }
+
+      .navbar-nav .nav-item .nav-link {
+        margin-right: 0;
+        /* Remove right margin */
+      }
+    }
   </style>
 </head>
+
 <body>
-   <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#" id="logo">PVG</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
-                <ul class="navbar-nav">
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Home</a>
-                </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'signup' %}">Register</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'student_login' %}">Login</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    
-
-  <form id="signup-form" action="{% url 'signup' %}" method="post" onsubmit="return validateForm()" enctype="multipart/form-data">
-    {% if messages %}
-            {% for message in messages %}
-                <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    <script>console.log("{{ message }}")</script>
-                </div>
-            {% endfor %}
-            
-        {% endif %}
-
-
-        {% if form.errors %}
-    <div class="error-list">
-        <ul>
-            {% for field, errors in form.errors.items %}
-                {% for error in errors %}
-                    <li class="error-message">
-                        {{ error }}
-                        <button type="button" class="btn-close" aria-label="Close" onclick="closeErrorMessage(this);">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </li>
-                {% endfor %}
-            {% endfor %}
+  <!--<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#" id="logo">PVG</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'signup' %}">Register</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'student_login' %}">Login</a>
+          </li>
         </ul>
+      </div>
     </div>
-{% endif %}
+  </nav>-->
+  <nav class="navbar navbar-expand-lg  ">
+    <div id="nav-container" class="container-fluid  bg-slate-300  p-2">
+      <a class="navbar-brand " href="{% url 'PVG HOME' %}">PVG COET</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link px-4" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-4" href="{% url 'signup' %}">Register</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-4" href="{% url 'student_login' %}">Login</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-<script>
-    // Function to close error message
-    function closeErrorMessage(button) {
+  <form id="signup-form" action="{% url 'signup' %}" method="post" onsubmit="return validateForm()"
+    enctype="multipart/form-data">
+    {% if messages %}
+    {% for message in messages %}
+    <div
+      class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible"
+      role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      <script>console.log("{{ message }}")</script>
+    </div>
+    {% endfor %}
+
+    {% endif %}
+
+
+    {% if form.errors %}
+    <div class="error-list">
+      <ul>
+        {% for field, errors in form.errors.items %}
+        {% for error in errors %}
+        <li class="error-message">
+          {{ error }}
+          <button type="button" class="btn-close" aria-label="Close" onclick="closeErrorMessage(this);">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </li>
+        {% endfor %}
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <script>
+      // Function to close error message
+      function closeErrorMessage(button) {
         const errorMessage = button.parentElement;
         errorMessage.style.display = 'none';
 
@@ -108,42 +230,42 @@
         const errorMessages = document.querySelectorAll('.error-message');
         let visibleErrors = false;
         errorMessages.forEach(message => {
-            if (message.style.display !== 'none') {
-                visibleErrors = true;
-            }
+          if (message.style.display !== 'none') {
+            visibleErrors = true;
+          }
         });
 
         // If no visible errors left, hide the error-list container
         if (!visibleErrors) {
-            document.querySelector('.error-list').style.display = 'none';
+          document.querySelector('.error-list').style.display = 'none';
         }
-    }
-</script>
+      }
+    </script>
 
-    
-    
-    
+
+
+
 
     {% csrf_token %}
     <!-- Step 1: Personal Information -->
     <div class="step" id="step1">
       <h2>Step 1: Personal Information</h2>
       <label for="crn_number">CRN Number:</label>
-      <input type="text" id="crn_number" name="crn_number" placeholder="Enter CRN Number" ><br>
+      <input type="text" id="crn_number" name="crn_number" placeholder="Enter CRN Number"><br>
       <b><span class="formerror" id="crn_number_error"></span></b><br>
-      
+
       <label for="name">Name:</label>
-      <input type="text" id="name" name="name" placeholder="Enter Your Name" ><br>
+      <input type="text" id="name" name="name" placeholder="Enter Your Name"><br>
       <b><span class="formerror" id="name_error"></span></b><br>
 
       <label for="gender">Gender:</label>
-      <select id="gender" name="gender" >
+      <select id="gender" name="gender">
         <option value="Male">Male</option>
         <option value="Female">Female</option>
       </select><br>
 
       <label for="branch">Branch:</label>
-      <select id="branch" name="branch" >
+      <select id="branch" name="branch">
         <option value="IT">Information Technology</option>
         <option value="CS">Computer Science</option>
         <option value="EE">Electrical Engineering</option>
@@ -152,17 +274,17 @@
         <option value="Printing">Printing</option>
         <option value="AIDS">AIDS</option>
       </select><br>
-      
+
       <label for="year">Class:</label>
-      <select id="year" name="year" >
+      <select id="year" name="year">
         <option value="FE">First Year</option>
         <option value="SE">Second Year</option>
         <option value="TE">Third Year</option>
         <option value="BE">Final Year</option>
       </select><br>
-      
+
       <label for="mobile_number">Mobile Number:</label>
-      <input type="text" id="mobile_number" name="mobile_number" placeholder="Enter Mobile Number" >
+      <input type="text" id="mobile_number" name="mobile_number" placeholder="Enter Mobile Number">
       <b><span class="formerror" id="mobile_number_error"></span></b><br>
 
       <button type="button" onclick="nextStep(1)">Next</button>
@@ -172,7 +294,7 @@
     <div class="step" id="step2">
       <h2>Step 2: Academic Details</h2>
       <label for="CGPA">CGPA:</label>
-      <input type="text" id="CGPA" name="CGPA" placeholder="Enter Your CGPA" ><br>
+      <input type="text" id="CGPA" name="CGPA" placeholder="Enter Your CGPA"><br>
       <b><span class="formerror" id="cgpa_error"></span></b><br>
 
       <label for="aggregate_marks">Aggregate Marks:</label>
@@ -185,21 +307,23 @@
       <b><span class="formerror" id="mark_10th_error"></span></b><br>
 
       <label for="mark_12th">12th Marks:</label>
-      <input type="text" id="mark_12th" name="mark_12th" placeholder="Enter 12th Percentage" onchange="toggleDiplomaMarks()"><br>
+      <input type="text" id="mark_12th" name="mark_12th" placeholder="Enter 12th Percentage"
+        onchange="toggleDiplomaMarks()"><br>
       <b><span class="formerror" id="12th_marks_error"></span></b><br>
 
       <label for="diploma_marks">Diploma Marks:</label>
-      <input type="text" id="diploma_marks" name="diploma_marks" placeholder="Enter Diploma Percentage" onchange="toggle12thMarks()" ><br>
+      <input type="text" id="diploma_marks" name="diploma_marks" placeholder="Enter Diploma Percentage"
+        onchange="toggle12thMarks()"><br>
       <b><span class="formerror" id="diploma_marks_error"></span></b><br>
 
       <label for="year_down">Year Down:</label>
-      <select id="year_down" name="year_down" >
+      <select id="year_down" name="year_down">
         <option value="NO">No</option>
         <option value="YES">Yes</option>
       </select><br>
 
       <label for="active_backlog">Active Backlog:</label>
-      <select id="active_backlog" name="active_backlog" >
+      <select id="active_backlog" name="active_backlog">
         <option value="NO">No</option>
         <option value="YES">Yes</option>
       </select>
@@ -212,7 +336,7 @@
     <div class="step" id="step3">
       <h2>Step 3: Placement Status</h2>
       <label for="placement_status">Placement Status:</label>
-      <select id="placement_status" name="placement_status"  onchange="toggleFields()">
+      <select id="placement_status" name="placement_status" onchange="toggleFields()">
         <option value="Not Placed">Not Placed</option>
         <option value="Placed">Placed</option>
       </select><br>
@@ -241,19 +365,19 @@
       <input type="email" id="email" name="email" placeholder="Enter College Email Id"><br>
       <b><span class="formerror" id="email_error"></span></b><br>
 
-      
+
 
       <div class="input-group">
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
         <span class="toggle-password" onclick="togglePasswordVisibility(this)"><i class="far fa-eye"></i></span>
-    </div>
-    <div class="input-group">
+      </div>
+      <div class="input-group">
         <label for="retype-password">Retype Password:</label>
         <input type="password" id="retype-password" name="retype-password" required>
         <span class="toggle-password" onclick="togglePasswordVisibility(this)"><i class="far fa-eye"></i></span>
-    </div>
-    <p class="error" id="password-error">Passwords do not match.</p>
+      </div>
+      <p class="error" id="password-error">Passwords do not match.</p>
 
       <button type="button" onclick="prevStep(4)">Previous</button>
       <button type="submit">Submit</button>
@@ -261,7 +385,8 @@
     <p class="signin-link"><a href="{%url 'student_login'%}">Login</a></p>
   </form>
 
- 
+
   <script src="{% static 'js/signup.js' %}"></script>
 </body>
+
 </html>

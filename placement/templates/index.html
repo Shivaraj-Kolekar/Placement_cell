@@ -1,21 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PVG Placement Cell</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-   
+    <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>-->
+
     <style>
-         .navbar {
-        background-color: #f8f9fa; /* Light gray */
-    }
-    
+        .navbar {
+            background-color: #f8f9fa;
+            /* Light gray */
+        }
+
         .navbar a {
             text-decoration: none;
-            
-            
+
+
             padding: 8px 16px;
             border-radius: 5px;
         }
@@ -25,10 +30,11 @@
             background-color: lightblue;
             box-shadow: 0px 0px 10px rgba(0, 0, 255, 0.5);
         }
-       
+
 
         .navbar-nav .nav-item .nav-link {
-            margin-right: 15px; /* Add gap between nav links */
+            margin-right: 15px;
+            /* Add gap between nav links */
         }
 
         /* Responsive carousel captions */
@@ -80,34 +86,41 @@
         /* Navigation bar media queries */
         @media (max-width: 992px) {
             .navbar {
-                flex-direction: column; /* Stack the navbar items vertically */
+                flex-direction: column;
+                /* Stack the navbar items vertically */
             }
 
             .navbar-brand {
-                margin-bottom: 10px; /* Add margin below the brand logo */
+                margin-bottom: 10px;
+                /* Add margin below the brand logo */
             }
 
             .navbar-nav .nav-item {
-                margin-bottom: 10px; /* Add margin below each nav item */
+                margin-bottom: 10px;
+                /* Add margin below each nav item */
             }
         }
 
         @media (max-width: 768px) {
             .navbar-collapse {
-                text-align: center; /* Center align the navbar items */
+                text-align: center;
+                /* Center align the navbar items */
             }
 
             .navbar-nav .nav-item .nav-link {
-                margin-right: 0; /* Remove right margin */
+                margin-right: 0;
+                /* Remove right margin */
             }
         }
     </style>
 </head>
+
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary bg-green-300 text-white">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'PVG HOME' %}">PVG</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
@@ -126,38 +139,49 @@
     <div class="container mt-5">
         <div id="carouselExampleCaptions" class="carousel slide">
             <div class="carousel-indicators">
-                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
+                    aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
+                    aria-label="Slide 3"></button>
             </div>
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img src="https://media.istockphoto.com/id/1461630610/photo/group-of-happy-students-checking-results-on-laptop-while-sitting-on-college-campus-concept-of.jpg?s=2048x2048&w=is&k=20&c=-wzkKOD5YqbAFcNjiCzttZ51WZmJE-FTRTPGHft4_nE=" class="d-block w-100" alt="Happy students checking results">
+                    <img src="https://media.istockphoto.com/id/1461630610/photo/group-of-happy-students-checking-results-on-laptop-while-sitting-on-college-campus-concept-of.jpg?s=2048x2048&w=is&k=20&c=-wzkKOD5YqbAFcNjiCzttZ51WZmJE-FTRTPGHft4_nE="
+                        class="d-block w-100" alt="Happy students checking results">
                     <div class="carousel-caption d-none d-md-block">
-                        <h5>Take the first step towards your dream career. Register now and unlock endless opportunities.</h5>
-                        <p><a href='{% url "signup" %}' >Register</a></p>
+                        <h5>Take the first step towards your dream career. Register now and unlock endless
+                            opportunities.</h5>
+                        <p><a href='{% url "signup" %}'>Register</a></p>
                     </div>
                 </div>
                 <div class="carousel-item">
-                    <img src="https://media.istockphoto.com/id/2039710863/photo/college-students-raising-hands-during-a-class-lecture-hall.jpg?s=612x612&w=0&k=20&c=rtH8di4ceWTQcSJ8RwagWumePTRK5RfHGXeSIJOGmOI=" class="d-block w-100" alt="College students in lecture hall">
+                    <img src="https://media.istockphoto.com/id/2039710863/photo/college-students-raising-hands-during-a-class-lecture-hall.jpg?s=612x612&w=0&k=20&c=rtH8di4ceWTQcSJ8RwagWumePTRK5RfHGXeSIJOGmOI="
+                        class="d-block w-100" alt="College students in lecture hall">
                     <div class="carousel-caption d-none d-md-block">
-                        <h5>Your future starts now. Don't wait for opportunities, create them. Register for placement services today</h5>
-                        <p><a href='{% url "signup" %}' >Register</a></p>
+                        <h5>Your future starts now. Don't wait for opportunities, create them. Register for placement
+                            services today</h5>
+                        <p><a href='{% url "signup" %}'>Register</a></p>
                     </div>
                 </div>
                 <div class="carousel-item">
-                    <img src="https://media.istockphoto.com/id/1461631424/photo/group-of-college-students-showing-victory-sign-or-gesture-by-looking-at-camera-while-standing.jpg?s=2048x2048&w=is&k=20&c=bzUmfbVOrU-Jbhast6Qgu3_4Dt2jYfjhUchuKaVDcpA=" class="d-block w-100" alt="Group of students showing victory sign">
+                    <img src="https://media.istockphoto.com/id/1461631424/photo/group-of-college-students-showing-victory-sign-or-gesture-by-looking-at-camera-while-standing.jpg?s=2048x2048&w=is&k=20&c=bzUmfbVOrU-Jbhast6Qgu3_4Dt2jYfjhUchuKaVDcpA="
+                        class="d-block w-100" alt="Group of students showing victory sign">
                     <div class="carousel-caption d-none d-md-block">
-                        <h5>Seize the moment, register for placement assistance. Your journey to success starts with a simple click</h5>
-                        <p><a href='{% url "signup" %}' >Register</a></p>
+                        <h5>Seize the moment, register for placement assistance. Your journey to success starts with a
+                            simple click</h5>
+                        <p><a href='{% url "signup" %}'>Register</a></p>
                     </div>
                 </div>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
+                data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
+                data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
@@ -168,4 +192,5 @@
         <p>&copy; 2024 Your Website. All Rights Reserved.</p>
     </footer>
 </body>
+
 </html>
